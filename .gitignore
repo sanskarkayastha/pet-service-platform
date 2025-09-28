@@ -1,0 +1,40 @@
+# Next.js build output
+.next/
+out/ # If you are using `next export`
+
+# Node.js dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.production.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Editor/IDE specific files
+.vscode/ # VS Code settings, but you might want to version some settings (e.g., extensions.json)
+.idea/ # IntelliJ IDEA
+*.sublime-workspace # Sublime Text
+*.swp # Vim swap files
+
+# macOS specific files
+.DS_Store
+
+# Thumbnails
+Thumbs.db
+
+# Optional: Coverage reports
+coverage/
+.nyc_output/
+
+# Optional: Storybook build output
+storybook-static/
+
+# Optional: SWC cache
+.swc/
