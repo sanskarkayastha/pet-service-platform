@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:16
+    container_name: pet_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Sans7509$
+      POSTGRES_DB: pet_platform
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - petnet
+
+networks:
+  petnet:
