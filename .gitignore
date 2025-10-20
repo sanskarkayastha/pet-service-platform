@@ -8,6 +8,7 @@
 /backend/demo/.mvn
 /backend/demo/.idea
 /backend/demo/*.iml
+/backend/demo/.env
 
 # OS / editors
 .DS_Store
