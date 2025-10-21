@@ -33,5 +33,15 @@ public class UserController {
         return "User registered successfully";
     }
 
+    @PostMapping("/login")
+    public String loginUser(@RequestBody User user) {
+        User existingUser = userRepository.existsByEmailAndPassword(user.getEmail(), user.getPassword()) ? user : null;
+        if (existingUser != null) {
+            return "Login successful";
+        } else {
+            return "Invalid username or password";
+        }
+    }
+
 
 }
