@@ -8,8 +8,12 @@ const Home = () => {
       <Link href="/users/login">Login</Link>
       <br />
       <Link href="/users/register">Sign Up</Link>
+      <br/>
+      <Link href="/users/business">Registration Form</Link>
+
     </div>
+
   )
 }
 
-export default Home
+export default Home;
