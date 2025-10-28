@@ -5,17 +5,17 @@ import { ChevronRight, ChevronLeft, Upload, Check } from 'lucide-react';
 import '../components/RegistrationForm.css'; // Import the CSS file
 
 
-export default function RegistrationForm() {
+export default function RegistrationForm({onsubmit}:{ onsubmit: (data:any)=>void}) {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState({
-    businessName: 'furever',
-    ownerName: 'bhumika kayastha',
-    email: 'kayasthabr6@gmail.com',
-    contact: '9876543210',
-    address: 'behfuwh, 12345',
-    serviceType: 'Pet Food Store',
-    description: 'hseofie iwdoiwehw iawoohwe iwdow eqajldele oqdwlw iwudih oidiwj iwjdl owueh',
-    panNumber: '23456789',
+    businessName: '',
+    ownerName: '',
+    email: '',
+    contact: '',
+    address: '',
+    serviceType: '',
+    description: '',
+    panNumber: '',
     businessLogo: null,
     certificationDoc: null,
     verificationDoc: null,
@@ -71,8 +71,8 @@ export default function RegistrationForm() {
   };
 
   const handleSubmit = (): void => {
-    console.log('Form submitted:', formData);
-    // Add your API call here
+    console.log("here in ")
+    onsubmit(formData)
   };
 
   return (
@@ -396,7 +396,7 @@ export default function RegistrationForm() {
                   if (currentStep === 1) {
                     setCurrentStep(2);
                   } else {
-                    handleSubmit();
+                    handleSubmit()
                   }
                 }}
                 disabled={currentStep === 2 && (!formData.confirmAuthentic || !formData.agreeTerms)}
