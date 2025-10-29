@@ -23,7 +23,9 @@ export default function Navbar() {
         <div className="nav-icons">
           <span>🔍</span>
           <span>👤</span>
-          <button>Sign Up</button>
+          <Link href="/users/register">
+            <button>Sign Up</button>
+          </Link>
           <Link href="/users/login">
             <button>Log in</button>
           </Link>
