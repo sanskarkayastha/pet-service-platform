@@ -2,20 +2,19 @@
 
 import { useState } from 'react';
 import { ChevronRight, ChevronLeft, Upload, Check } from 'lucide-react';
-import '../components/RegistrationForm.css'; // Import the CSS file
-
+import './RegistrationForm.css';
 
 export default function RegistrationForm() {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState({
-    businessName: 'furever',
-    ownerName: 'bhumika kayastha',
-    email: 'kayasthabr6@gmail.com',
-    contact: '9876543210',
-    address: 'behfuwh, 12345',
-    serviceType: 'Pet Food Store',
-    description: 'hseofie iwdoiwehw iawoohwe iwdow eqajldele oqdwlw iwudih oidiwj iwjdl owueh',
-    panNumber: '23456789',
+    businessName: '',
+    ownerName: '',
+    email: '',
+    contact: '',
+    address: '',
+    serviceType: '',
+    description: '',
+    panNumber: '',
     businessLogo: null,
     certificationDoc: null,
     verificationDoc: null,
@@ -70,9 +69,20 @@ export default function RegistrationForm() {
     }
   };
 
-  const handleSubmit = (): void => {
-    console.log('Form submitted:', formData);
-    // Add your API call here
+  const handleSubmit = async (): Promise<void> => {
+    console.log('Submitting form data:', formData);
+    try {
+      const response = await fetch('http://localhost:8080/api/business/addBusiness',{
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      })
+      const result = await response.text()
+      console.log(result)
+    } catch (error) {
+      console.log(error)
+    }
+
   };
 
   return (
@@ -396,7 +406,7 @@ export default function RegistrationForm() {
                   if (currentStep === 1) {
                     setCurrentStep(2);
                   } else {
-                    handleSubmit();
+                    handleSubmit()
                   }
                 }}
                 disabled={currentStep === 2 && (!formData.confirmAuthentic || !formData.agreeTerms)}
