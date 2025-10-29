@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import "../styles/Navbar.css";
+import { redirect } from "next/navigation";
+
 
 export default function Navbar() {
   return (
@@ -13,22 +15,18 @@ export default function Navbar() {
         </div>
 
         <ul className="nav-links">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#shop">Pet Shop</a></li>
-          <li><a href="#contact">Contact Us</a></li>
-          <li><a href="#cart">Cart</a></li>
+          <li><Link href="/">Home</Link></li>
+          <li><Link href="/">Services</Link></li>
+          <li><Link href="/">Pet Shop</Link></li>
+          <li><Link href="/">Contact Us</Link></li>
+          <li><Link href="/">Cart</Link></li>
         </ul>
 
         <div className="nav-icons">
           <span>🔍</span>
           <span>👤</span>
-          <Link href="/users/register">
-            <button>Sign Up</button>
-          </Link>
-          <Link href="/users/login">
-            <button>Log in</button>
-          </Link>
+          <button onClick={()=>redirect("/users/register")}>Sign Up</button>
+          <button onClick={()=>redirect("/users/login")}>Log in</button>
         </div>
 
         <div className="hamburger" id="hamburger">
