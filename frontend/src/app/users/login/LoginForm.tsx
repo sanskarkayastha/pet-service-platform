@@ -1,69 +1,83 @@
 "use client";
 
 import React, { useState } from "react";
-import "./Login.css"; // your styling file
+import "./Login.css"; // Import the separate CSS file
+import Link from "next/link";
 
-const LoginForm = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [message, setMessage] = useState("");
+export default function LoginForm() {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    try {
-      const request = await fetch("http://localhost:8080/api/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const result = await request.text();
-      setMessage(result);
-    } catch (err) {
-      setMessage("Server connection failed!");
-    }
+    alert(`Logging in with ${formData.email}`);
+    // TODO: connect to backend API
   };
+
+  const [showModal, setShowModal] = useState(true);
+  const toggleModal = () => setShowModal(!showModal);
 
   return (
-    <div className="modal-overlay">
-      <div className="login-modal">
-        <h2>Login</h2>
-        <p className="msg">{message}</p>
+    <div className="login-page">
+      
 
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        {/* Modal Overlay */}
+        {showModal && (
+            <div className="modal-overlay">
+            <div className="login-modal">
+                <button className="close-btn" onClick={toggleModal}>
+                ×
+                </button>
+                <h2>Login</h2>
+                <form onSubmit={handleSubmit}>
+                <div className="input-group">
+                    <input
+                    type="email"
+                    placeholder="Email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    />
+                </div>
+                <div className="input-group">
+                    <input
+                    type="password"
+                    placeholder="Password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    />
+                </div>
 
-          <div className="input-group">
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
+                <div className="options">
+                    <label className="remember">
+                    <input type="checkbox" /> Remember me
+                    </label>
+                    <a href="#" className="forgot">
+                    Forgot Password?
+                    </a>
+                </div>
 
-          <button type="submit" className="login-submit">
-            Login
-          </button>
-        </form>
-      </div>
+                <button type="submit" className="login-submit">
+                    Login
+                </button>
+
+                <div className="register-link">
+                    Don’t have an account? <a href="#">Register</a>
+                </div>
+                </form>
+            </div>
+            </div>
+        )}
     </div>
   );
-};
-
-export default LoginForm;
+}
