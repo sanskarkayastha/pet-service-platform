@@ -29,8 +29,12 @@ public class UserController {
 
     @PostMapping("/register")
     public String registerUser(@RequestBody User user) {
-        userRepository.save(user);
-        return "User registered successfully";
+        try {
+            userRepository.save(user);
+            return "User registered successfully";
+        } catch (Exception e) {
+            return "Error registering user: " + e.getMessage();
+        }
     }
 
     @PostMapping("/login")
@@ -42,6 +46,5 @@ public class UserController {
             return "Invalid username or password";
         }
     }
-
 
 }
