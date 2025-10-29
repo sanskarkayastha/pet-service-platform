@@ -2,10 +2,9 @@
 
 import { useState } from 'react';
 import { ChevronRight, ChevronLeft, Upload, Check } from 'lucide-react';
-import '../components/RegistrationForm.css'; // Import the CSS file
+import './RegistrationForm.css';
 
-
-export default function RegistrationForm({onsubmit}:{ onsubmit: (data:any)=>void}) {
+export default function RegistrationForm() {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState({
     businessName: '',
@@ -70,9 +69,20 @@ export default function RegistrationForm({onsubmit}:{ onsubmit: (data:any)=>void
     }
   };
 
-  const handleSubmit = (): void => {
-    console.log("here in ")
-    onsubmit(formData)
+  const handleSubmit = async (): Promise<void> => {
+    console.log('Submitting form data:', formData);
+    try {
+      const response = await fetch('http://localhost:8080/api/business/addBusiness',{
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      })
+      const result = await response.text()
+      console.log(result)
+    } catch (error) {
+      console.log(error)
+    }
+
   };
 
   return (
