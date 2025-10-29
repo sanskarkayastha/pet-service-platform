@@ -1,25 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
-import "./Login.css"; // Import the separate CSS file
+import React, { useActionState, useState } from "react";
+import "./Login.css";
 import Link from "next/link";
+import {FormState, logUserIn } from "@/app/actions/login";
 
 export default function LoginForm() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const initialState: FormState = {
+    error: {},
+    prevData: {
+      email: "",
+      password: ""
+    }
+  }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert(`Logging in with ${formData.email}`);
-    // TODO: connect to backend API
-  };
+ const [state, formAction, isPending] =  useActionState(logUserIn, initialState)
 
   const [showModal, setShowModal] = useState(true);
   const toggleModal = () => setShowModal(!showModal);
@@ -36,24 +32,25 @@ export default function LoginForm() {
                 ×
                 </button>
                 <h2>Login</h2>
-                <form onSubmit={handleSubmit}>
+                {state.error.cred && <p className="error-message">{state.error.cred}</p>}
+                <form action={formAction}>
                 <div className="input-group">
+                    {state.error.email && <p className="error-message">{state.error.email}</p>}
                     <input
                     type="email"
                     placeholder="Email"
                     name="email"
-                    value={formData.email}
-                    onChange={handleChange}
+                    defaultValue={state.prevData.email}
                     required
-                    />
+                    />  
                 </div>
                 <div className="input-group">
+                    {state.error.password && <p className="error-message">{state.error.password}</p>}   
                     <input
                     type="password"
                     placeholder="Password"
                     name="password"
-                    value={formData.password}
-                    onChange={handleChange}
+                    defaultValue={state.prevData.password}
                     required
                     />
                 </div>
@@ -67,7 +64,7 @@ export default function LoginForm() {
                     </a>
                 </div>
 
-                <button type="submit" className="login-submit">
+                <button type="submit" className="login-submit" disabled={isPending}>
                     Login
                 </button>
 
