@@ -3,9 +3,13 @@
 import Link from "next/link";
 import "../styles/Navbar.css";
 import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 
 
-export default function Navbar() {
+type Session = typeof auth.$Infer.Session
+
+
+export default function Navbar( {session}: {session: Session | null}) {
   return (
     <nav>
       <div className="nav-container">
@@ -25,8 +29,13 @@ export default function Navbar() {
         <div className="nav-icons">
           <span>🔍</span>
           <span>👤</span>
-          <button onClick={()=>redirect("/users/register")}>Sign Up</button>
-          <button onClick={()=>redirect("/users/login")}>Log in</button>
+          {
+            !session &&
+            <>
+              <button onClick={()=>redirect("/users/register")}>Sign Up</button>
+              <button onClick={()=>redirect("/users/login")}>Log in</button>
+            </>
+          }
         </div>
 
         <div className="hamburger" id="hamburger">
