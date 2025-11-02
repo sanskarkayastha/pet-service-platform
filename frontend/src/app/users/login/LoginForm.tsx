@@ -2,7 +2,7 @@
 
 import React, { useActionState, useState } from "react";
 import "./Login.css";
-import {FormState, logUserIn } from "@/app/actions/login";
+import {FormState, logUserIn } from "@/actions/login";
 
 export default function LoginForm() {
 
