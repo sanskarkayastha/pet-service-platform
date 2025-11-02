@@ -1,11 +1,19 @@
+import { auth } from "@/lib/auth";
 import SignupForm from "./SignupForm";
-import Navbar from "../../components/navbar";
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 
-export default function Signup() {
-  return(
-    <>
-      <Navbar />
-      <SignupForm />
-    </>
-  );
+
+export default async function Signup() {
+  const session = await auth.api.getSession(
+          {
+              headers: await headers(),
+          }
+      );
+      
+      if(session){
+          redirect("/");
+      }else{
+          return <SignupForm/>
+      }
 }

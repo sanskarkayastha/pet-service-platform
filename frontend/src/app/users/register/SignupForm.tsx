@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import "../login/Login.css";
 import Link from "next/link";
-import { registerUser, FormState } from "@/app/actions/register";
+import { registerUser, FormState } from "@/actions/register";
 
 export default function SignupForm() {
 
@@ -22,7 +22,7 @@ export default function SignupForm() {
         <div className="modal-overlay">
           <div className="login-modal">
             <h2>Sign Up</h2>
-
+            {state.errors.general && <p className="error-message">{state.errors.general}</p>}
             <form action={formAction}>
               <div className="input-group">
                 <input
