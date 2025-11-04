@@ -6,14 +6,14 @@ import { headers } from "next/headers";
 
 export default async function Signup() {
   const session = await auth.api.getSession(
-          {
-              headers: await headers(),
-          }
-      );
+        {
+            headers: await headers(),
+        }
+    );
       
-      if(session){
-          redirect("/");
-      }else{
-          return <SignupForm/>
-      }
+    if(session){
+        redirect("/");
+    }else{
+        return <SignupForm/>
+    }
 }
