@@ -247,9 +247,8 @@ export default function RegistrationForm() {
                 onChange={handleChange}
                 className="form-select"
               >
-                <option>Pet Food Store</option>
                 <option>Pet Grooming</option>
-                <option>Pet Clinic</option>
+                <option>Vet</option>
                 <option>Pet Hotel</option>
               </select>
             </div>
@@ -386,10 +385,11 @@ export default function RegistrationForm() {
                 <label>
                   Upload Verification Documents <span className="required">*</span>
                 </label>
+
                 <div
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={(e) => handleDragDrop(e, "verificationDoc")}
-                  className="file-upload-area"
+                  className={`file-upload-area ${preview.verificationDoc ? "has-image" : ""}`}
                 >
                   <input
                     type="file"
@@ -398,25 +398,24 @@ export default function RegistrationForm() {
                     id="verify-upload"
                     hidden
                   />
-                  <label htmlFor="verify-upload">
-                    <Upload className="file-upload-icon" />
-                    <p className="file-upload-text">Click to upload or drag and drop</p>
-                    <p className="file-upload-subtext">PNG, JPG, JPEG (max 5MB)</p>
-                  </label>
-                </div>
 
-                {preview.verificationDoc && (
-                  <div className="preview-container">
-                    <img src={preview.verificationDoc} alt="Verification" className="preview-image" />
-                    <button
-                      className="remove-btn"
-                      onClick={() => removeImage("verificationDoc")}
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                )}
+                  {!preview.verificationDoc ? (
+                    <label htmlFor="verify-upload" className="upload-placeholder">
+                      <Upload className="file-upload-icon" />
+                      <p className="file-upload-text">Click to upload or drag and drop</p>
+                      <p className="file-upload-subtext">PNG, JPG, JPEG (max 5MB)</p>
+                    </label>
+                  ) : (
+                    <div className="preview-inside-box">
+                      <img src={preview.verificationDoc} alt="Verification" className="preview-image-inside" />
+                      <button className="remove-btn-inside" onClick={() => removeImage("verificationDoc")}>
+                        <X size={16} />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
+
 
             {/*=============== ==Checkboxes ===================*/}
             <div>
