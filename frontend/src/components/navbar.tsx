@@ -2,9 +2,21 @@
 
 import Link from "next/link";
 import "../styles/Navbar.css";
-
+import { logOut } from "@/actions/logout";
+import { useRouter } from "next/navigation";
 
 export default function Navbar( {session}: {session: any}) {
+
+  const router = useRouter()
+
+  async function logUserOut(){
+    let result = await logOut()
+    if(result){
+      router.refresh()
+      router.replace("/")
+    }
+  }
+
   return (
     <nav>
       <div className="nav-container">
@@ -30,6 +42,10 @@ export default function Navbar( {session}: {session: any}) {
               <Link href="/users/register"><button>Sign Up</button></Link>
               <Link href="/users/login"><button>Log In</button></Link> 
             </>
+          }
+          {
+            session &&
+            <button onClick={logUserOut}>Log Out</button>
           }
         </div>
 
