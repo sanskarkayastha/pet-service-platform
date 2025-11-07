@@ -1,10 +1,19 @@
 "use client";
 
-import React, { useActionState, useState } from "react";
+import React, { FormEvent, useActionState, useState } from "react";
 import "./Login.css";
-import {FormState, logUserIn } from "@/actions/login";
+import {FormState, logUserIn, logUserInWithGoogle } from "@/actions/login";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
+
+  const router = useRouter()
+
+  async function googleLogin(e:FormEvent){
+    e.preventDefault()
+    await logUserInWithGoogle()
+    router.refresh()
+  }
 
   const initialState: FormState = {
     error: {},
@@ -16,7 +25,10 @@ export default function LoginForm() {
 
  const [state, formAction, isPending] =  useActionState(logUserIn, initialState)
 
-
+if(state.success){
+  router.refresh()
+  router.replace("/")
+}
 
   return (
     <div className="login-page">
@@ -32,7 +44,6 @@ export default function LoginForm() {
                   placeholder="Email"
                   name="email"
                   defaultValue={state.prevData.email}
-                  required
                   />  
               </div>
               <div className="input-group">
@@ -42,7 +53,6 @@ export default function LoginForm() {
                   placeholder="Password"
                   name="password"
                   defaultValue={state.prevData.password}
-                  required
                   />
               </div>
 
@@ -57,6 +67,10 @@ export default function LoginForm() {
 
               <button type="submit" className="login-submit" disabled={isPending}>
                   Login
+              </button>
+
+              <button  className="login-submit" onClick={googleLogin}>
+                  Login from google
               </button>
 
               <div className="register-link">
