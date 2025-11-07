@@ -17,13 +17,11 @@ export type FormState = {
     email: string;
     password: string;
   }
-  success?: boolean;
 }
 
 
 export async function logUserIn(prevState:FormState, formData:FormData) {
   let hasError:boolean = false;
-  let success:boolean = false
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
@@ -76,7 +74,7 @@ export async function logUserIn(prevState:FormState, formData:FormData) {
   
 
   if(!hasError){
-    return {error: errors, prevData: {email, password}, success: true}
+    redirect("/")
   }else{
     return {error: errors, prevData: {email, password}};
   }
