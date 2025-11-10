@@ -25,11 +25,6 @@ export default function LoginForm() {
 
  const [state, formAction, isPending] =  useActionState(logUserIn, initialState)
 
-if(state.success){
-  router.refresh()
-  router.replace("/")
-}
-
   return (
     <div className="login-page">
       <div className="modal-overlay">

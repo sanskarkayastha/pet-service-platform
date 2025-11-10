@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { ChevronRight, ChevronLeft, Upload, Check , X } from 'lucide-react';
 import './RegistrationForm.css';
+import { registerBusiness } from '@/actions/business';
 
-export default function RegistrationForm() {
+export default function RegistrationForm( {id}:{id:string} ) {
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const handleDragDrop = (
@@ -23,19 +24,13 @@ export default function RegistrationForm() {
   };
 
   const handleSubmit = async (): Promise<void> => {
-    console.log('Submitting form data:', formData);
-    try {
-      const response = await fetch('http://localhost:8080/api/business/addBusiness',{
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(imgData)
-      })
-      const result = await response.text()
-      console.log(result)
-    } catch (error) {
-      console.log(error)
-    }
-
+    setFormData((prev)=>(
+      {
+        ...prev,
+        userId: id
+      }
+    ))
+    await registerBusiness(formData)
   };
   const [imgData, setImgData] = useState({
     businessLogo: null as File | null,
