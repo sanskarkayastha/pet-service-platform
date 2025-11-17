@@ -100,7 +100,8 @@ nav {
 }
 
 .nav-icons button:last-of-type {
-  background: linear-gradient(135deg, #f4a261, #e76f51);
+  /* background: linear-gradient(135deg, #f4a261, #e76f51); */
+  background-color: #f28b2e;
   border: none;
   color: white;
   box-shadow: 0 4px 15px rgba(244, 162, 97, 0.3);
