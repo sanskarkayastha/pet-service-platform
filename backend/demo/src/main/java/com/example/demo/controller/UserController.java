@@ -11,8 +11,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -26,22 +24,5 @@ public class UserController {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-
-    @PostMapping("/register")
-    public String registerUser(@RequestBody User user) {
-        userRepository.save(user);
-        return "User registered successfully";
-    }
-
-    @PostMapping("/login")
-    public String loginUser(@RequestBody User user) {
-        User existingUser = userRepository.existsByEmailAndPassword(user.getEmail(), user.getPassword()) ? user : null;
-        if (existingUser != null) {
-            return "Login successful";
-        } else {
-            return "Invalid username or password";
-        }
-    }
-
 
 }

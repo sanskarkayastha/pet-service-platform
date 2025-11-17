@@ -23,6 +23,8 @@ public class Business {
 
     private Double latitude;
     private Double longitude;
+    private String panNumber;
+
 
     @ElementCollection(targetClass = CategoryType.class)
     @Enumerated(EnumType.STRING)
@@ -111,5 +113,13 @@ public class Business {
 
     public void setCategories(Set<CategoryType> categories) {
         this.categories = categories;
+    }
+
+    public String getPanNumber(){
+        return panNumber;
+    }
+
+    public void setPanNumber(String panNumber){
+        this.panNumber = panNumber;
     }
 }

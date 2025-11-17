@@ -1,26 +1,88 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronRight, ChevronLeft, Upload, Check } from 'lucide-react';
-import '../components/RegistrationForm.css'; // Import the CSS file
+import { ChevronRight, ChevronLeft, Upload, Check , X } from 'lucide-react';
+import './RegistrationForm.css';
+import { registerBusiness } from '@/actions/business';
 
+export default function RegistrationForm( {id}:{id:string} ) {
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
-export default function RegistrationForm() {
+  const handleDragDrop = (
+    e: React.DragEvent<HTMLDivElement>,
+    fileType: string
+  ): void => {
+    e.preventDefault();
+    e.stopPropagation();
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      setImgData(prev => ({
+        ...prev,
+        [fileType]: file.name
+      }));
+    }
+  };
+
+  const handleSubmit = async (): Promise<void> => {
+    setFormData((prev)=>(
+      {
+        ...prev,
+        userId: id
+      }
+    ))
+    await registerBusiness(formData)
+  };
+  const [imgData, setImgData] = useState({
+    businessLogo: null as File | null,
+    certificationDoc: null as File | null,
+    verificationDoc: null as File | null,
+  });
+
+  const [preview, setPreview] = useState({
+    businessLogo: "",
+    certificationDoc: "",
+    verificationDoc: "",
+  });
+
+  // Handle file upload
+  const handleFileUpload = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: "businessLogo" | "certificationDoc" | "verificationDoc"
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImgData((prev) => ({ ...prev, [field]: file }));
+
+      // generate preview
+      const fileURL = URL.createObjectURL(file);
+      setPreview((prev) => ({ ...prev, [field]: fileURL }));
+    }
+  };
+
+ 
+
+  // Remove image
+  const removeImage = (field: "businessLogo" | "certificationDoc" | "verificationDoc") => {
+    setImgData((prev) => ({ ...prev, [field]: null }));
+    setPreview((prev) => ({ ...prev, [field]: "" }));
+  };
+
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState({
-    businessName: 'furever',
-    ownerName: 'bhumika kayastha',
-    email: 'kayasthabr6@gmail.com',
-    contact: '9876543210',
-    address: 'behfuwh, 12345',
-    serviceType: 'Pet Food Store',
-    description: 'hseofie iwdoiwehw iawoohwe iwdow eqajldele oqdwlw iwudih oidiwj iwjdl owueh',
-    panNumber: '23456789',
+    businessName: '',
+    ownerName: '',
+    email: '',
+    contact: '',
+    address: '',
+    serviceType: '',
+    description: '',
+    panNumber: '',
     businessLogo: null,
     certificationDoc: null,
     verificationDoc: null,
     confirmAuthentic: false,
     agreeTerms: false
+    
   });
 
   const handleChange = (
@@ -42,38 +104,6 @@ export default function RegistrationForm() {
     }
   };
 
-  const handleFileUpload = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    fileType: string
-  ): void => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData(prev => ({
-        ...prev,
-        [fileType]: file.name
-      }));
-    }
-  };
-
-  const handleDragDrop = (
-    e: React.DragEvent<HTMLDivElement>,
-    fileType: string
-  ): void => {
-    e.preventDefault();
-    e.stopPropagation();
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      setFormData(prev => ({
-        ...prev,
-        [fileType]: file.name
-      }));
-    }
-  };
-
-  const handleSubmit = (): void => {
-    console.log('Form submitted:', formData);
-    // Add your API call here
-  };
 
   return (
     <div className="pet-service-container">
@@ -126,12 +156,12 @@ export default function RegistrationForm() {
                   <input
                     type="text"
                     name="businessName"
+                    placeholder="Enter your business name..."
                     value={formData.businessName}
                     onChange={handleChange}
                     className="form-input"
-                  />
-                  <span className="input-checkmark">✓</span>
-                </div>
+                  />                      
+                   </div>
               </div>
 
               {/* Owner Name */}
@@ -143,11 +173,11 @@ export default function RegistrationForm() {
                   <input
                     type="text"
                     name="ownerName"
+                    placeholder="Enter owner name..."
                     value={formData.ownerName}
                     onChange={handleChange}
                     className="form-input"
                   />
-                  <span className="input-checkmark">✓</span>
                 </div>
               </div>
 
@@ -160,11 +190,11 @@ export default function RegistrationForm() {
                   <input
                     type="email"
                     name="email"
+                    placeholder="Enter your email..."
                     value={formData.email}
                     onChange={handleChange}
                     className="form-input"
                   />
-                  <span className="input-checkmark">✓</span>
                 </div>
               </div>
 
@@ -177,11 +207,11 @@ export default function RegistrationForm() {
                   <input
                     type="tel"
                     name="contact"
+                    placeholder="Enter your contact..."
                     value={formData.contact}
                     onChange={handleChange}
                     className="form-input"
                   />
-                  <span className="input-checkmark">✓</span>
                 </div>
               </div>
             </div>
@@ -193,6 +223,7 @@ export default function RegistrationForm() {
               </label>
               <textarea
                 name="address"
+                placeholder="Enter your address..."
                 value={formData.address}
                 onChange={handleChange}
                 className="form-textarea"
@@ -211,9 +242,8 @@ export default function RegistrationForm() {
                 onChange={handleChange}
                 className="form-select"
               >
-                <option>Pet Food Store</option>
                 <option>Pet Grooming</option>
-                <option>Pet Clinic</option>
+                <option>Vet</option>
                 <option>Pet Hotel</option>
               </select>
             </div>
@@ -225,6 +255,7 @@ export default function RegistrationForm() {
               </label>
               <textarea
                 name="description"
+                placeholder="Enter the description..."
                 value={formData.description}
                 onChange={handleChange}
                 className="form-textarea"
@@ -232,7 +263,7 @@ export default function RegistrationForm() {
               />
             </div>
           </div>
-
+{/* ===========================================2nd page=========================================== */}
           {/* Step 2: Documents & Verification */}
           <div className={`form-content ${currentStep === 2 ? 'active' : ''} form-content.space-y-8`}>
             {/* PAN Number */}
@@ -244,41 +275,59 @@ export default function RegistrationForm() {
                 <input
                   type="text"
                   name="panNumber"
+                  placeholder="Enter Pan number / Registration number..."
                   value={formData.panNumber}
                   onChange={handleChange}
                   className="form-input"
                 />
-                <span className="input-checkmark">✓</span>
               </div>
             </div>
 
             {/* Business Logo */}
-            <div className="form-group">
-              <label>
-                Upload Business Logo <span className="required">*</span>
-              </label>
-              <div
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => handleDragDrop(e, 'businessLogo')}
-                className="file-upload-area"
-              >
-                <input
-                  type="file"
-                  onChange={(e) => handleFileUpload(e, 'businessLogo')}
-                  accept="image/*"
-                  id="logo-upload"
-                />
-                <label htmlFor="logo-upload">
-                  <Upload className="file-upload-icon" />
-                  <p className="file-upload-text">Click to upload or drag and drop</p>
-                  <p className="file-upload-subtext">PNG, JPG, JPEG (max 5MB)</p>
+              <div className="form-group">
+                <label>
+                  Upload Business Logo <span className="required">*</span>
                 </label>
-              </div>
-            </div>
+                <div
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => handleDragDrop(e, "businessLogo")}
+                  className="file-upload-area"
+                >
+                  <input
+                    type="file"
+                    onChange={(e) => handleFileUpload(e, "businessLogo")}
+                    accept="image/*"
+                    id="logo-upload"
+                    hidden
+                  />
 
-            {/* Documents & Verification Section */}
-            <div>
-              <h3 className="section-title">Documents & Verification</h3>
+                  {/* Show upload text only when no image is uploaded */}
+                  {!preview.businessLogo ? (
+                    <label htmlFor="logo-upload">
+                      <Upload className="file-upload-icon" />
+                      <p className="file-upload-text">Click to upload or drag and drop</p>
+                      <p className="file-upload-subtext">PNG, JPG, JPEG (max 5MB)</p>
+                    </label>
+                  ) : (
+                    // Show image preview inside the box
+                    <div className="preview-inside-box">
+                      <img
+                        src={preview.businessLogo}
+                        alt="Business Logo"
+                        className="preview-image-inside"
+                      />
+                      <button
+                        type="button"
+                        className="remove-btn-inside"
+                        onClick={() => removeImage("businessLogo")}
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
 
               {/* Certification */}
               <div className="form-group">
@@ -287,47 +336,83 @@ export default function RegistrationForm() {
                 </label>
                 <div
                   onDragOver={(e) => e.preventDefault()}
-                  onDrop={(e) => handleDragDrop(e, 'certificationDoc')}
+                  onDrop={(e) => handleDragDrop(e, "certificationDoc")}
                   className="file-upload-area"
                 >
                   <input
                     type="file"
-                    onChange={(e) => handleFileUpload(e, 'certificationDoc')}
+                    onChange={(e) => handleFileUpload(e, "certificationDoc")}
+                    accept="image/*"
                     id="cert-upload"
+                    hidden
                   />
-                  <label htmlFor="cert-upload">
-                    <Upload className="file-upload-icon" />
-                    <p className="file-upload-text">Click to upload or drag and drop</p>
-                    <p className="file-upload-subtext">PNG, JPG, JPEG (max 5MB)</p>
-                  </label>
+
+                  {/* Show upload text only if no image is uploaded */}
+                  {!preview.certificationDoc ? (
+                    <label htmlFor="cert-upload">
+                      <Upload className="file-upload-icon" />
+                      <p className="file-upload-text">Click to upload or drag and drop</p>
+                      <p className="file-upload-subtext">PNG, JPG, JPEG (max 5MB)</p>
+                    </label>
+                  ) : (
+                    // Show image preview inside the box
+                    <div className="preview-inside-box">
+                      <img
+                        src={preview.certificationDoc}
+                        alt="Certification"
+                        className="preview-image-inside"
+                      />
+                      <button
+                        type="button"
+                        className="remove-btn-inside"
+                        onClick={() => removeImage("certificationDoc")}
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
+
 
               {/* Verification Documents */}
               <div className="form-group">
                 <label>
                   Upload Verification Documents <span className="required">*</span>
                 </label>
+
                 <div
                   onDragOver={(e) => e.preventDefault()}
-                  onDrop={(e) => handleDragDrop(e, 'verificationDoc')}
-                  className="file-upload-area"
+                  onDrop={(e) => handleDragDrop(e, "verificationDoc")}
+                  className={`file-upload-area ${preview.verificationDoc ? "has-image" : ""}`}
                 >
                   <input
                     type="file"
-                    onChange={(e) => handleFileUpload(e, 'verificationDoc')}
+                    onChange={(e) => handleFileUpload(e, "verificationDoc")}
+                    accept="image/*"
                     id="verify-upload"
+                    hidden
                   />
-                  <label htmlFor="verify-upload">
-                    <Upload className="file-upload-icon" />
-                    <p className="file-upload-text">Click to upload or drag and drop</p>
-                    <p className="file-upload-subtext">PNG, JPG, JPEG (max 5MB)</p>
-                  </label>
+
+                  {!preview.verificationDoc ? (
+                    <label htmlFor="verify-upload" className="upload-placeholder">
+                      <Upload className="file-upload-icon" />
+                      <p className="file-upload-text">Click to upload or drag and drop</p>
+                      <p className="file-upload-subtext">PNG, JPG, JPEG (max 5MB)</p>
+                    </label>
+                  ) : (
+                    <div className="preview-inside-box">
+                      <img src={preview.verificationDoc} alt="Verification" className="preview-image-inside" />
+                      <button className="remove-btn-inside" onClick={() => removeImage("verificationDoc")}>
+                        <X size={16} />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
 
-            {/* Checkboxes */}
+
+            {/*=============== ==Checkboxes ===================*/}
             <div>
               <label className="checkbox-group">
                 <input
@@ -389,17 +474,35 @@ export default function RegistrationForm() {
                   <ChevronLeft size={18} />
                   Back
                 </button>
+              )}             
+                 {/* Warning message below button */}
+              {errorMessage && (
+                <p style={{ color: "red", marginTop: "-25px", fontSize: "14px", marginRight: "-118px" }}>
+                  {errorMessage}
+                </p>
               )}
-
               <button
                 onClick={() => {
                   if (currentStep === 1) {
-                    setCurrentStep(2);
+                    // check if all required fields are filled
+                    if (
+                      formData.businessName.trim() &&
+                      formData.ownerName.trim() &&
+                      formData.email.trim() &&
+                      formData.contact.trim() &&
+                      formData.address.trim() &&
+                      formData.serviceType.trim() &&
+                      formData.description.trim()
+                    ) {
+                      setErrorMessage(""); // clear any old warning
+                      setCurrentStep(2); // proceed to next step
+                    } else {
+                      setErrorMessage("⚠️ Please fill in all required fields before proceeding.");
+                    }
                   } else {
                     handleSubmit();
                   }
                 }}
-                disabled={currentStep === 2 && (!formData.confirmAuthentic || !formData.agreeTerms)}
                 className="btn btn-primary"
               >
                 {currentStep === 1 ? (

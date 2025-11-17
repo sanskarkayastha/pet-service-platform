@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import "@/styles/Grooming.css"
+import { useState } from "react";
+import "@/styles/Grooming.css"; // reuse the same CSS
 
-interface Service {
+interface VetClinic {
   name: string;
   description: string;
   rating: number;
@@ -13,136 +13,100 @@ interface Service {
   image: string;
 }
 
-export default function GroomingPage() {
+export default function VetPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [radius, setRadius] = useState(10);
   const [location, setLocation] = useState("Kathmandu");
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedClinic, setSelectedClinic] = useState<VetClinic | null>(null);
   const [showBooking, setShowBooking] = useState(false);
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
-  // Service data
-  const services: Service[] = [
+  const vetClinics: VetClinic[] = [
     {
-      name: "Pawfect Groomers",
+      name: "Happy Paws Veterinary Clinic",
       description:
-        "Professional pet grooming services with experienced staff. We provide comprehensive grooming solutions for all breeds.",
-      rating: 4.8,
-      reviews: 234,
-      distance: "2.3 km",
-      location: "Thamel, Kathmandu",
-      image:
-        "https://i.pinimg.com/1200x/d8/7c/57/d87c5768c8272a071b1a07046e71467d.jpg",
-    },
-    {
-      name: "Fluffy & Clean Spa",
-      description:
-        "Premium grooming experience with organic products. Specialized in breed-specific cuts and styling.",
+        "Full-service veterinary clinic offering checkups, vaccinations, diagnostics, and emergency care.",
       rating: 4.9,
-      reviews: 189,
-      distance: "1.8 km",
-      location: "Lazimpat, Kathmandu",
+      reviews: 312,
+      distance: "2.1 km",
+      location: "Maharajgunj, Kathmandu",
       image:
         "https://i.pinimg.com/1200x/bc/77/4a/bc774ad551536130e818dfea04e1ce76.jpg",
     },
     {
-      name: "Pet Paradise Salon",
+      name: "City Pet Veterinary Center",
       description:
-        "Affordable grooming services with caring professionals. Walk-ins welcome, appointments preferred.",
+        "Experienced veterinarians providing consultations, surgery, and dental care for all pets.",
       rating: 4.7,
-      reviews: 156,
-      distance: "3.5 km",
-      location: "Patan, Lalitpur",
+      reviews: 198,
+      distance: "1.4 km",
+      location: "Pulchowk, Lalitpur",
       image:
-        "https://i.pinimg.com/736x/28/ff/3a/28ff3ae2531d3bd58ceca9b6730a77b2.jpg",
+        "https://i.pinimg.com/1200x/ce/64/3f/ce643f3f0cd8b9b6af9f811aed4f8269.jpg",
     },
     {
-      name: "Whiskers & Wags",
+      name: "VetCare Animal Hospital",
       description:
-        "Expert groomers specializing in nervous and senior pets. Gentle handling and calming environment.",
-      rating: 4.6,
-      reviews: 142,
-      distance: "4.2 km",
-      location: "Bouddha, Kathmandu",
-      image:
-        "https://i.pinimg.com/1200x/ac/fa/b8/acfab884be3ccfbf0c2d529cc2536a02.jpg",
-    },
-    {
-      name: "The Grooming Den",
-      description:
-        "Modern grooming facility with state-of-the-art equipment. Online booking available 24/7.",
-      rating: 4.9,
-      reviews: 278,
-      distance: "1.2 km",
-      location: "Jhamsikhel, Lalitpur",
-      image:
-        "https://i.pinimg.com/736x/e0/41/0c/e0410cfe4a874c72448eac1c145a33f4.jpg",
-    },
-    {
-      name: "Pampered Paws Studio",
-      description:
-        "Boutique grooming studio offering personalized care. Exclusive products and premium services.",
+        "24/7 emergency care, lab tests, vaccinations, and advanced medical facilities.",
       rating: 4.8,
-      reviews: 201,
-      distance: "2.9 km",
+      reviews: 274,
+      distance: "3.0 km",
       location: "Baneshwor, Kathmandu",
       image:
-        "https://i.pinimg.com/1200x/b2/72/13/b272139b3d2460e3fbecf0807c041bdc.jpg",
+        "https://i.pinimg.com/1200x/52/1f/c2/521fc2aeae09dc3f71fa755a8c5909e0.jpg",
+    },
+    {
+      name: "Paws & Claws Vet Clinic",
+      description:
+        "Trusted animal clinic offering wellness exams, treatments, and minor surgeries.",
+      rating: 4.6,
+      reviews: 142,
+      distance: "4.6 km",
+      location: "Bhaktapur",
+      image:
+        "https://i.pinimg.com/1200x/e8/43/9e/e8439e9f3a44cd7842c2e364a7e5e497.jpg",
     },
   ];
 
-  // Filter logic
-  const filteredServices = services.filter(
-    (s) =>
-      s.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      parseFloat(s.distance) <= radius
+  // Filter
+  const filteredClinics = vetClinics.filter(
+    (c) =>
+      c.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      parseFloat(c.distance) <= radius
   );
 
-  // Detect current location
   const detectLocation = () => {
-    if (!navigator.geolocation) {
-      alert("Geolocation not supported.");
-      return;
-    }
+    if (!navigator.geolocation)
+      return alert("Geolocation not supported.");
 
     navigator.geolocation.getCurrentPosition(
       () => {
         setLocation("Current Location");
         alert("Location detected! Showing services nearby.");
       },
-      () => {
-        alert("Unable to detect location. Please enter manually.");
-      }
+      () => alert("Unable to detect location.")
     );
   };
 
-  // Modal opener
-  const openModal = (service: Service) => {
-    setSelectedService(service);
+  const openModal = (clinic: VetClinic) => {
+    setSelectedClinic(clinic);
     setShowBooking(false);
-    setSelectedTime(null);
     setSelectedDate(null);
+    setSelectedTime(null);
     document.body.style.overflow = "hidden";
   };
 
-  // Modal closer
   const closeModal = () => {
-    setSelectedService(null);
+    setSelectedClinic(null);
     document.body.style.overflow = "auto";
   };
 
-  // Date selection
-  const handleDateSelect = (index: number) => setSelectedDate(index);
-
-  // Time selection
-  const handleTimeSelect = (time: string) => setSelectedTime(time);
-
   return (
     <div>
-      {/* HERO SECTION */}
+      {/* HERO */}
       <section className="hero">
-        <h1>Find the Best Grooming Services Near You</h1>
+        <h1>Find Trusted Veterinary Clinics Near You</h1>
       </section>
 
       {/* FILTER BAR */}
@@ -150,12 +114,11 @@ export default function GroomingPage() {
         <div className="search-filter">
           <input
             className="filter-input"
-            placeholder="Search for grooming services..."
+            placeholder="Search for veterinary clinics..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-          {/* Location */}
           <div className="location-row">
             <input
               className="filter-input"
@@ -167,7 +130,6 @@ export default function GroomingPage() {
             </button>
           </div>
 
-          {/* Radius */}
           <div className="radius-control">
             <span>Radius:</span>
             <input
@@ -185,10 +147,10 @@ export default function GroomingPage() {
         </div>
       </div>
 
-      {/* SERVICES GRID */}
+      {/* GRID */}
       <div className="container">
         <div className="services-grid">
-          {filteredServices.length === 0 ? (
+          {filteredClinics.length === 0 ? (
             <p
               style={{
                 gridColumn: "1/-1",
@@ -197,32 +159,32 @@ export default function GroomingPage() {
                 color: "#888",
               }}
             >
-              No services found matching your criteria.
+              No clinics found matching your criteria.
             </p>
           ) : (
-            filteredServices.map((service) => (
-              <div className="service-card" key={service.name}>
+            filteredClinics.map((clinic) => (
+              <div className="service-card" key={clinic.name}>
                 <div
                   className="card-image"
-                  style={{ backgroundImage: `url('${service.image}')` }}
+                  style={{ backgroundImage: `url('${clinic.image}')` }}
                 ></div>
 
                 <div className="card-content">
-                  <div className="vendor-name">{service.name}</div>
-                  <div className="description">{service.description}</div>
+                  <div className="vendor-name">{clinic.name}</div>
+                  <div className="description">{clinic.description}</div>
 
                   <div className="card-meta">
                     <div className="rating">
-                      ⭐ {service.rating} ({service.reviews})
+                      ⭐ {clinic.rating} ({clinic.reviews})
                     </div>
-                    <div className="distance">📍 {service.distance}</div>
+                    <div className="distance">📍 {clinic.distance}</div>
                   </div>
 
                   <div className="card-footer">
-                    <button className="btn-book" onClick={() => openModal(service)}>
+                    <button className="btn-book" onClick={() => openModal(clinic)}>
                       Book Now
                     </button>
-                    <button className="btn-details" onClick={() => openModal(service)}>
+                    <button className="btn-details" onClick={() => openModal(clinic)}>
                       View Details
                     </button>
                   </div>
@@ -234,54 +196,49 @@ export default function GroomingPage() {
       </div>
 
       {/* MODAL */}
-      {selectedService && (
+      {selectedClinic && (
         <div className="modal" onClick={closeModal}>
-          <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <button className="close-btn" onClick={closeModal}>
-                ×
-              </button>
+              <button className="close-btn" onClick={closeModal}>×</button>
 
-              <h2>{selectedService.name}</h2>
+              <h2>{selectedClinic.name}</h2>
               <div className="rating">
-                ⭐ {selectedService.rating} ({selectedService.reviews} reviews)
+                ⭐ {selectedClinic.rating} ({selectedClinic.reviews} reviews)
               </div>
-              <p>📍 {selectedService.location} | {selectedService.distance} away</p>
+              <p>📍 {selectedClinic.location} | {selectedClinic.distance} away</p>
             </div>
 
-            {/* MODAL BODY */}
             <div className="modal-body">
               {/* ABOUT */}
               <div className="section">
                 <h3>About</h3>
                 <p>
-                  {selectedService.description} We provide comprehensive grooming
-                  solutions for all breeds with love and care.
+                  {selectedClinic.description} Our veterinarians are certified and
+                  experienced in providing quality care and treatment for your pet.
                 </p>
               </div>
 
-              {/* SERVICE ITEMS */}
+              {/* VET SERVICES */}
               <div className="section">
                 <h3>Services Offered</h3>
                 <div className="service-list">
                   {[
                     {
-                      title: "Full Groom Package",
-                      details: "Bath, haircut, nail trim, ear cleaning | 90 mins",
+                      title: "General Health Checkup",
+                      details: "Full physical exam | 20–30 mins",
+                      price: "NPR 1,000",
+                    },
+                    {
+                      title: "Vaccination Package",
+                      details: "Rabies, DHPPiL, Anti-parasite | 15 mins",
                       price: "NPR 1,500",
                     },
                     {
-                      title: "Bath & Brush",
-                      details: "Shampoo, conditioner, brush out | 45 mins",
-                      price: "NPR 800",
-                    },
-                    {
-                      title: "Nail Trim & Paw Care",
-                      details: "Nail clipping, paw pad treatment | 20 mins",
-                      price: "NPR 400",
+                      title: "Diagnostics & Lab Tests",
+                      details:
+                        "Blood tests, X-Ray, Ultrasound (as needed) | 30–45 mins",
+                      price: "NPR 2,000+",
                     },
                   ].map((s) => (
                     <div className="service-item" key={s.title}>
@@ -304,13 +261,12 @@ export default function GroomingPage() {
                 </div>
               </div>
 
-              {/* BOOKING SECTION */}
+              {/* BOOKING SECTION (same as grooming) */}
               {showBooking && (
                 <div className="section">
                   <div className="booking-section">
                     <h3>Select Date & Time</h3>
 
-                    {/* DATE PICKER */}
                     <div className="date-picker">
                       {["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"].map(
                         (day, index) => (
@@ -319,7 +275,7 @@ export default function GroomingPage() {
                             className={`date-slot ${
                               selectedDate === index ? "selected" : ""
                             }`}
-                            onClick={() => handleDateSelect(index)}
+                            onClick={() => setSelectedDate(index)}
                           >
                             <div>{day}</div>
                             <div>{4 + index}</div>
@@ -328,11 +284,10 @@ export default function GroomingPage() {
                       )}
                     </div>
 
-                    {/* TIME SLOTS */}
                     <div className="time-slots">
                       {[
                         "09:00 AM",
-                        "10:30 AM",
+                        "10:00 AM",
                         "12:00 PM",
                         "02:00 PM",
                         "03:30 PM",
@@ -343,7 +298,7 @@ export default function GroomingPage() {
                           className={`time-slot ${
                             selectedTime === time ? "selected" : ""
                           }`}
-                          onClick={() => handleTimeSelect(time)}
+                          onClick={() => setSelectedTime(time)}
                         >
                           {time}
                         </div>
@@ -351,7 +306,7 @@ export default function GroomingPage() {
                     </div>
 
                     <button className="btn-primary" style={{ width: "100%" }}>
-                      Confirm Booking
+                      Confirm Appointment
                     </button>
                   </div>
                 </div>
@@ -363,28 +318,29 @@ export default function GroomingPage() {
                 <div className="reviews">
                   <div className="review-item">
                     <div className="review-header">
-                      <span className="reviewer">Sarah M.</span>
+                      <span className="reviewer">Priya S.</span>
                       <span className="rating">⭐⭐⭐⭐⭐</span>
                     </div>
                     <p>
-                      Excellent service! My golden retriever looks amazing. The
-                      staff was very gentle and professional.
+                      The vet was very gentle and explained everything clearly.
+                      My cat received excellent care.
                     </p>
                   </div>
 
                   <div className="review-item">
                     <div className="review-header">
-                      <span className="reviewer">John D.</span>
+                      <span className="reviewer">Ramesh K.</span>
                       <span className="rating">⭐⭐⭐⭐⭐</span>
                     </div>
                     <p>
-                      Best grooming experience in town. They really care about
-                      the pets and take their time.
+                      One of the best clinics in the city! Clean environment and
+                      friendly staff.
                     </p>
                   </div>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       )}
