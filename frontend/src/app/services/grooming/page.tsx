@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { useEffect, useState } from "react";
 import "@/styles/Grooming.css"
@@ -222,9 +223,11 @@ export default function GroomingPage() {
                     <button className="btn-book" onClick={() => openModal(service)}>
                       Book Now
                     </button>
-                    <button className="btn-details" onClick={() => openModal(service)}>
+                    <Link 
+                      href="/services/grooming/detail"
+                    className="btn-details" onClick={() => openModal(service)}>
                       View Details
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>

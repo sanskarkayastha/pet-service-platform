@@ -1,0 +1,168 @@
+
+.sidebar {
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e6eef3;
+  height: fit-content;
+  position: sticky;
+  top: 24px;
+  box-sizing: border-box;
+}
+
+.heading {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.itemsWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 48vh;
+  overflow: auto;
+}
+
+.empty {
+  color: #64748b;
+  padding: 8px 0;
+}
+
+.itemCard {
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px solid #f1f5f9;
+  background: #fbfdff;
+}
+
+.itemHead {
+  display: flex;
+  justify-content: space-between;
+}
+
+.itemTitle {
+  font-weight: 700;
+}
+
+.itemMeta {
+  color: #64748b;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.addonLine {
+  display: flex;
+  justify-content: space-between;
+  color: #475569;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.addonName {
+    color: #475569;
+}
+
+.addonPrice {
+  color: #0284c7;
+  font-weight: 700;
+}
+
+.removeWrap {
+  display: flex;
+  align-items: flex-start;
+}
+
+.trash {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.itemBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.qtyControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qtyBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid #e6eef3;
+  background: white;
+  display: grid;
+  place-items: center;
+}
+
+.qty {
+  min-width: 24px;
+  text-align: center;
+}
+
+.itemTotal {
+  color: #0284c7;
+  font-weight: 800;
+}
+
+.formSection {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e6eef3;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.totalLabel {
+  font-weight: 700;
+}
+
+.totalValue {
+  color: #0284c7;
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.ctaBtn {
+  margin-top: 12px;
+  background: #0284c7;
+  color: white;
+  padding: 12px;
+  border: none;
+  width: 100%;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* responsive */
+@media (max-width: 980px) {
+  .sidebar {
+    width: 100%;
+    position: relative;
+    top: auto;
+  }
+}

@@ -1,0 +1,129 @@
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: "Inter", sans-serif;
+  background-color: #ffffff;
+  padding: 100px;
+  color: black;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: black;
+}
+
+.rating {
+  color: #555;
+  margin-top: 8px;
+  font-size: 0.95rem;
+}
+
+.link {
+  color: #00bcd4;
+  text-decoration: none;
+  margin-left: 8px;
+}
+
+.imageGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.mainImage img,
+.sideImages img {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.sideImages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.services {
+  margin-top: 40px;
+}
+
+.divider {
+  border: none;
+  border-top: 0.5px solid #92AFBF; /* grey line */
+  margin: 40px 0; /* space above and below */
+  opacity: 50%;
+}
+
+.reviews {
+  margin-top: 60px;
+}
+
+.reviews h2 {
+    color: black;
+}
+
+.reviewGrid {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+  color: black;
+}
+
+.reviewCard {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  color: black;
+}
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  background: #00bcd4;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.time {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.about {
+  margin-top: 60px;
+  line-height: 1.7;
+}
+
+.location {
+  margin-top: 60px;
+}
+
+.mapBox {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 40px;
+  text-align: center;
+}
+
+.mapIcon {
+  font-size: 2rem;
+}
+
+.mapNote {
+  color: #777;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
