@@ -1,5 +1,8 @@
 
 "use client";
+import Link from "next/link";
+
+
 import React, { useMemo, useState } from "react";
 import styles from "../bookingSummary.module.css";
 import { Trash2, Plus, Minus } from "lucide-react";
@@ -116,8 +119,11 @@ export default function BookingSummary({
         <div className={styles.totalValue}>${total.toFixed(2)}</div>
       </div>
 
-      <button className={styles.ctaBtn}>Continue to Payment</button>
-    </aside>
+      <Link 
+        href="/services/grooming/detail/receipt" 
+        className={styles.ctaBtn}
+      >
+        Continue to Payment
+      </Link>    </aside>
   );
 }
-

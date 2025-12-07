@@ -279,6 +279,7 @@
   width: 100%;
   display: flex;
   justify-content: left;
+  margin-bottom: 15px;
 }
 
 .segmentTabs {
@@ -312,7 +313,8 @@
 }
 
 .segmentBtn.active {
-  color: #111827;
+  color: #ffffff;
+  font-weight: 500;
 }
 
 .segmentIndicator {
@@ -323,7 +325,7 @@
   width: calc(33.33% - 0px);
   height: calc(100% - 12px);
 
-  background: white;
+  background: #ff8f1f;
   border-radius: 10px;
 
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);

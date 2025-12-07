@@ -122,12 +122,22 @@
 .label {
   font-weight: 600;
   font-size: 13px;
+   color: #000000;   /* black label */
 }
 
 .input {
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid #e6eef3;
+  border: 1px solid #000000;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  
+}
+
+/* ✅ Calendar icon black */
+.input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);   /* ensures black icon */
+  cursor: pointer;
 }
 
 .totalRow {
@@ -165,4 +175,36 @@
     position: relative;
     top: auto;
   }
+}
+
+
+.ctaBtn {
+  display: inline-block;
+  width: 100%;
+  background-color: #ff9f43;     /* तुमीले पहिले use गरेको orange color */
+  color: white;
+  padding: 14px 20px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;         /* Link ला button जस्तै बनाउने */
+  transition: all 0.2s ease-in-out;
+}
+
+.ctaBtn:hover {
+  background-color: #ff8f1f;     /* hover color (slightly darker) */
+  transform: translateY(-2px);
+}
+
+.ctaBtn:active {
+  transform: translateY(0px);
+  background-color: #ff7f0a;     /* active click color */
+}
+
+.ctaBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
