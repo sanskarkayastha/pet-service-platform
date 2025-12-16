@@ -8,11 +8,6 @@ import styles from "../bookingSummary.module.css";
 import { Trash2, Plus, Minus } from "lucide-react";
 //mport type { BookingItem } from "../typesNotUsed"; // optional if you want consistent types; ignore if not present
 
-/** 
- *        BookingItem[] where each item = { service, addons, qty }
- * onRemove(serviceId)
- * onQtyChange(serviceId, qty)
- */
 export default function BookingSummary({
   items,
   onRemove,

@@ -1,5 +1,5 @@
 .pagebg{
-  background: #eae9e8;
+  background: #f2d6bb;
   /* margin-top: 77px; */
   padding: 80px 0;
 }
@@ -14,7 +14,7 @@
 }
 
 .header {
-  background: #fbbf24;
+  background: #ffffff;
   padding: 25px;
   border-radius: 6px;
   margin-bottom: 30px;
@@ -34,7 +34,7 @@
   font-size: 24px;
   font-weight: 700;
   margin: 0;
-  color: #3E3E49;
+  color: #f97316;
 }
 
 .subtitle {
