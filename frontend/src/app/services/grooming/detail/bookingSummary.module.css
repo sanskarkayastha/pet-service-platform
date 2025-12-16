@@ -4,11 +4,13 @@
   background: #fff;
   border-radius: 12px;
   padding: 20px;
-  border: 1px solid #e6eef3;
+  border: 1px solid #e5e7eb;
   height: fit-content;
   position: sticky;
   top: 24px;
   box-sizing: border-box;
+  max-height: calc(100vh - 48px); /* sticky area */
+   overflow-y: auto;
 }
 
 .heading {
@@ -64,8 +66,9 @@
 }
 
 .addonPrice {
-  color: #0284c7;
+  color: #475569;
   font-weight: 700;
+  margin-left: 70px;
 }
 
 .removeWrap {
@@ -108,8 +111,8 @@
 }
 
 .itemTotal {
-  color: #0284c7;
-  font-weight: 800;
+  color: #475569;
+  font-weight: 700;
 }
 
 .formSection {
@@ -152,7 +155,7 @@
 }
 
 .totalValue {
-  color: #0284c7;
+  color: #f97316;
   font-weight: 900;
   font-size: 20px;
 }
@@ -181,7 +184,7 @@
 .ctaBtn {
   display: inline-block;
   width: 100%;
-  background-color: #ff9f43;     /* तुमीले पहिले use गरेको orange color */
+  background-color: #ff9f43;     
   color: white;
   padding: 14px 20px;
   text-align: center;

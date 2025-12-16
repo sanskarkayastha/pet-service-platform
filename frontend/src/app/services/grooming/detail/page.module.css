@@ -87,6 +87,8 @@
 .avatar {
   width: 35px;
   height: 35px;
+   min-width: 35px;
+  min-height: 35px;
   background: #00bcd4;
   color: white;
   border-radius: 50%;
@@ -94,6 +96,7 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
+   flex-shrink: 0;
 }
 
 .time {

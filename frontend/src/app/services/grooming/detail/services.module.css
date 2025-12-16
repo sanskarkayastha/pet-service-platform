@@ -1,352 +1,155 @@
-
-
 .pageWrap {
-  padding: 22px;
   min-height: 100vh;
-  background: #ffffff;
-  box-sizing: border-box;
+  background: white;
+  padding: 1.5rem;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 .content {
   display: flex;
-  gap: 28px;
-  max-width: 1400px;
-  margin: 0 auto;
+  gap: 1.5rem;
 }
 
-/* Left column */
-.left {
-  width: 70%;
+.leftColumn {
+  flex: 1;
 }
 
-/* Right column will hold BookingSummary */
-.right {
-  width: 30%;
+.rightColumn {
+  width: 24rem;
 }
 
-/* Slider tabs */
-.sliderTabs {
+.servicesList {
   display: flex;
-  gap: 8px;
-  position: relative;
-  align-items: left;
-  margin-bottom: 18px;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.tabBtn {
-  background: #f3f6f8;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-weight: 600;
-  cursor: pointer;
-  position: relative;
-}
-
-.tabBtn:hover {
-  opacity: 0.95;
-}
-
-.tabBtn.active,
-.tabBtn[aria-pressed="true"] {
-  background: #e6f4ff;
-}
-
-.indicator {
-  position: absolute;
-  bottom: -6px;
-  left: 2px;
-  width: calc(33.333% - 4px);
-  height: 3px;
-  background: #0ea5e9;
-  border-radius: 3px;
-  transition: transform 220ms ease;
-}
-
-/* Service card */
 .serviceCard {
-  background: #fff;
-  border-radius: 12px;
-  padding: 18px;
-  margin-bottom: 18px;
-  border: 1px solid #e8eef3;
-  box-shadow: 0 1px 0 rgba(16, 24, 40, 0.02);
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  /* box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); */
+  padding: 1.5rem;
+  /* transition: box-shadow 0.2s; */
+  border: 1.5px solid #e5e7eb;
 }
 
-.cardTop {
+.cardHeader {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  margin-bottom: 0.75rem;
 }
 
-.title {
-  font-size: 18px;
-  margin: 0;
+.cardInfo {
+  flex: 1;
 }
 
-.meta {
-  color: #64748b;
-  font-size: 13px;
-  margin-top: 6px;
+.serviceTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+}
+
+.serviceMeta {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #4b5563;
 }
 
-.duration {
-  font-size: 13px;
-}
-
-.description {
-  color: #475569;
-  margin-top: 12px;
-  margin-bottom: 14px;
-}
-
-.controls {
+.cardControls {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.75rem;
 }
-
-.checkboxWrap {
-  display: inline-flex;
+.checkboxLabel {
+  display: flex;
   align-items: center;
-  gap: 8px;
-  color: black;
-
+  cursor: pointer;
 }
 
-.checkboxWrap input[type="checkbox"] {
-  display: none;
-}
+/* Custom square checkbox */
+.checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
 
-.checkboxCustom {
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  display: inline-grid;
+  background-color: #ffffff;
+  border: 2px solid #000000;
+  cursor: pointer;
+
+  display: grid;
   place-items: center;
-  border: 1px solid #dbeafe;
-  background: #ffffff;
+
+  transition: 
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* Checked state – orange fill */
+.checkbox:checked {
+  background-color: #f97316; /* primary orange */
+  border-color: #f97316;
+}
+
+/* Centered tick */
+.checkbox:checked::after {
+  content: "";
+  width: 5px;
+  height: 9px;
+  border:  1px solid #ffffff; /* white tick */
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 .detailsBtn {
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 1px solid #e6eef3;
-  background: white;
-  cursor: pointer;
-    color: black;
-
-}
-
-.cardFooter {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.price {
-  color: #E6A659;
-  font-weight: 800;
-  font-size: 18px;
-}
-
-/* Modal styles included here for single-file styling convenience */
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(10, 20, 30, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 60;
-}
-
-.modal {
-  width: 720px;
-  max-width: calc(100% - 32px);
-  background: #fff;
-  border-radius: 10px;
-  padding: 22px;
-  box-shadow: 0 10px 40px rgba(2, 6, 23, 0.6);
-  border: 1px solid #e6eef3;
-}
-
-.modalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.closeBtn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.modalMeta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 8px;
-}
-
-.modalPrice {
-  color: #E6A659;
-  font-weight: 700;
-}
-
-.sectionTitle {
-  margin-top: 18px;
-  margin-bottom: 8px;
-  font-size: 14px;
-  color: #374151;
-}
-
-.longDesc {
-  color: #475569;
-  line-height: 1.5;
-}
-
-.addonsList {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.addonItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px;
-  border-radius: 10px;
-  border: 1px solid #e6eef3;
-  background: #fff;
-}
-
-.addonItem.checked {
-  border-color: #bae6fd;
-  background: #f0f9ff;
-}
-
-.addonItem input[type="checkbox"] {
-  display: none;
-}
-
-.addonContent {
-  flex: 1;
-}
-
-.addonTitle {
-  font-weight: 700;
-}
-
-.addonDesc {
-  color: #64748b;
-  font-size: 13px;
-  margin-top: 6px;
-}
-
-.addonPrice {
-  font-weight: 700;
-  color: #E6A659;
-}
-
-.modalFooter {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 18px;
-}
-
-.addBookingBtn {
-  background: #E6A659;
-  color: white;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.addonTotal {
-  color: #475569;
-}
-
-.segmentWrapper {
-  width: 100%;
-  display: flex;
-  justify-content: left;
-  margin-bottom: 15px;
-}
-
-.segmentTabs {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 450px;
-
-  background: #f2f4f7;
-  padding: 6px;
-  border-radius: 12px;
-}
-
-.segmentBtn {
-  position: relative;
-  flex: 1;
-  padding: 10px 16px;
-
-  background: transparent;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-
-  font-size: 14px;
-  font-weight: 500;
-  color: #4b5563;
-
-  transition: color 0.25s ease;
-  z-index: 2;
-}
-
-.segmentBtn.active {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  background-color: #FF9F43;
   color: #ffffff;
-  font-weight: 500;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 540;
+  transition: background-color 0.2s;
 }
 
-.segmentIndicator {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-
-  width: calc(33.33% - 0px);
-  height: calc(100% - 12px);
-
-  background: #ff8f1f;
-  border-radius: 10px;
-
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-
-  transition: transform 0.3s ease;
-  z-index: 1;
+.detailsBtn:hover {
+  background-color: #f97316;
 }
 
+.serviceDescription {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
-/* responsive */
-@media (max-width: 980px) {
+.servicePrice {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f97316;
+}
+
+@media (max-width: 1024px) {
   .content {
     flex-direction: column;
   }
-  .left {
+
+  .rightColumn {
     width: 100%;
-  }
-  .right {
-    width: 100%;
-  }
-  .modal {
-    width: calc(100% - 32px);
   }
 }

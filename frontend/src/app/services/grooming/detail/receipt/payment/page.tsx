@@ -41,10 +41,10 @@ export default function PaymentPage() {
                 <div className={styles.paymentDesc}>Pay with your eSewa digital wallet</div>
             </div>
             </div>
-<label className={styles.radioWrap}>
-  <input type="radio" name="method" className={styles.radio} />
-  <div className={styles.customRadio}></div>
-</label>
+            <label className={styles.radioWrap}>
+            <input type="radio" name="method" className={styles.radio} />
+            <div className={styles.customRadio}></div>
+            </label>
         </div>
 
         <div className={styles.paymentOptionKhalti}>
@@ -69,10 +69,10 @@ export default function PaymentPage() {
                 <div className={styles.paymentDesc}>Pay directly from your bank account</div>
             </div>
             </div>
-<label className={styles.radioWrap}>
-  <input type="radio" name="method" className={styles.radio} />
-  <div className={styles.customRadio}></div>
-</label>
+            <label className={styles.radioWrap}>
+            <input type="radio" name="method" className={styles.radio} />
+            <div className={styles.customRadio}></div>
+            </label>
         </div>
 
         {/* Confirm Button */}
