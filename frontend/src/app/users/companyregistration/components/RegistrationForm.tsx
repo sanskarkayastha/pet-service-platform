@@ -116,21 +116,27 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CheckCircle } from 'lucide-react';
 import StepOne from '../components/StepOne';
 import StepTwo from '../components/StepTwo';
 import styles from '../components/Registration.module.css';
+import { authClient } from '@/lib/auth-client';
+import { useRouter } from 'next/navigation';
 
 const RegistrationForm = () => {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [session, setSession] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true); // Track loading state
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
+    userId: '', 
     businessName: '',
     ownerName: '',
     email: '',
     contactNumber: '',
     businessAddress: '',
-    serviceType: 'Veterinary Clinic',
+    serviceType: 'VETERINARY',
     businessDescription: '',
     panNumber: '',
     businessLogo: null,
@@ -140,17 +146,35 @@ const RegistrationForm = () => {
     agreeTerms: false,
   });
 
-  const handleNext = () => {
-    setCurrentStep(2);
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await authClient.getSession();
+        if (!data) {
+          router.push("/login");
+        } else {
+          setFormData(
+            (prev)=>({
+              ...prev,
+              userId: data?.data?.user.id || ''
+            })
+          )
+        }
+      } catch (err) {
+        console.error("Auth error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [router]);
 
-  const handleBack = () => {
-    setCurrentStep(1);
-  };
+  const [currentStep, setCurrentStep] = useState(1);
+  
+  const handleNext = () => setCurrentStep(2);
+  const handleBack = () => setCurrentStep(1);
 
-  const handleSubmit = () => {
-    alert('Registration submitted successfully!');
-  };
+  if (loading) return <div className={styles.container}>Loading session...</div>;
 
   return (
     <div className={styles.container}>
@@ -164,46 +188,8 @@ const RegistrationForm = () => {
       </div>
 
       <div className={styles.card}>
+        
         <div className={styles.stepper}>
-          <div
-            className={`${styles.stepperLine} ${
-              currentStep === 2 ? styles.stepperLineActive : ''
-            }`}
-          ></div>
-
-          <div className={styles.stepItem}>
-            <div
-              className={`${styles.stepCircle} ${
-                currentStep >= 1 ? styles.stepCircleActive : ''
-              }`}
-            >
-              {currentStep > 1 ? <CheckCircle size={20} /> : '1'}
-            </div>
-            <span
-              className={`${styles.stepLabel} ${
-                currentStep === 1 ? styles.stepLabelActive : ''
-              }`}
-            >
-              Business Details
-            </span>
-          </div>
-
-          <div className={styles.stepItem}>
-            <div
-              className={`${styles.stepCircle} ${
-                currentStep === 2 ? styles.stepCircleActive : ''
-              }`}
-            >
-              2
-            </div>
-            <span
-              className={`${styles.stepLabel} ${
-                currentStep === 2 ? styles.stepLabelActive : ''
-              }`}
-            >
-              Documents
-            </span>
-          </div>
         </div>
 
         {currentStep === 1 && (
@@ -218,7 +204,7 @@ const RegistrationForm = () => {
             formData={formData} 
             setFormData={setFormData}
             onBack={handleBack}
-            onSubmit={handleSubmit}
+            onSubmit={() => console.log("Final Data:", formData)} 
           />
         )}
       </div>

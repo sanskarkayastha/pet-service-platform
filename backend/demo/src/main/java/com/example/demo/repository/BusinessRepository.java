@@ -7,5 +7,5 @@ import com.example.demo.model.Business;
 
 @Repository
 public interface BusinessRepository extends JpaRepository<Business, Long> {
-    
+
 }

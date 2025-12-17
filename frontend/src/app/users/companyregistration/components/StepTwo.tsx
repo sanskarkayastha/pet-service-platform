@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import {FileText,Upload,CheckCircle,ArrowLeft,ArrowRight,X,Image} from 'lucide-react';
 import styles from '../components/Registration.module.css';
+import { set } from 'better-auth';
+import { useRouter } from 'next/navigation';
 
 interface StepTwoProps {
   formData: any;
@@ -16,7 +18,8 @@ const StepTwo: React.FC<StepTwoProps> = ({
   onSubmit
 }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
-
+  const [isDisabled, setIsDisabled] = useState(false);
+  const router = useRouter();
   const handleFileUpload = (type: string, file: File | null) => {
     if (!file) return;
 
@@ -61,9 +64,64 @@ const StepTwo: React.FC<StepTwoProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validate()) return;
-    onSubmit();
+    const formDataToSend = new FormData();
+
+    /* ===== BASIC INFO ===== */
+    console.log("here " + formData.userId);
+    formDataToSend.append("userId", formData.userId);
+    formDataToSend.append('businessName', formData.businessName);
+    formDataToSend.append('ownerName', formData.ownerName);
+    formDataToSend.append('email', formData.email);
+    formDataToSend.append('contactNumber', formData.contactNumber);
+    formDataToSend.append('businessAddress', formData.businessAddress);
+    formDataToSend.append('description', formData.businessDescription);
+    formDataToSend.append('panNumber', formData.panNumber);
+    formDataToSend.append('city', formData.businessAddress); // optional // session user id
+
+    /* ===== CATEGORY (MULTI SELECT READY) ===== */
+    // Example: ['Veterinary', 'Pet Grooming']
+    const selectedCategories = [formData.serviceType];
+    selectedCategories.forEach((category: string) => {
+      formDataToSend.append('categories', category);
+    });
+
+    /* ===== FILES ===== */
+    formDataToSend.append(
+      'logo-upload',
+      formData.businessLogo.file
+    );
+
+    formDataToSend.append(
+      'license-upload',
+      formData.license.file
+    );
+
+    formDataToSend.append(
+      'verification-upload',
+      formData.verificationDoc.file
+    );
+
+    try {
+      setIsDisabled(true);
+      const res = await fetch('http://localhost:8080/api/business/addBusiness', {
+        method: 'POST',
+        body: formDataToSend
+      });
+
+      if (!res.ok){
+        throw new Error('Failed to submit');
+      }else{
+        setIsDisabled(false);
+        router.push("/")
+      }
+
+      alert('Business registration submitted!');
+    } catch (err) {
+      console.error(err);
+      alert('Submission failed');
+    }
   };
 
   return (
@@ -136,6 +194,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
             </div>
             <input
               id="logo-upload"
+              name="logo-upload"
               type="file"
               hidden
               accept=".jpg,.jpeg,.png"
@@ -194,6 +253,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
             </div>
             <input
               id="license-upload"
+              name="license-upload"
               type="file"
               hidden
               accept=".jpg,.jpeg,.png"
@@ -252,6 +312,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
             </div>
             <input
               id="verification-upload"
+              name="verification-upload"
               type="file"
               hidden
               accept=".pdf"
@@ -344,7 +405,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
         </button>
         <button
           className={`${styles.button} ${styles.buttonPrimary}`}
-          onClick={handleSubmit}
+          onClick={handleSubmit} disabled={isDisabled}
         >
           Submit Registration
           <ArrowRight size={16} />
