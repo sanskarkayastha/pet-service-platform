@@ -27,15 +27,31 @@ export default function Navbar( {session}: {session: any}) {
 
         <ul className="nav-links">
           <li><Link href="/">Home</Link></li>
-          <li><Link href="/">Services</Link></li>
-          <li><Link href="/">Pet Shop</Link></li>
+          <li className="dropdown">
+            <span className="dropdown-toggle ">Services ▾</span>
+            <ul className="dropdown-menu">
+              <li>
+                <Link href="/services/grooming">Grooming</Link>
+              </li>
+              <li>
+                <Link href="/services/vet">Vet</Link>
+              </li>
+              <li>
+                <Link href="/services/hostel">Pet Hostel</Link>
+              </li>
+            </ul>
+          </li>
+          <li><Link href="/">About Us</Link></li>
           <li><Link href="/">Contact Us</Link></li>
-          <li><Link href="/">Cart</Link></li>
+          
         </ul>
 
         <div className="nav-icons">
-          <span>🔍</span>
-          <span>👤</span>
+           {/* Search Bar */}
+          {/* <div className="search-box">
+            <input type="text" placeholder="Search services..." />
+          </div>
+          <span>👤</span> */}
           {
             !session &&
             <>
@@ -44,16 +60,24 @@ export default function Navbar( {session}: {session: any}) {
             </>
           }
           {
-            session &&
-            <button onClick={logUserOut}>Log Out</button>
+            session &&(
+              <div className="profile-wrapper">
+                <Link href="/profile" className="profile-link" title="Profile">
+                <div className="profile-icon">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  </svg>
+                </div>
+                </Link>
+
+                <button onClick={logUserOut}>Log Out</button>
+              </div>
+            )
+            
           }
         </div>
 
-        <div className="hamburger" id="hamburger">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+        
       </div>
     </nav>
   );
