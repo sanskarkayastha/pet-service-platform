@@ -20,8 +20,8 @@ nav {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
   letter-spacing: 3px;
   text-transform: uppercase;
   z-index: 1001;
@@ -48,8 +48,8 @@ nav {
 .nav-links a {
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
-  font-weight: 500;
-  font-size: 0.70rem;
+  font-weight: 500 !important;
+  font-size: 0.70rem !important;
   letter-spacing: 1px;
   text-transform: uppercase;
   transition: all 0.3s ease;
@@ -57,6 +57,17 @@ nav {
 
 .nav-links a:hover {
   color: white;
+}
+
+.nav-links span{
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-weight: 500 !important;
+  font-size: 0.70rem !important;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+
 }
 
 .nav-icons {
@@ -111,6 +122,107 @@ nav {
   box-shadow: 0 6px 20px rgba(244, 162, 97, 0.5);
   transform: translateY(-2px);
 }
+
+/* Dropdown */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  min-width: 180px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 8px 0;
+  display: none;
+  z-index: 1000;
+}
+
+.dropdown-menu li {
+  padding: 10px 16px;
+  white-space: nowrap;
+  list-style: none;
+}
+
+.dropdown-menu li a {
+  color: #333;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-menu li a:hover {
+  color: #e76f51;
+}
+
+/* Show dropdown on hover */
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+
+/* Search Bar */
+.search-box {
+  position: relative;
+  
+}
+
+.search-box input {
+  width: 200px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  outline: none;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background-color: white;
+  color: #333;
+}
+
+.search-box input:focus {
+  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.15);
+}
+
+
+.profile-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Profile Icon */
+.profile-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f28b2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.profile-icon:hover {
+  transform: scale(1.05);
+}
+
+.profile-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+  display: block;
+}
+
+
+
+
 
 /* Hamburger Menu */
 .hamburger {
