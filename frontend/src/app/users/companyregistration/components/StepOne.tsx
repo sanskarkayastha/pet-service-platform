@@ -123,9 +123,9 @@ const StepOne: React.FC<StepOneProps> = ({ formData, setFormData, onNext }) => {
             onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
           >
             <option value="">Select service</option>
-            <option value="Pet Grooming">Pet Grooming</option>
-            <option value="Pet Boarding">Pet Boarding</option>
-            <option value="Veterinary">Veterinary</option>
+            <option value="GROOMING">Pet Grooming</option>
+            <option value="BOARDING">Pet Boarding</option>
+            <option value="VETERINARY">Veterinary</option>
           </select>
           {errors.serviceType && <p className={styles.errorText}>{errors.serviceType}</p>}
         </div>

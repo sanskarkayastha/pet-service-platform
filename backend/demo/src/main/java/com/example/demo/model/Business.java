@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "businesses")
@@ -9,38 +8,53 @@ public class Business {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
+    /* ================= USER ================= */
     @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    /* ================= BASIC INFO ================= */
     private String businessName;
+    private String ownerName;
+    private String email;
+    private String contactNumber;
+    private String businessAddress;
     private String description;
-    private String address;
     private String city;
-    private String phoneNumber;
-
-    private Double latitude;
-    private Double longitude;
     private String panNumber;
 
+    /* ================= FILES (byte[]) ================= */
 
-    @ElementCollection(targetClass = CategoryType.class)
+    // -------- Business Logo --------
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String businessLogo;
+
+    // -------- License --------
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String licenseFile;
+
+    // -------- Verification Document --------
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String verificationDoc;
+
+    /* ================= CATEGORY ================= */
     @Enumerated(EnumType.STRING)
-    @CollectionTable(
-        name = "business_categories",
-        joinColumns = @JoinColumn(name = "business_id")
-    )
-    @Column(name = "category")
-    private Set<CategoryType> categories;
+    @Column(name = "category_type") // Use a regular column mapping
+    private CategoryType category;
 
-    public long getId() {
+    /* ================= STATUS ================= */
+    @Enumerated(EnumType.STRING)
+    private BusinessStatus status = BusinessStatus.PENDING;
+
+    /* ================= GETTERS & SETTERS ================= */
+
+    public Long getId() {
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public User getUser() {
@@ -59,20 +73,44 @@ public class Business {
         this.businessName = businessName;
     }
 
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
+
+    public String getBusinessAddress() {
+        return businessAddress;
+    }
+
+    public void setBusinessAddress(String businessAddress) {
+        this.businessAddress = businessAddress;
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public String getCity() {
@@ -83,43 +121,53 @@ public class Business {
         this.city = city;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public Set<CategoryType> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(Set<CategoryType> categories) {
-        this.categories = categories;
-    }
-
-    public String getPanNumber(){
+    public String getPanNumber() {
         return panNumber;
     }
 
-    public void setPanNumber(String panNumber){
+    public void setPanNumber(String panNumber) {
         this.panNumber = panNumber;
+    }
+
+    /* ===== FILE GETTERS / SETTERS ===== */
+
+    public String getBusinessLogo() {
+        return businessLogo;
+    }
+
+    public void setBusinessLogo(String businessLogo) {
+        this.businessLogo = businessLogo;
+    }
+
+    public String getLicenseFile() {
+        return licenseFile;
+    }
+
+    public void setLicenseFile(String licenseFile) {
+        this.licenseFile = licenseFile;
+    }
+
+    public String getVerificationDoc() {
+        return verificationDoc;
+    }
+
+    public void setVerificationDoc(String verificationDoc) {
+        this.verificationDoc = verificationDoc;
+    }
+
+    public CategoryType getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryType category) {
+        this.category = category;
+    }
+
+    public BusinessStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BusinessStatus status) {
+        this.status = status;
     }
 }
