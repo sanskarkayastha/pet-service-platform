@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.model.Business;
+import com.example.demo.model.CategoryType;
 import com.example.demo.repository.BusinessRepository;
 import com.example.demo.repository.UserRepository;
 
@@ -37,6 +40,7 @@ public class BusinessController {
     @PostMapping("/addBusiness")
     public ResponseEntity<?> addBusiness(@ModelAttribute Business business,
             @RequestParam("userId") String userId,
+            @RequestParam("category-select") String category,
             @RequestParam("logo-upload") MultipartFile logo,
             @RequestParam("license-upload") MultipartFile license,
             @RequestParam("verification-upload") MultipartFile verification) {
@@ -47,6 +51,13 @@ public class BusinessController {
                 byte logoBytes[] = logo.getBytes();
                 byte licenseBytes[] = license.getBytes();
                 byte verificationBytes[] = verification.getBytes();
+
+                List<String> oldList = business.getCategory();
+                if(oldList == null){
+                    oldList = new ArrayList<>();
+                }
+                oldList.add(category);
+                business.setCategory(oldList);
 
                 business.setBusinessLogo(Base64.getEncoder().encodeToString(logoBytes));
                 business.setLicenseFile(Base64.getEncoder().encodeToString(licenseBytes));

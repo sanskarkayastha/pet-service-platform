@@ -78,14 +78,8 @@ const StepTwo: React.FC<StepTwoProps> = ({
     formDataToSend.append('businessAddress', formData.businessAddress);
     formDataToSend.append('description', formData.businessDescription);
     formDataToSend.append('panNumber', formData.panNumber);
-    formDataToSend.append('city', formData.businessAddress); // optional // session user id
-
-    /* ===== CATEGORY (MULTI SELECT READY) ===== */
-    // Example: ['Veterinary', 'Pet Grooming']
-    const selectedCategories = [formData.serviceType];
-    selectedCategories.forEach((category: string) => {
-      formDataToSend.append('categories', category);
-    });
+    formDataToSend.append('city', formData.businessAddress); 
+    formDataToSend.append('category-select', formData.serviceType)
 
     /* ===== FILES ===== */
     formDataToSend.append(
