@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StatCard from "../../../components/StatCard";
 import BusinessRequestCard from "../../../components/BusinessRequestCard";
 import ModalBusinessDetails from "../../../components/ModalBusinessDetails";
@@ -33,6 +33,11 @@ const BusinessRequestsPage: React.FC = () => {
   const [selectedRequest, setSelectedRequest] =
     useState<BusinessRequest | null>(null);
 
+  useEffect(
+    ()=>{
+
+    }, []
+  )  
   return (
     <>
       <div className="main-content">

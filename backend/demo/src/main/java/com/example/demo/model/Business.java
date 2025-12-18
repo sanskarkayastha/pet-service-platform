@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 import java.util.List;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -13,7 +12,7 @@ public class Business {
     private Long id;
 
     /* ================= USER ================= */
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -27,25 +26,22 @@ public class Business {
     private String city;
     private String panNumber;
 
-    /* ================= FILES (byte[]) ================= */
+    /* ================= FILES ================= */
 
-    // -------- Business Logo --------
     @Lob
-    @Column(columnDefinition = "TEXT")
-    private String businessLogo;
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] businessLogo;
 
-    // -------- License --------
     @Lob
-    @Column(columnDefinition = "TEXT")
-    private String licenseFile;
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] licenseFile;
 
-    // -------- Verification Document --------
     @Lob
-    @Column(columnDefinition = "TEXT")
-    private String verificationDoc;
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] verificationDoc;
 
     /* ================= CATEGORY ================= */
-    @Column(name = "category_type") 
+    @Column(name = "category")
     private List<String> category;
 
     /* ================= STATUS ================= */
@@ -54,121 +50,47 @@ public class Business {
 
     /* ================= GETTERS & SETTERS ================= */
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
 
-    public User getUser() {
-        return user;
-    }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+    public String getBusinessName() { return businessName; }
+    public void setBusinessName(String businessName) { this.businessName = businessName; }
 
-    public String getBusinessName() {
-        return businessName;
-    }
+    public String getOwnerName() { return ownerName; }
+    public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
 
-    public void setBusinessName(String businessName) {
-        this.businessName = businessName;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public String getOwnerName() {
-        return ownerName;
-    }
+    public String getContactNumber() { return contactNumber; }
+    public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
 
-    public void setOwnerName(String ownerName) {
-        this.ownerName = ownerName;
-    }
+    public String getBusinessAddress() { return businessAddress; }
+    public void setBusinessAddress(String businessAddress) { this.businessAddress = businessAddress; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
 
-    public String getContactNumber() {
-        return contactNumber;
-    }
+    public String getPanNumber() { return panNumber; }
+    public void setPanNumber(String panNumber) { this.panNumber = panNumber; }
 
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
-    }
+    public byte[] getBusinessLogo() { return businessLogo; }
+    public void setBusinessLogo(byte[] businessLogo) { this.businessLogo = businessLogo; }
 
-    public String getBusinessAddress() {
-        return businessAddress;
-    }
+    public byte[] getLicenseFile() { return licenseFile; }
+    public void setLicenseFile(byte[] licenseFile) { this.licenseFile = licenseFile; }
 
-    public void setBusinessAddress(String businessAddress) {
-        this.businessAddress = businessAddress;
-    }
+    public byte[] getVerificationDoc() { return verificationDoc; }
+    public void setVerificationDoc(byte[] verificationDoc) { this.verificationDoc = verificationDoc; }
 
-    public String getDescription() {
-        return description;
-    }
+    public List<String> getCategory() { return category; }
+    public void setCategory(List<String> category) { this.category = category; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getPanNumber() {
-        return panNumber;
-    }
-
-    public void setPanNumber(String panNumber) {
-        this.panNumber = panNumber;
-    }
-
-    /* ===== FILE GETTERS / SETTERS ===== */
-
-    public String getBusinessLogo() {
-        return businessLogo;
-    }
-
-    public void setBusinessLogo(String businessLogo) {
-        this.businessLogo = businessLogo;
-    }
-
-    public String getLicenseFile() {
-        return licenseFile;
-    }
-
-    public void setLicenseFile(String licenseFile) {
-        this.licenseFile = licenseFile;
-    }
-
-    public String getVerificationDoc() {
-        return verificationDoc;
-    }
-
-    public void setVerificationDoc(String verificationDoc) {
-        this.verificationDoc = verificationDoc;
-    }
-
-    public List<String> getCategory() {
-        return category;
-    }
-
-    public void setCategory(List<String> category) {
-        this.category = category;
-    }
-
-    public BusinessStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(BusinessStatus status) {
-        this.status = status;
-    }
+    public BusinessStatus getStatus() { return status; }
+    public void setStatus(BusinessStatus status) { this.status = status; }
 }
