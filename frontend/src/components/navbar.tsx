@@ -31,13 +31,13 @@ export default function Navbar( {session}: {session: any}) {
             <span className="dropdown-toggle ">Services ▾</span>
             <ul className="dropdown-menu">
               <li>
-                <Link href="/services/grooming">Grooming</Link>
+                <Link href="/users/petServices/grooming">Grooming</Link>
               </li>
               <li>
-                <Link href="/services/vet">Vet</Link>
+                <Link href="/users/petServices/vet">Vet</Link>
               </li>
               <li>
-                <Link href="/services/hostel">Pet Hostel</Link>
+                <Link href="/users/petServices/hostel">Pet Hostel</Link>
               </li>
             </ul>
           </li>

@@ -27,16 +27,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-  const session = await auth.api.getSession(
-    {
-      headers: await headers(),
-    }
-  ) 
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        < Navbar session = { session }/>  
         {children}
       </body>
     </html>

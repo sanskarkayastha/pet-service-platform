@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.model.Business;
-import com.example.demo.model.CategoryType;
 import com.example.demo.repository.BusinessRepository;
 import com.example.demo.repository.UserRepository;
 
@@ -53,7 +52,7 @@ public class BusinessController {
                 byte verificationBytes[] = verification.getBytes();
 
                 List<String> oldList = business.getCategory();
-                if(oldList == null){
+                if (oldList == null) {
                     oldList = new ArrayList<>();
                 }
                 oldList.add(category);
@@ -68,6 +67,17 @@ public class BusinessController {
                 return ResponseEntity.status(400).body("Error: User with given ID does not exist");
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/allBusinesses")
+    public ResponseEntity<?> getAllBusinesses() {
+        try {
+            List<Business> businesses = bRepo.findAll();
+            return ResponseEntity.ok(businesses);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
