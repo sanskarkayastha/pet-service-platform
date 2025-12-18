@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -43,9 +45,8 @@ public class Business {
     private String verificationDoc;
 
     /* ================= CATEGORY ================= */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "category_type") // Use a regular column mapping
-    private CategoryType category;
+    @Column(name = "category_type") 
+    private List<String> category;
 
     /* ================= STATUS ================= */
     @Enumerated(EnumType.STRING)
@@ -155,11 +156,11 @@ public class Business {
         this.verificationDoc = verificationDoc;
     }
 
-    public CategoryType getCategory() {
+    public List<String> getCategory() {
         return category;
     }
 
-    public void setCategory(CategoryType category) {
+    public void setCategory(List<String> category) {
         this.category = category;
     }
 

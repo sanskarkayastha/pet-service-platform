@@ -136,7 +136,7 @@ const RegistrationForm = () => {
     email: '',
     contactNumber: '',
     businessAddress: '',
-    serviceType: 'VETERINARY',
+    serviceType: '',
     businessDescription: '',
     panNumber: '',
     businessLogo: null,
