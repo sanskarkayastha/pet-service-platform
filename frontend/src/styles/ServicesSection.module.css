@@ -1,28 +1,28 @@
 /* Services Section */
-.services-section {
+.servicesSection {
   padding: 8rem 5%;
   padding-left: 10rem;
   padding-right: 10rem;
-  background: linear-gradient(180deg, #fde2d0 0%, #ffb465 100%);
+  background: #fed5b3;
   position: relative;
   font-family: 'Montserrat', sans-serif;
 }
 
-.services-header {
+.servicesHeader {
   text-align: center;
   margin-bottom: 5rem;
 }
 
-.services-label {
-  font-size: 0.8rem;
-  font-weight: 300;
+.servicesLabel {
+  font-size: 1rem;
+  font-weight: 550;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: #f4a261;
   margin-bottom: 1rem;
 }
 
-.services-title {
+.servicesTitle {
   font-size: 2.7rem;
   font-weight: bolder;
   text-transform: uppercase;
@@ -33,7 +33,7 @@
   background-clip: text;
 }
 
-.services-grid {
+.servicesGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 3rem;
@@ -42,13 +42,13 @@
 }
 
 /* Flip Card */
-.flip-card {
+.flipCard {
   perspective: 1000px;
   height: 350px;
   cursor: pointer;
 }
 
-.flip-card-inner {
+.flipCardInner {
   position: relative;
   width: 100%;
   height: 100%;
@@ -56,22 +56,24 @@
   transform-style: preserve-3d;
 }
 
-.flip-card.flipped .flip-card-inner {
+/* IMPORTANT: module-safe flipped selector */
+.flipCard.flipped .flipCardInner {
   transform: rotateY(180deg);
 }
 
-.flip-card-front,
-.flip-card-back {
+.flipCardFront,
+.flipCardBack {
   position: absolute;
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
   border-radius: 20px;
   overflow: hidden;
+  pointer-events: auto;
 }
 
 /* Front */
-.flip-card-front {
+.flipCardFront {
   background: #2a2a2a;
   display: flex;
   flex-direction: column;
@@ -79,29 +81,28 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
-.flip-card-front img {
+.flipCardFront img {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
 
-.flip-card:hover .flip-card-front img {
+.flipCard:hover .flipCardFront img {
   transform: scale(1.1);
 }
 
-.flip-card-front::before {
+.flipCardFront::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  background: linear-gradient(to top, rgba(0,0,0,0.2), transparent);
   z-index: 1;
 }
 
-.service-name {
+.serviceName {
   position: relative;
   z-index: 2;
   padding: 2rem;
@@ -113,19 +114,22 @@
 }
 
 /* Back */
-.flip-card-back {
-  background: linear-gradient(135deg, #f4a261, #e76f51);
+.flipCardBack {
+  /* background: linear-gradient(135deg, #f4a261, #e76f51); */
+  background: #f4a261;
   transform: rotateY(180deg);
   display: flex;
+  z-index: 2;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 1rem;
   text-align: center;
   box-shadow: 0 10px 40px rgba(244, 162, 97, 0.4);
+  pointer-events: auto;
 }
 
-.service-back-title {
+.serviceBackTitle {
   font-size: 1.5rem;
   font-weight: bolder;
   text-transform: uppercase;
@@ -133,7 +137,7 @@
   color: white;
 }
 
-.service-description {
+.serviceDescription {
   font-size: 0.9rem;
   line-height: 1.8;
   color: rgba(255, 255, 255, 0.95);
@@ -141,66 +145,68 @@
   font-weight: 300;
 }
 
-.service-btn {
+.serviceBtn {
   padding: 0.8rem 2rem;
   background: white;
   color: #e76f51;
   border: none;
   border-radius: 30px;
-  font-size: 0.85rem;
+  font-size: 0.80rem;
   font-weight: 600;
   letter-spacing: 1px;
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: 'Montserrat', sans-serif;
+  pointer-events: auto;
+  z-index: 3 !important;
 }
 
-.service-btn:hover {
+.serviceBtn:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .services-title {
+  .servicesTitle {
     font-size: 3rem;
   }
 
-  .services-grid {
+  .servicesGrid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
   }
 }
 
 @media (max-width: 768px) {
-  .services-section {
+  .servicesSection {
     padding: 5rem 3%;
   }
 
-  .services-title {
+  .servicesTitle {
     font-size: 2.5rem;
   }
 
-  .services-grid {
+  .servicesGrid {
     grid-template-columns: 1fr;
   }
 
-  .flip-card {
+  .flipCard {
     height: 400px;
   }
 }
 
 @media (max-width: 480px) {
-  .services-title {
+  .servicesTitle {
     font-size: 2rem;
   }
 
-  .service-name {
+  .serviceName {
     font-size: 1.5rem;
   }
 
-  .flip-card {
+  .flipCard {
     height: 350px;
   }
 }
