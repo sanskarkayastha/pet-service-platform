@@ -2,10 +2,19 @@
 
 import React from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { logOut } from "@/actions/logout";
 
 const SuperAdminSidebar: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
+
+  async function logUserOut(){
+    let result = await logOut()
+    if(result){
+      router.refresh()
+      router.replace("/")
+    }
+  }
 
   const menuItems = [
     {
@@ -71,7 +80,9 @@ const SuperAdminSidebar: React.FC = () => {
             </div>
           );
         })}
+        <button onClick={logUserOut}>Log Out</button>
       </div>
+
     </div>
   );
 };
