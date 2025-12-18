@@ -127,7 +127,7 @@ export default function PetHostelPage() {
   return (
     <div>
       {/* HERO */}
-      <section className="hero">
+      <section className="heroine">
         <h1>Find the Best Pet Hostels Near You</h1>
       </section>
 

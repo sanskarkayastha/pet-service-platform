@@ -5,8 +5,9 @@ import "../styles/Navbar.css";
 import { logOut } from "@/actions/logout";
 import { useRouter } from "next/navigation";
 
-export default function Navbar( {session}: {session: any}) {
 
+export default function Navbar( {session}: {session: any}) {
+  const logo = new URL("../image/furreverLogo2.png", import.meta.url).href;
   const router = useRouter()
 
   async function logUserOut(){
@@ -21,8 +22,10 @@ export default function Navbar( {session}: {session: any}) {
     <nav>
       <div className="nav-container">
         <div className="logo">
-          <div className="logo-icon">🌍</div>
-          FurrEver
+          {/* <div className="logo-icon">
+            <img src={logo} alt="FurrEver Logo" />
+          </div> */}
+          <span>FurrEver</span>
         </div>
 
         <ul className="nav-links">

@@ -43,7 +43,7 @@ export default function VetPage() {
       distance: "1.4 km",
       location: "Pulchowk, Lalitpur",
       image:
-        "https://i.pinimg.com/1200x/ce/64/3f/ce643f3f0cd8b9b6af9f811aed4f8269.jpg",
+        "https://i.pinimg.com/1200x/d8/7c/57/d87c5768c8272a071b1a07046e71467d.jpg",
     },
     {
       name: "VetCare Animal Hospital",
@@ -54,7 +54,7 @@ export default function VetPage() {
       distance: "3.0 km",
       location: "Baneshwor, Kathmandu",
       image:
-        "https://i.pinimg.com/1200x/52/1f/c2/521fc2aeae09dc3f71fa755a8c5909e0.jpg",
+        "https://i.pinimg.com/736x/28/ff/3a/28ff3ae2531d3bd58ceca9b6730a77b2.jpg",
     },
     {
       name: "Paws & Claws Vet Clinic",
@@ -65,7 +65,7 @@ export default function VetPage() {
       distance: "4.6 km",
       location: "Bhaktapur",
       image:
-        "https://i.pinimg.com/1200x/e8/43/9e/e8439e9f3a44cd7842c2e364a7e5e497.jpg",
+        "https://i.pinimg.com/1200x/ac/fa/b8/acfab884be3ccfbf0c2d529cc2536a02.jpg",
     },
   ];
 
@@ -105,7 +105,7 @@ export default function VetPage() {
   return (
     <div>
       {/* HERO */}
-      <section className="hero">
+      <section className="heroine">
         <h1>Find Trusted Veterinary Clinics Near You</h1>
       </section>
 
