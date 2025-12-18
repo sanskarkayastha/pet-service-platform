@@ -142,7 +142,7 @@ export default function GroomingPage() {
   return (
     <div>
       {/* HERO SECTION */}
-      <section className="hero">
+      <section className="heroine">
         <h1>Find the Best Grooming Services Near You</h1>
       </section>
 
