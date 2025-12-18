@@ -118,9 +118,9 @@ import React from "react";
 import { Star, MapPin } from "lucide-react";
 import styles from "./page.module.css";
 import Services from "./components/Services";
-import img1 from "../../../../image/dog-salon.jpg";
-import img2 from "../../../../image/dog-salon2.jpg";
-import img3 from "../../../../image/hero-salon.jpg";
+import img1 from "../../../../../image/dog-salon.jpg";
+import img2 from "../../../../../image/dog-salon2.jpg";
+import img3 from "../../../../../image/hero-salon.jpg";
 
 /* =====================
    DATA (API-ready)

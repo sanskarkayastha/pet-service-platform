@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, X, Check } from 'lucide-react';
+import { Upload, X, Check, Scissors, Home, Stethoscope } from 'lucide-react';
 import styles from './page.module.css';
 
 interface FormData {
@@ -18,9 +18,9 @@ interface ImagePreview {
 }
 
 const services = [
-  { id: 'grooming', label: 'Pet Grooming', icon: '✂️' },
-  { id: 'hostel', label: 'Pet Hostel', icon: '🏠' },
-  { id: 'vet', label: 'Veterinary', icon: '⚕️' },
+  { id: 'grooming', label: 'Pet Grooming', Icon: Scissors },
+  { id: 'hostel', label: 'Pet Hostel', Icon: Home },
+  { id: 'vet', label: 'Veterinary', Icon: Stethoscope },
 ];
 
 export default function BookingForm() {
@@ -37,7 +37,6 @@ export default function BookingForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Handle text input changes
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -46,7 +45,6 @@ export default function BookingForm() {
       ...prev,
       [name]: value,
     }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -55,7 +53,6 @@ export default function BookingForm() {
     }
   };
 
-  // Handle service selection
   const handleServiceToggle = (serviceId: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -71,38 +68,41 @@ export default function BookingForm() {
     }
   };
 
-  // Handle image upload
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.currentTarget.files;
     if (!files) return;
 
-    const newImages: ImagePreview[] = [];
+    const currentCount = imagePreviews.length;
+    const remainingSlots = 3 - currentCount;
+    const filesToProcess = Array.from(files).slice(0, remainingSlots);
 
-    Array.from(files).forEach((file) => {
-      if (imagePreviews.length + newImages.length < 3) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          newImages.push({
-            file,
-            preview: reader.result as string,
-          });
-          if (newImages.length === Array.from(files).length) {
-            setImagePreviews((prev) => [...prev, ...newImages]);
-            setFormData((prev) => ({
-              ...prev,
-              images: [...prev.images, ...newImages.map((img) => img.file)],
-            }));
-          }
+    filesToProcess.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const preview = {
+          file,
+          preview: reader.result as string,
         };
-        reader.readAsDataURL(file);
-      }
+
+        setImagePreviews((prev) => [...prev, preview]);
+        setFormData((prev) => ({
+          ...prev,
+          images: [...prev.images, file],
+        }));
+
+        if (errors.images) {
+          setErrors((prev) => ({
+            ...prev,
+            images: '',
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
     });
 
-    // Reset input
     e.currentTarget.value = '';
   };
 
-  // Remove image
   const removeImage = (index: number) => {
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
     setFormData((prev) => ({
@@ -111,7 +111,6 @@ export default function BookingForm() {
     }));
   };
 
-  // Validate form
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
@@ -135,22 +134,19 @@ export default function BookingForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
       return;
     }
 
-    // Simulate API call
     console.log('Form Data:', {
       ...formData,
       images: imagePreviews.map((img) => img.preview),
     });
 
     setSubmitted(true);
-    // Reset form after 2 seconds
     setTimeout(() => {
       setFormData({
         companyName: '',
@@ -164,6 +160,18 @@ export default function BookingForm() {
     }, 2000);
   };
 
+  const handleReset = () => {
+    setFormData({
+      companyName: '',
+      companyAddress: '',
+      selectedServices: [],
+      aboutUs: '',
+      images: [],
+    });
+    setImagePreviews([]);
+    setErrors({});
+  };
+
   if (submitted) {
     return (
       <main className={styles.mainContent}>
@@ -171,8 +179,8 @@ export default function BookingForm() {
           <div className={styles.successIcon}>
             <Check size={64} />
           </div>
-          <h2>Booking Submitted Successfully!</h2>
-          <p>Your company information has been registered. Our team will review and get back to you soon.</p>
+          <h2 className={styles.successTitle}>Booking Submitted Successfully!</h2>
+          <p className={styles.successText}>Your company information has been registered. Our team will review and get back to you soon.</p>
         </div>
       </main>
     );
@@ -182,14 +190,14 @@ export default function BookingForm() {
     <main className={styles.mainContent}>
       <div className={styles.formContainer}>
         <div className={styles.formHeader}>
-          <h1>New Booking</h1>
-          <p>Register your company and select services</p>
+          <h1 className={styles.formTitle}>New Booking</h1>
+          <p className={styles.formSubtitle}>Register your company and select services</p>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.form}>
           {/* Company Name */}
           <div className={styles.formGroup}>
-            <label htmlFor="companyName">Company Name *</label>
+            <label htmlFor="companyName" className={styles.label}>Company Name *</label>
             <input
               type="text"
               id="companyName"
@@ -206,7 +214,7 @@ export default function BookingForm() {
 
           {/* Company Address */}
           <div className={styles.formGroup}>
-            <label htmlFor="companyAddress">Company Address *</label>
+            <label htmlFor="companyAddress" className={styles.label}>Company Address *</label>
             <input
               type="text"
               id="companyAddress"
@@ -223,7 +231,7 @@ export default function BookingForm() {
 
           {/* Image Upload */}
           <div className={styles.formGroup}>
-            <label>Company Images (Upload up to 3 images) *</label>
+            <label className={styles.label}>Company Images (Upload up to 3 images) *</label>
             <div className={styles.uploadArea}>
               <input
                 ref={fileInputRef}
@@ -234,35 +242,55 @@ export default function BookingForm() {
                 className={styles.fileInput}
               />
               <div
-                className={styles.uploadBox}
+                className={`${styles.uploadBox} ${imagePreviews.length > 0 ? styles.uploadBoxWithImages : ''}`}
                 onClick={() => fileInputRef.current?.click()}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.classList.add(styles.dragOver);
+                }}
+                onDragLeave={(e) => {
+                  e.currentTarget.classList.remove(styles.dragOver);
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.classList.remove(styles.dragOver);
+                  handleImageUpload({
+                    currentTarget: { files: e.dataTransfer.files, value: '' },
+                  } as React.ChangeEvent<HTMLInputElement>);
+                }}
               >
-                <Upload size={32} />
-                <p>Click to upload or drag and drop</p>
-                <span>PNG, JPG, GIF up to 10MB</span>
-              </div>
-            </div>
-
-            {/* Image Previews */}
-            {imagePreviews.length > 0 && (
-              <div className={styles.imageGrid}>
-                {imagePreviews.map((preview, index) => (
-                  <div key={index} className={styles.imageCard}>
-                    <img src={preview.preview} alt={`Preview ${index + 1}`} />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      className={styles.removeBtn}
-                    >
-                      <X size={20} />
-                    </button>
+                {imagePreviews.length > 0 && (
+                  <div className={styles.imageGridInside}>
+                    {imagePreviews.map((preview, index) => (
+                      <div key={index} className={styles.imageCard}>
+                        <img
+                          src={preview.preview}
+                          alt={`Preview ${index + 1}`}
+                          className={styles.cardImage}
+                        />
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeImage(index);
+                          }}
+                          className={styles.removeBtn}
+                        >
+                          <X size={20} />
+                        </button>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
+                <div className={`${styles.uploadPrompt} ${imagePreviews.length === 3 ? styles.uploadPromptHidden : ''}`}>
+                  <Upload size={32} className={styles.uploadIcon} />
+                  <p className={styles.uploadText}>Click to upload or drag and drop</p>
+                  <span className={styles.uploadSubtext}>PNG, JPG, GIF up to 10MB</span>
+                </div>
+                <div className={styles.imageCounter}>
+                  {imagePreviews.length} / 3 images uploaded
+                </div>
               </div>
-            )}
-
-            <div className={styles.imageCounter}>
-              {imagePreviews.length} / 3 images uploaded
             </div>
 
             {errors.images && (
@@ -272,27 +300,32 @@ export default function BookingForm() {
 
           {/* Service Selection */}
           <div className={styles.formGroup}>
-            <label>Select Services *</label>
+            <label className={styles.label}>Select Services *</label>
             <div className={styles.servicesGrid}>
-              {services.map((service) => (
-                <div
-                  key={service.id}
-                  className={`${styles.serviceCard} ${
-                    formData.selectedServices.includes(service.id)
-                      ? styles.selected
-                      : ''
-                  }`}
-                  onClick={() => handleServiceToggle(service.id)}
-                >
-                  <div className={styles.serviceIcon}>{service.icon}</div>
-                  <p>{service.label}</p>
-                  {formData.selectedServices.includes(service.id) && (
-                    <div className={styles.checkmark}>
-                      <Check size={20} />
+              {services.map((service) => {
+                const Icon = service.Icon;
+                return (
+                  <div
+                    key={service.id}
+                    onClick={() => handleServiceToggle(service.id)}
+                    className={`${styles.serviceCard} ${
+                      formData.selectedServices.includes(service.id)
+                        ? styles.serviceCardSelected
+                        : ''
+                    }`}
+                  >
+                    <div className={styles.serviceIcon}>
+                      <Icon size={40} color="#fbbf24" />
                     </div>
-                  )}
-                </div>
-              ))}
+                    <p className={styles.serviceLabel}>{service.label}</p>
+                    {formData.selectedServices.includes(service.id) && (
+                      <div className={styles.checkmark}>
+                        <Check size={20} color="white" />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
             {errors.selectedServices && (
               <span className={styles.error}>{errors.selectedServices}</span>
@@ -301,7 +334,7 @@ export default function BookingForm() {
 
           {/* About Us */}
           <div className={styles.formGroup}>
-            <label htmlFor="aboutUs">About Us *</label>
+            <label htmlFor="aboutUs" className={styles.label}>About Us *</label>
             <textarea
               id="aboutUs"
               name="aboutUs"
@@ -318,14 +351,22 @@ export default function BookingForm() {
 
           {/* Submit Button */}
           <div className={styles.formActions}>
-            <button type="submit" className={styles.btnSubmit}>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className={styles.btnSubmit}
+            >
               Submit Booking
             </button>
-            <button type="reset" className={styles.btnReset}>
+            <button
+              type="button"
+              onClick={handleReset}
+              className={styles.btnReset}
+            >
               Reset
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </main>
   );
