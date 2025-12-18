@@ -18,7 +18,7 @@ export default function ServicesSection() {
       image:
         "https://i.pinimg.com/1200x/14/b8/12/14b8129cd1bcceae62320189794836f1.jpg",
       buttonText: "Explore Grooming Services",
-      link:"services/grooming"
+      link:"/users/petServices/grooming"
     },
     {
       title: "Veterinary",
@@ -28,7 +28,7 @@ export default function ServicesSection() {
       image:
         "https://i.pinimg.com/1200x/7d/24/a9/7d24a92f2fd0c5032da96e33b153306c.jpg",
       buttonText: "Explore Veterinary Services",
-      link:"services/vet"
+      link:"/users/petServices/vet"
     },
     {
       title: "Pet Hostel",
@@ -38,7 +38,7 @@ export default function ServicesSection() {
       image: 
         "https://i.pinimg.com/736x/1f/a1/68/1fa1680700d4ff66d708af0810f224b2.jpg",
       buttonText: "Explore Hostel Services",
-      link:"services/hostel"
+      link:"/users/petServices/hostel"
     },
   ];
 
