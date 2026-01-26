@@ -70,16 +70,19 @@ const StepTwo: React.FC<StepTwoProps> = ({
 
     /* ===== BASIC INFO ===== */
     console.log("here " + formData.userId);
-    formDataToSend.append("userId", formData.userId);
-    formDataToSend.append('businessName', formData.businessName);
-    formDataToSend.append('ownerName', formData.ownerName);
-    formDataToSend.append('email', formData.email);
-    formDataToSend.append('contactNumber', formData.contactNumber);
-    formDataToSend.append('businessAddress', formData.businessAddress);
-    formDataToSend.append('description', formData.businessDescription);
-    formDataToSend.append('panNumber', formData.panNumber);
-    formDataToSend.append('city', formData.businessAddress); 
-    formDataToSend.append('category-select', formData.serviceType)
+    formDataToSend.append("businessInfo", new Blob(
+      [JSON.stringify({"userId":formData.userId,
+      'businessName':formData.businessName,
+      'ownerName': formData.ownerName,
+      'email': formData.email,
+      'contactNumber': formData.contactNumber,
+      'businessAddress': formData.businessAddress,
+      'description': formData.businessDescription,
+      'panNumber': formData.panNumber,
+      'city': formData.businessAddress})],
+      {type: "application/json"}
+    )
+    )
 
     /* ===== FILES ===== */
     formDataToSend.append(
@@ -101,7 +104,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
       setIsDisabled(true);
       const res = await fetch('http://localhost:8080/api/business/addBusiness', {
         method: 'POST',
-        body: formDataToSend
+        body: formDataToSend,
       });
 
       if (!res.ok){
