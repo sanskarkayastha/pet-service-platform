@@ -28,17 +28,11 @@ public class Business {
 
     /* ================= FILES ================= */
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] businessLogo;
+    private String businessLogo;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] licenseFile;
+    private String licenseFile;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] verificationDoc;
+    private String verificationDoc;
 
     /* ================= CATEGORY ================= */
     @Column(name = "category")
@@ -50,47 +44,119 @@ public class Business {
 
     /* ================= GETTERS & SETTERS ================= */
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public User getUser() {
+        return user;
+    }
 
-    public String getBusinessName() { return businessName; }
-    public void setBusinessName(String businessName) { this.businessName = businessName; }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-    public String getOwnerName() { return ownerName; }
-    public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
+    public String getBusinessName() {
+        return businessName;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public void setBusinessName(String businessName) {
+        this.businessName = businessName;
+    }
 
-    public String getContactNumber() { return contactNumber; }
-    public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
+    public String getOwnerName() {
+        return ownerName;
+    }
 
-    public String getBusinessAddress() { return businessAddress; }
-    public void setBusinessAddress(String businessAddress) { this.businessAddress = businessAddress; }
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getEmail() {
+        return email;
+    }
 
-    public String getCity() { return city; }
-    public void setCity(String city) { this.city = city; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public String getPanNumber() { return panNumber; }
-    public void setPanNumber(String panNumber) { this.panNumber = panNumber; }
+    public String getContactNumber() {
+        return contactNumber;
+    }
 
-    public byte[] getBusinessLogo() { return businessLogo; }
-    public void setBusinessLogo(byte[] businessLogo) { this.businessLogo = businessLogo; }
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
 
-    public byte[] getLicenseFile() { return licenseFile; }
-    public void setLicenseFile(byte[] licenseFile) { this.licenseFile = licenseFile; }
+    public String getBusinessAddress() {
+        return businessAddress;
+    }
 
-    public byte[] getVerificationDoc() { return verificationDoc; }
-    public void setVerificationDoc(byte[] verificationDoc) { this.verificationDoc = verificationDoc; }
+    public void setBusinessAddress(String businessAddress) {
+        this.businessAddress = businessAddress;
+    }
 
-    public List<String> getCategory() { return category; }
-    public void setCategory(List<String> category) { this.category = category; }
+    public String getDescription() {
+        return description;
+    }
 
-    public BusinessStatus getStatus() { return status; }
-    public void setStatus(BusinessStatus status) { this.status = status; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getPanNumber() {
+        return panNumber;
+    }
+
+    public void setPanNumber(String panNumber) {
+        this.panNumber = panNumber;
+    }
+
+    public String getBusinessLogo() {
+        return businessLogo;
+    }
+
+    public void setBusinessLogo(String businessLogo) {
+        this.businessLogo = businessLogo;
+    }
+
+    public String getLicenseFile() {
+        return licenseFile;
+    }
+
+    public void setLicenseFile(String licenseFile) {
+        this.licenseFile = licenseFile;
+    }
+
+    public String getVerificationDoc() {
+        return verificationDoc;
+    }
+
+    public void setVerificationDoc(String verificationDoc) {
+        this.verificationDoc = verificationDoc;
+    }
+
+    public List<String> getCategory() {
+        return category;
+    }
+
+    public void setCategory(List<String> category) {
+        this.category = category;
+    }
+
+    public BusinessStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BusinessStatus status) {
+        this.status = status;
+    }
 }
