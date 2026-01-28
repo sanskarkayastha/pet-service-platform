@@ -224,7 +224,7 @@ export default function GroomingPage() {
                       Book Now
                     </button>
                     <Link 
-                      href="/services/grooming/detail"
+                      href="/users/petServices/grooming/detail"
                     className="btn-details" onClick={() => openModal(service)}>
                       View Details
                     </Link>

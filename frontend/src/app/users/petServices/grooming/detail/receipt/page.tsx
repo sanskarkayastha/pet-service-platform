@@ -108,7 +108,7 @@ export default function ReceiptPage() {
         <span className={styles.totalValue}>${total.toFixed(2)}</span>
       </div>
 
-      <Link href="/services/grooming/detail/receipt/payment" className={styles.payBtn}>
+      <Link href="/users/petServices/grooming/detail/receipt/payment" className={styles.payBtn}>
         Proceed to Payment
       </Link>
     </div>

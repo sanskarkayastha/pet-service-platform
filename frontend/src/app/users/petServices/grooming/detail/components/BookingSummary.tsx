@@ -115,7 +115,7 @@ export default function BookingSummary({
       </div>
 
       <Link 
-        href="/services/grooming/detail/receipt" 
+        href="/users/petServices/grooming/detail/receipt" 
         className={styles.ctaBtn}
       >
         Continue to Payment

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Search, Plus } from 'lucide-react';
 import styles from './page.module.css';
+import AddServiceModal from './components/AddServiceModal';
 
 interface StatCard {
   label: string;
@@ -62,6 +63,8 @@ const bookingsData: Booking[] = [
 
 export default function GainingService() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [open, setOpen] = useState(false);
+
 
   return (
     <main className={styles.mainContent}>
@@ -85,7 +88,7 @@ export default function GainingService() {
           <p>Manage grooming appointments and services</p>
         </div>
         <div className={styles.actionButtons}>
-          <button className={styles.btnOutline}>
+          <button className={styles.btnOutline} onClick={() => setOpen(true)}>
             <Plus size={18} />
             Add Service
           </button>
@@ -95,6 +98,9 @@ export default function GainingService() {
           </button>
         </div>
       </div>
+
+      <AddServiceModal isOpen={open} onClose={() => setOpen(false)} />
+
 
       {/* Stats Grid */}
       <div className={styles.statsGrid}>
