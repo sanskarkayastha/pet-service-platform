@@ -10,6 +10,14 @@
   width: 100%;
 }
 
+.title {
+  color: #ff7a18;
+}
+
+.subtitle {
+  color: black;
+}
+
 /* TOP BAR */
 .topBar {
   display: flex;

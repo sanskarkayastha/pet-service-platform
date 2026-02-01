@@ -29,8 +29,10 @@ export default function BookingCalendarPage() {
         {/* TOP BAR */}
         <div className={styles.topBar}>
           <div>
-            <h1>Booking Calendar</h1>
-            <p>Manage appointments, breaks, and holidays</p>
+            <h1 className={styles.title}>Booking Calendar</h1>
+            <p className={styles.subtitle}>
+              Manage appointments, breaks, and holidays
+            </p>
           </div>
 
           <div className={styles.actions}>
