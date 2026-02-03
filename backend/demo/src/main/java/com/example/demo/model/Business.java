@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
-import java.util.List;
+import java.util.Set;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -35,8 +36,11 @@ public class Business {
     private String verificationDoc;
 
     /* ================= CATEGORY ================= */
+    @ElementCollection(targetClass = CategoryType.class)
+    @CollectionTable(name = "business_categories", joinColumns = @JoinColumn(name = "business_id"))
+    @Enumerated(EnumType.STRING)
     @Column(name = "category")
-    private List<String> category;
+    private Set<CategoryType> category;
 
     /* ================= STATUS ================= */
     @Enumerated(EnumType.STRING)
@@ -144,11 +148,11 @@ public class Business {
         this.verificationDoc = verificationDoc;
     }
 
-    public List<String> getCategory() {
+    public Set<CategoryType> getCategory() {
         return category;
     }
 
-    public void setCategory(List<String> category) {
+    public void setCategory(Set<CategoryType> category) {
         this.category = category;
     }
 

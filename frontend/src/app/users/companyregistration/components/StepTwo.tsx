@@ -69,7 +69,6 @@ const StepTwo: React.FC<StepTwoProps> = ({
     const formDataToSend = new FormData();
 
     /* ===== BASIC INFO ===== */
-    console.log("here " + formData.userId);
     formDataToSend.append("businessInfo", new Blob(
       [JSON.stringify({"userId":formData.userId,
       'businessName':formData.businessName,
@@ -79,7 +78,9 @@ const StepTwo: React.FC<StepTwoProps> = ({
       'businessAddress': formData.businessAddress,
       'description': formData.businessDescription,
       'panNumber': formData.panNumber,
-      'city': formData.businessAddress})],
+      'city': formData.businessAddress,
+      'category': formData.serviceType,
+    })],
       {type: "application/json"}
     )
     )
