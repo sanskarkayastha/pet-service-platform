@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.dto.BusinessDTO;
 import com.example.demo.dto.BusinessResponseDTO;
 import com.example.demo.model.Business;
+import com.example.demo.model.BusinessStatus;
 import com.example.demo.model.CategoryType;
 import com.example.demo.model.User;
 import com.example.demo.repository.BusinessRepository;
@@ -82,6 +83,11 @@ public class BusinessServices {
                 .map(business -> toResponseDTO(business))
                 .toList();
 
+    }
+
+    public List<Business> getAllPendingBusiness(){
+
+        return bRepo.findByStatus(BusinessStatus.PENDING);
     }
 
 }
