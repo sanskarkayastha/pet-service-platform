@@ -88,15 +88,15 @@
 //         </div>
 
 //         {currentStep === 1 && (
-//           <StepOne 
-//             formData={formData} 
-//             setFormData={setFormData} 
+//           <StepOne
+//             formData={formData}
+//             setFormData={setFormData}
 //             onNext={handleNext}
 //           />
 //         )}
 //         {currentStep === 2 && (
-//           <StepTwo 
-//             formData={formData} 
+//           <StepTwo
+//             formData={formData}
 //             setFormData={setFormData}
 //             onBack={handleBack}
 //             onSubmit={handleSubmit}
@@ -113,16 +113,17 @@
 
 // export default RegistrationForm;
 
+"use client";
 
-'use client';
-
-import React, { useEffect, useState } from 'react';
-import { CheckCircle } from 'lucide-react';
-import StepOne from '../components/StepOne';
-import StepTwo from '../components/StepTwo';
-import styles from '../components/Registration.module.css';
-import { authClient } from '@/lib/auth-client';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from "react";
+import { CheckCircle } from "lucide-react";
+import StepOne from "../components/StepOne";
+import StepTwo from "../components/StepTwo";
+import styles from "../components/Registration.module.css";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import StepThreeImages from "./StepThreeImages";
+import StepFour from "./StepFour";
 
 const RegistrationForm = () => {
   const [session, setSession] = useState<any | null>(null);
@@ -130,15 +131,15 @@ const RegistrationForm = () => {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    userId: '', 
-    businessName: '',
-    ownerName: '',
-    email: '',
-    contactNumber: '',
-    businessAddress: '',
-    serviceType: '',
-    businessDescription: '',
-    panNumber: '',
+    userId: "",
+    businessName: "",
+    ownerName: "",
+    email: "",
+    contactNumber: "",
+    businessAddress: "",
+    serviceType: "",
+    businessDescription: "",
+    panNumber: "",
     businessLogo: null,
     license: null,
     verificationDoc: null,
@@ -153,12 +154,10 @@ const RegistrationForm = () => {
         if (!data) {
           router.push("/login");
         } else {
-          setFormData(
-            (prev)=>({
-              ...prev,
-              userId: data?.data?.user.id || ''
-            })
-          )
+          setFormData((prev) => ({
+            ...prev,
+            userId: data?.data?.user.id || "",
+          }));
         }
       } catch (err) {
         console.error("Auth error:", err);
@@ -170,11 +169,12 @@ const RegistrationForm = () => {
   }, [router]);
 
   const [currentStep, setCurrentStep] = useState(1);
-  
+
   const handleNext = () => setCurrentStep(2);
   const handleBack = () => setCurrentStep(1);
 
-  if (loading) return <div className={styles.container}>Loading session...</div>;
+  if (loading)
+    return <div className={styles.container}>Loading session...</div>;
 
   return (
     <div className={styles.container}>
@@ -184,15 +184,15 @@ const RegistrationForm = () => {
           Pet Service Network
         </div>
         <h1 className={styles.title}>Business Registration</h1>
-        <p className={styles.subtitle}>Join our network of trusted pet service providers</p>
+        <p className={styles.subtitle}>
+          Join our network of trusted pet service providers
+        </p>
       </div>
 
       <div className={styles.card}>
-        
-        <div className={styles.stepper}>
-        </div>
+        <div className={styles.stepper}></div>
 
-        {currentStep === 1 && (
+        {/* {currentStep === 1 && (
           <StepOne 
             formData={formData} 
             setFormData={setFormData} 
@@ -205,6 +205,41 @@ const RegistrationForm = () => {
             setFormData={setFormData}
             onBack={handleBack}
             onSubmit={() => console.log("Final Data:", formData)} 
+          />
+        )} */}
+
+        {currentStep === 1 && (
+          <StepOne
+            formData={formData}
+            setFormData={setFormData}
+            onNext={() => setCurrentStep(2)}
+          />
+        )}
+
+        {currentStep === 2 && (
+          <StepTwo
+            formData={formData}
+            setFormData={setFormData}
+            onBack={() => setCurrentStep(1)}
+            onSubmit={() => setCurrentStep(3)} // 🔥 THIS WAS MISSING
+          />
+        )}
+
+        {currentStep === 3 && (
+          <StepThreeImages
+            formData={formData}
+            setFormData={setFormData}
+            onBack={() => setCurrentStep(2)}
+            onNext={() => setCurrentStep(4)}
+          />
+        )}
+
+        {currentStep === 4 && (
+          <StepFour
+            formData={formData}
+            setFormData={setFormData}
+            onBack={() => setCurrentStep(3)}
+            onSubmit={() => console.log("submitted successful")}
           />
         )}
       </div>
