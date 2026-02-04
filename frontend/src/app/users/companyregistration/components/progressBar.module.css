@@ -1,0 +1,59 @@
+.progressWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #ff7a18;
+  color: #ff7a18;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.completed {
+  background: #ff7a18;
+  color: #fff;
+}
+
+.active {
+  background: #ff7a18;
+  color: #fff;
+}
+
+.label {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #999;
+}
+
+.labelActive {
+  color: #ff7a18;
+  font-weight: 600;
+}
+
+.line {
+  flex: 1;
+  height: 2px;
+  background: #e5e5e5;
+  margin: 0 12px;
+}
+
+.lineCompleted {
+  background: #ff7a18;
+}
