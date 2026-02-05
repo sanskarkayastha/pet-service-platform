@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import static com.example.demo.mapper.BusinessMapper.toResponseDTO;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -60,10 +62,11 @@ public class BusinessController {
     }
 
     @GetMapping("/getPendingBusiness")
-    ResponseEntity<List<Business>> pendingBusiness(){
+    List<BusinessResponseDTO> pendingBusiness(){
         List<Business> allPendingBusiness= businessServices.getAllPendingBusiness();
-
-        return ResponseEntity.ok(allPendingBusiness);
+        return allPendingBusiness.stream().map((Business business)->{
+            return toResponseDTO(business);
+        }).toList();
     }
 
 }
