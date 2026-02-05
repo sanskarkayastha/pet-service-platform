@@ -1,43 +1,57 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import StatCard from "../../../components/StatCard";
 import BusinessRequestCard from "../../../components/BusinessRequestCard";
 import ModalBusinessDetails from "../../../components/ModalBusinessDetails";
-import { BusinessRequest } from "../../../types/businessRequest";
 import "../../../styles/superadminDash.css";
 
-// Mock data
-const requestsData: BusinessRequest[] = [
-  {
-    id: 1,
-    name: "Paws & Claws Grooming",
-    owner: "Sarah Johnson",
-    email: "sarah.j@pawsclaws.com",
-    contact: "+977 9841234567",
-    location: "Thamel, Kathmandu",
-    serviceType: "Grooming Service",
-    pan: "123456789",
-    submitted: "Dec 8, 2025",
-    description:
-      "Premium pet grooming services with over 5 years of experience in the industry.",
-    documents: [
-      { name: "Business Logo" },
-      { name: "License Certificate" },
-      { name: "Verification Documents" },
-    ],
-  },
-];
+/* ✅ Type now MATCHES backend */
+export interface BusinessRequest {
+  userId: string;
+  businessName: string;
+  ownerName: string;
+  email: string;
+  contactNumber: string;
+  businessAddress?: string;
+  description?: string;
+  city?: string;
+  panNumber?: string;
+  category?: string[];
+  imageUrl?: string;
+}
 
 const BusinessRequestsPage: React.FC = () => {
-  const [selectedRequest, setSelectedRequest] =
-    useState<BusinessRequest | null>(null);
+  const [requests, setRequests] = useState<BusinessRequest[]>([]);
+  const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
 
-  useEffect(
-    ()=>{
+  useEffect(() => {
+    const getPendingBusiness = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:8080/api/business/getPendingBusiness"
+        );
 
-    }, []
-  )  
+        // axios automatically gives data
+        const data = res.data;
+
+        // safety check in case backend wraps response
+        if (Array.isArray(data)) {
+          setRequests(data);
+        } else if (Array.isArray(data.content)) {
+          setRequests(data.content);
+        } else {
+          setRequests([]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch businesses", err);
+      }
+    };
+
+    getPendingBusiness();
+  }, []);
+
   return (
     <>
       <div className="main-content">
@@ -61,25 +75,36 @@ const BusinessRequestsPage: React.FC = () => {
 
         {/* Stats */}
         <div className="stats-grid">
-          <StatCard number={12} label="Pending Review" />
+          <StatCard number={requests.length} label="Pending Review" />
           <StatCard number={48} label="Approved" />
           <StatCard number={5} label="Rejected" />
           <StatCard number={65} label="Total Requests" />
         </div>
 
-        {/* Cards */}
+        {/* Business Cards */}
         <div className="requests-grid">
-          {requestsData.map((req) => (
+          {requests.map((req, index) => (
             <BusinessRequestCard
-              key={req.id}
-              request={req}
+              key={req.userId}
+              request={{
+                id: index + 1,
+                name: req.businessName,
+                owner: req.ownerName,
+                email: req.email,
+                contact: req.contactNumber,
+                location: `${req.city ?? ""} ${req.businessAddress ?? ""}`,
+                serviceType: req.category?.join(", ") ?? "",
+                pan: req.panNumber ?? "",
+                submitted: "",
+                description: req.description ?? "",
+                documents: [],
+              }}
               onView={setSelectedRequest}
             />
           ))}
         </div>
       </div>
 
-      {/* Modal */}
       <ModalBusinessDetails
         request={selectedRequest}
         onClose={() => setSelectedRequest(null)}
