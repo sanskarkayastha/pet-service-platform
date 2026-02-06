@@ -13,6 +13,7 @@ export default async function UserLayout({
       headers: await headers(),
     }
   )
+  console.log("User Layout Session:", session);
   return (
     <>
       < Navbar session = { session }/>
