@@ -80,6 +80,7 @@ export default function AddServiceModal({ isOpen, onClose }: Props) {
     console.log('SERVICE PAYLOAD:', payload);
 
     // 👉 SEND TO BACKEND HERE
+    
 
     onClose();
   };

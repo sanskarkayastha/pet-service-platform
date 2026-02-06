@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.BusinessDTO;
 import com.example.demo.dto.BusinessResponseDTO;
+import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.model.Business;
 import com.example.demo.model.BusinessStatus;
 import com.example.demo.model.CategoryType;
@@ -69,6 +70,10 @@ public class BusinessServices {
             business.setLicenseFile(licenseUrl);
             business.setVerificationDoc(verificationDocUrl);
 
+            // update users role to business
+            user.get().setRole("business");
+
+            uRepo.save(user.get());
             bRepo.save(business);
             return business;
         }
@@ -85,9 +90,22 @@ public class BusinessServices {
 
     }
 
-    public List<Business> getAllPendingBusiness(){
+    // get pending business for admin
+    public List<Business> getAllPendingBusiness() {
 
         return bRepo.findByStatus(BusinessStatus.PENDING);
+    }
+
+    // get business status
+    public BusinessStatus getBusinessStatus(String userId) {
+
+        User user = uRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
+
+        Business business = bRepo.findByUser(user)
+                .orElseThrow(() -> new ResourceNotFoundException("Business not found for user: " + userId));
+
+        return business.getStatus();
     }
 
 }
