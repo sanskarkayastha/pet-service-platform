@@ -1,6 +1,15 @@
-import React, { useState } from 'react';
-import { Building2, User, Mail, Phone, MapPin, FileText, ArrowRight } from 'lucide-react';
-import styles from '../components/Registration.module.css';
+import React, { useState } from "react";
+import {
+  Building2,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  FileText,
+  ArrowRight,
+} from "lucide-react";
+import styles from "../components/Registration.module.css";
+import ProgressBar from "./ProgressBar";
 
 interface StepOneProps {
   formData: any;
@@ -14,12 +23,17 @@ const StepOne: React.FC<StepOneProps> = ({ formData, setFormData, onNext }) => {
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.businessName?.trim()) newErrors.businessName = "Business name is required";
-    if (!formData.ownerName?.trim()) newErrors.ownerName = "Owner name is required";
+    if (!formData.businessName?.trim())
+      newErrors.businessName = "Business name is required";
+    if (!formData.ownerName?.trim())
+      newErrors.ownerName = "Owner name is required";
     if (!formData.email?.trim()) newErrors.email = "Email is required";
-    if (!formData.contactNumber?.trim()) newErrors.contactNumber = "Contact number is required";
-    if (!formData.businessAddress?.trim()) newErrors.businessAddress = "Address is required";
-    if (!formData.serviceType?.trim()) newErrors.serviceType = "Service type is required";
+    if (!formData.contactNumber?.trim())
+      newErrors.contactNumber = "Contact number is required";
+    if (!formData.businessAddress?.trim())
+      newErrors.businessAddress = "Address is required";
+    if (!formData.serviceType?.trim())
+      newErrors.serviceType = "Service type is required";
     if (!formData.businessDescription?.trim())
       newErrors.businessDescription = "Description is required";
 
@@ -34,8 +48,11 @@ const StepOne: React.FC<StepOneProps> = ({ formData, setFormData, onNext }) => {
 
   return (
     <div>
+      <ProgressBar currentStep={1} />
       <h2 className={styles.sectionTitle}>Basic Information</h2>
-      <p className={styles.sectionSubtitle}>Tell us about your pet service business</p>
+      <p className={styles.sectionSubtitle}>
+        Tell us about your pet service business
+      </p>
 
       <div className={styles.formGrid}>
         {/* Business Name */}
@@ -47,9 +64,13 @@ const StepOne: React.FC<StepOneProps> = ({ formData, setFormData, onNext }) => {
           <input
             className={`${styles.input} ${errors.businessName ? styles.inputError : ""}`}
             value={formData.businessName}
-            onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, businessName: e.target.value })
+            }
           />
-          {errors.businessName && <p className={styles.errorText}>{errors.businessName}</p>}
+          {errors.businessName && (
+            <p className={styles.errorText}>{errors.businessName}</p>
+          )}
         </div>
 
         {/* Owner Name */}
@@ -61,9 +82,13 @@ const StepOne: React.FC<StepOneProps> = ({ formData, setFormData, onNext }) => {
           <input
             className={`${styles.input} ${errors.ownerName ? styles.inputError : ""}`}
             value={formData.ownerName}
-            onChange={(e) => setFormData({ ...formData, ownerName: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, ownerName: e.target.value })
+            }
           />
-          {errors.ownerName && <p className={styles.errorText}>{errors.ownerName}</p>}
+          {errors.ownerName && (
+            <p className={styles.errorText}>{errors.ownerName}</p>
+          )}
         </div>
 
         {/* Email */}
@@ -76,7 +101,9 @@ const StepOne: React.FC<StepOneProps> = ({ formData, setFormData, onNext }) => {
             type="email"
             className={`${styles.input} ${errors.email ? styles.inputError : ""}`}
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
           />
           {errors.email && <p className={styles.errorText}>{errors.email}</p>}
         </div>
@@ -90,9 +117,13 @@ const StepOne: React.FC<StepOneProps> = ({ formData, setFormData, onNext }) => {
           <input
             className={`${styles.input} ${errors.contactNumber ? styles.inputError : ""}`}
             value={formData.contactNumber}
-            onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, contactNumber: e.target.value })
+            }
           />
-          {errors.contactNumber && <p className={styles.errorText}>{errors.contactNumber}</p>}
+          {errors.contactNumber && (
+            <p className={styles.errorText}>{errors.contactNumber}</p>
+          )}
         </div>
 
         {/* Address */}
@@ -104,7 +135,9 @@ const StepOne: React.FC<StepOneProps> = ({ formData, setFormData, onNext }) => {
           <input
             className={`${styles.input} ${errors.businessAddress ? styles.inputError : ""}`}
             value={formData.businessAddress}
-            onChange={(e) => setFormData({ ...formData, businessAddress: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, businessAddress: e.target.value })
+            }
           />
           {errors.businessAddress && (
             <p className={styles.errorText}>{errors.businessAddress}</p>
@@ -120,14 +153,18 @@ const StepOne: React.FC<StepOneProps> = ({ formData, setFormData, onNext }) => {
           <select
             className={`${styles.select} ${errors.serviceType ? styles.inputError : ""}`}
             value={formData.serviceType}
-            onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, serviceType: e.target.value })
+            }
           >
             <option value="">Select service</option>
             <option value="GROOMING">Pet Grooming</option>
             <option value="BOARDING">Pet Boarding</option>
             <option value="VETERINARY">Veterinary</option>
           </select>
-          {errors.serviceType && <p className={styles.errorText}>{errors.serviceType}</p>}
+          {errors.serviceType && (
+            <p className={styles.errorText}>{errors.serviceType}</p>
+          )}
         </div>
 
         {/* Description */}

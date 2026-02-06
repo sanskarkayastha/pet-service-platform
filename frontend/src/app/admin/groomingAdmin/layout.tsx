@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "../groomingAdmin/components/Sidebar";
+import "./layout.module.css";
 import styles from "./layout.module.css";
 
 export const metadata: Metadata = {

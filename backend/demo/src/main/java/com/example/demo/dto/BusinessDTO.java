@@ -12,6 +12,7 @@ public record BusinessDTO(
                 String businessAddress,
                 String description,
                 String city,
-                String panNumber) {
+                String panNumber,
+                String category) {
 
 }

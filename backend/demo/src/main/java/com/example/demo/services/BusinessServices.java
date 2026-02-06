@@ -3,15 +3,18 @@ package com.example.demo.services;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.BusinessDTO;
 import com.example.demo.dto.BusinessResponseDTO;
+import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.model.Business;
+import com.example.demo.model.BusinessStatus;
+import com.example.demo.model.CategoryType;
 import com.example.demo.model.User;
 import com.example.demo.repository.BusinessRepository;
 import com.example.demo.repository.UserRepository;
@@ -52,6 +55,11 @@ public class BusinessServices {
             business.setCity(dto.city());
             business.setPanNumber(dto.panNumber());
 
+            // setting category type
+            CategoryType category = CategoryType.valueOf(dto.category());
+            Set<CategoryType> categorySet = Set.of(category);
+            business.setCategory(categorySet);
+
             // conducting image upload
             String logoUrl = imgService.imageUpload(logo);
             String licenseUrl = imgService.imageUpload(licenseFile);
@@ -62,6 +70,10 @@ public class BusinessServices {
             business.setLicenseFile(licenseUrl);
             business.setVerificationDoc(verificationDocUrl);
 
+            // update users role to business
+            user.get().setRole("business");
+
+            uRepo.save(user.get());
             bRepo.save(business);
             return business;
         }
@@ -76,6 +88,24 @@ public class BusinessServices {
                 .map(business -> toResponseDTO(business))
                 .toList();
 
+    }
+
+    // get pending business for admin
+    public List<Business> getAllPendingBusiness() {
+
+        return bRepo.findByStatus(BusinessStatus.PENDING);
+    }
+
+    // get business status
+    public BusinessStatus getBusinessStatus(String userId) {
+
+        User user = uRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
+
+        Business business = bRepo.findByUser(user)
+                .orElseThrow(() -> new ResourceNotFoundException("Business not found for user: " + userId));
+
+        return business.getStatus();
     }
 
 }
