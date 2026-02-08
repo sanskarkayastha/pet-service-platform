@@ -19,7 +19,7 @@ public class ServiceAddon {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)
-    private Service service;
+    private BusinessService service;
 
     @Column(nullable = false, length = 150)
     private String name;
@@ -29,4 +29,54 @@ public class ServiceAddon {
 
     @Column(nullable = false)
     private Double price;
+
+    public ServiceAddon() {
+    }
+
+    public ServiceAddon(BusinessService service, String name, String description, Double price) {
+        this.service = service;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public BusinessService getService() {
+        return service;
+    }
+
+    public void setService(BusinessService service) {
+        this.service = service;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
 }
