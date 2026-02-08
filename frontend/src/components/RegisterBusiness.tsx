@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "./RegisterBusiness.module.css";
+import Image from "next/image";
+import img from "@/image/RegisterBusiness.png";
 
 type BusinessStatusType = "NOT_APPLIED" | "PENDING" | "APPROVED";
 
@@ -45,7 +47,8 @@ export default function RegisterBusiness() {
   switch (status) {
     case "NOT_APPLIED":
       title = "Register Your Business";
-      description = "Join our Furrever family and grow your pet care business!";
+      description ="Got a pet care service? We’d love to have you in our Furrever family! Join our platform to connect with pet parents, grow your business, and be part of a trusted community made just for animal lovers.";
+
       btn = (
         <button
           className={`${styles.btn} ${styles.btnPrimary}`}
@@ -57,14 +60,15 @@ export default function RegisterBusiness() {
       break;
 
     case "PENDING":
-      title = "Business Pending Approval";
-      description = "Your business is being reviewed. Please wait patiently.";
+      title = "Your Business is Under Review";
+      description ="We’re excited to have you join our Furrever family! Our team is carefully reviewing your business details right now. Sit tight — once approved, you’ll be able to access your dashboard and start growing with us.";
       btn = null; // No button while pending
       break;
 
     case "APPROVED":
-      title = "Welcome Back!";
-      description = "Your business is approved. Manage your dashboard now.";
+      title = "Let’s Get Started!";
+      description ="Your account is ready. Head to your dashboard, showcase your services, and start reaching more pet parents today.";
+
       btn = (
         <button
           className={`${styles.btn} ${styles.btnPrimary}`}
@@ -77,7 +81,8 @@ export default function RegisterBusiness() {
 
     default:
       title = "Register Your Business";
-      description = "Join our Furrever family and grow your pet care business!";
+      description = "Got a pet care service? We’d love to have you in our Furrever family! Join our platform to connect with pet parents, grow your business, and be part of a trusted community made just for animal lovers.";
+
       btn = (
         <button
           className={`${styles.btn} ${styles.btnPrimary}`}
@@ -93,15 +98,23 @@ export default function RegisterBusiness() {
     <div className={styles.container}>
       <div className={styles.card}>
         {/* Left image */}
-        <div
-          className={styles.cardImage}
-          style={{ backgroundImage: "url('/pet-business.jpg')" }}
-        ></div>
+        <div className={styles.cardImage}>
+            <Image
+                src={img}
+                alt="Pet Business"
+                fill
+                sizes="(max-width: 768px) 100vw, 40vw"
+                style={{ objectFit: "contain" }}
+                priority
+            />
+        </div>
 
         {/* Right content */}
         <div className={styles.cardContent}>
           <h2 className={styles.title}>{title}</h2>
+          <br></br>
           <p className={styles.description}>{description}</p>
+          <br></br>
           {btn && <div className={styles.btnWrapper}>{btn}</div>}
         </div>
       </div>

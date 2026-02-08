@@ -14,32 +14,34 @@
 
 .card {
   display: flex;
-  flex-wrap: wrap;
-  max-width: 900px;
-  background: #fff;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-  border-radius: 20px;
-  overflow: hidden;
+  width: 100%;
+  max-width: 1000px;
+  min-height: 460px; /* controls whole card height */
+  border-radius: 16px;
+  overflow: hidden; /* prevents image spill */
+  background: white;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
 
+/* IMAGE SIDE */
 .cardImage {
-  flex: 1;
-  min-width: 250px;
-  background-size: cover;
-  background-position: center;
-  height: 300px;
+  position: relative;
+  flex: 1;              /* takes equal height automatically */
+  min-height: 100%;     /* key fix */
 }
 
+/* CONTENT SIDE */
 .cardContent {
-  flex: 2;
-  padding: 30px 40px;
+  flex: 1;
+  padding: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
+
 .title {
-  font-size: 24px;
+  font-size: 54px;
   color: #FF6B35;
   margin-bottom: 15px;
 }
@@ -48,6 +50,8 @@
   font-size: 16px;
   color: #666;
   margin-bottom: 20px;
+  letter-spacing: 0.3px;
+  line-height: 1.7;
 }
 
 .btnWrapper {
