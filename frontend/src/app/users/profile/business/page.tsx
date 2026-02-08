@@ -1,7 +1,13 @@
-"use client"; // Mark as client if the component uses state or hooks
-
 import RegisterBusiness from "@/components/RegisterBusiness";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+
+const session = await auth.api.getSession(
+    {
+      headers: await headers(),
+    }
+  )
 
 export default function RegisterBusinessPage() {
-  return <RegisterBusiness />;
+  return <RegisterBusiness session={session} />;
 }

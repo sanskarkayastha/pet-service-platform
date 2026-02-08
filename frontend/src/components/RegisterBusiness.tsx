@@ -12,23 +12,33 @@ interface BusinessStatusResponse {
   status: BusinessStatusType;
 }
 
-export default function RegisterBusiness() {
+export default function RegisterBusiness( session: any) {
   const [status, setStatus] = useState<BusinessStatusType | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Replace this with your actual session logic
-  const userId = "user-session-id"; // Example: get this from session/auth context
+  console.log(session)
+  const userId = session?.session?.session?.userId; 
 
   useEffect(() => {
     const fetchStatus = async () => {
       try {
         const res = await axios.get<BusinessStatusResponse>(
-          `http://localhost:8080/getBusinessStatus/${userId}`
+          `http://localhost:8080/api/business/getBusinessStatus/${userId}`
         );
+
         setStatus(res.data.status);
-      } catch (err) {
-        console.error("Error fetching business status:", err);
-        setStatus("NOT_APPLIED"); // fallback
+      } catch (error: any) {
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 404) {
+            // User has NOT registered a business yet
+            setStatus("NOT_APPLIED");
+          } else {
+            setStatus("NOT_APPLIED"); // safe fallback
+          }
+        } else {
+          console.error("Unknown error:", error);
+          setStatus("NOT_APPLIED");
+        }
       } finally {
         setLoading(false);
       }
@@ -36,6 +46,7 @@ export default function RegisterBusiness() {
 
     fetchStatus();
   }, [userId]);
+
 
   if (loading) return <p className={styles.loading}>Loading...</p>;
 
