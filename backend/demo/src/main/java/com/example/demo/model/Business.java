@@ -46,6 +46,11 @@ public class Business {
     @Enumerated(EnumType.STRING)
     private BusinessStatus status = BusinessStatus.PENDING;
 
+    /* ================= REVIEW INFO ================= */
+    @Column(length = 1000)
+    private String rejectionMessage;
+
+
     /* ================= GETTERS & SETTERS ================= */
 
     public Long getId() {
@@ -163,4 +168,13 @@ public class Business {
     public void setStatus(BusinessStatus status) {
         this.status = status;
     }
+
+    public String getRejectionMessage() {
+        return rejectionMessage;
+    }
+
+    public void setRejectionMessage(String rejectionMessage) {
+        this.rejectionMessage = rejectionMessage;
+    }
+
 }

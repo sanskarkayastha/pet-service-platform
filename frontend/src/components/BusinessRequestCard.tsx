@@ -15,8 +15,8 @@ const BusinessRequestCard: React.FC<Props> = ({ request, onView }) => {
   // 🔹 Approve API
   const handleApprove = async () => {
     try {
-      await fetch(`/api/business-request/${request.id}/approve`, {
-        method: "POST",
+      await fetch(`http://localhost:8080/api/business/${request.id}/approve`, {
+        method: "PUT",
       });
       setShowApproveModal(false);
     } catch (err) {
@@ -32,8 +32,8 @@ const BusinessRequestCard: React.FC<Props> = ({ request, onView }) => {
     }
 
     try {
-      await fetch(`/api/business-request/${request.id}/reject`, {
-        method: "POST",
+      await fetch(`http://localhost:8080/api/business/${request.id}/reject`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reason: rejectReason }),
       });

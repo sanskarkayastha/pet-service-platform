@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -80,9 +81,15 @@ public class BusinessController {
                 "status", status.name()));
     }
 
-    @PutMapping("/{businessId}/approve")
-    public ResponseEntity<Void> approveBusiness(@PathVariable Long businessId) {
-        businessServices.approveBusiness(businessId);
+    @PutMapping("/{userId}/approve")
+    public ResponseEntity<Void> approveBusiness(@PathVariable String userId) {
+        businessServices.approveBusiness(userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{userId}/reject")
+    public ResponseEntity<Void> rejectBusiness(@PathVariable String userId ,@RequestBody String rejectMsg ){
+        businessServices.rejectBusiness(userId, rejectMsg);
         return ResponseEntity.ok().build();
     }
 }
