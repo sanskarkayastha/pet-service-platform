@@ -43,9 +43,6 @@ const StepOne: React.FC<StepOneProps> = ({ formData, setFormData, onNext }) => {
       newErrors.contactNumber = "Contact number must be exactly 10 digits";
     }
 
-    if (!formData.businessAddress?.trim())
-      newErrors.businessAddress = "Address is required";
-
     if (!formData.serviceType?.trim())
       newErrors.serviceType = "Service type is required";
 
@@ -138,24 +135,6 @@ const StepOne: React.FC<StepOneProps> = ({ formData, setFormData, onNext }) => {
           />
           {errors.contactNumber && (
             <p className={styles.errorText}>{errors.contactNumber}</p>
-          )}
-        </div>
-
-        {/* Address */}
-        <div className={`${styles.formGroup} ${styles.formGroupFull}`}>
-          <label className={styles.label}>
-            <MapPin size={14} color="#FF6B35" />
-            Business Address <span className={styles.required}>*</span>
-          </label>
-          <input
-            className={`${styles.input} ${errors.businessAddress ? styles.inputError : ""}`}
-            value={formData.businessAddress}
-            onChange={(e) =>
-              setFormData({ ...formData, businessAddress: e.target.value })
-            }
-          />
-          {errors.businessAddress && (
-            <p className={styles.errorText}>{errors.businessAddress}</p>
           )}
         </div>
 

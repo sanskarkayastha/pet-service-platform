@@ -124,6 +124,7 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import StepThreeImages from "./StepThreeImages";
 import StepFour from "./StepFour";
+import { registerBusiness } from "@/actions/business";
 
 const RegistrationForm = () => {
   const [session, setSession] = useState<any | null>(null);
@@ -239,7 +240,7 @@ const RegistrationForm = () => {
             formData={formData}
             setFormData={setFormData}
             onBack={() => setCurrentStep(3)}
-            onSubmit={() => console.log("submitted successful")}
+            onSubmit={() => registerBusiness(formData)}
           />
         )}
       </div>
