@@ -1,7 +1,8 @@
+"use client";
+
 import React, { useState } from "react";
 import {
   FileText,
-  Upload,
   CheckCircle,
   ArrowLeft,
   ArrowRight,
@@ -9,12 +10,24 @@ import {
   Image,
 } from "lucide-react";
 import styles from "../components/Registration.module.css";
-import { set } from "better-auth";
-import { useRouter } from "next/navigation";
 import ProgressBar from "./ProgressBar";
 
+interface FileData {
+  name: string;
+  size: string;
+  file: File;
+}
+
 interface StepTwoProps {
-  formData: any;
+  formData: {
+    panNumber: string;
+    businessLogo: FileData | null;
+    license: FileData | null;
+    verificationDoc: FileData | null;
+    confirmAuthenticity: boolean;
+    agreeTerms: boolean;
+    [key: string]: any;
+  };
   setFormData: (data: any) => void;
   onBack: () => void;
   onSubmit: () => void;
@@ -27,8 +40,8 @@ const StepTwo: React.FC<StepTwoProps> = ({
   onSubmit,
 }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isDisabled, setIsDisabled] = useState(false);
-  const router = useRouter();
+
+  /* -------------------- FILE UPLOAD -------------------- */
   const handleFileUpload = (type: string, file: File | null) => {
     if (!file) return;
 
@@ -48,7 +61,8 @@ const StepTwo: React.FC<StepTwoProps> = ({
     setFormData({ ...formData, [type]: null });
   };
 
-  const validate = () => {
+  /* -------------------- VALIDATION -------------------- */
+  const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.panNumber?.trim())
@@ -70,75 +84,27 @@ const StepTwo: React.FC<StepTwoProps> = ({
       newErrors.agreeTerms = "You must agree to terms & conditions";
 
     setErrors(newErrors);
+
+    // Return true if no errors
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async () => {
-    if (!validate()) return;
-    const formDataToSend = new FormData();
-
-    /* ===== BASIC INFO ===== */
-    formDataToSend.append(
-      "businessInfo",
-      new Blob(
-        [
-          JSON.stringify({
-            userId: formData.userId,
-            businessName: formData.businessName,
-            ownerName: formData.ownerName,
-            email: formData.email,
-            contactNumber: formData.contactNumber,
-            businessAddress: formData.businessAddress,
-            description: formData.businessDescription,
-            panNumber: formData.panNumber,
-            city: formData.businessAddress,
-            category: formData.serviceType,
-          }),
-        ],
-        { type: "application/json" },
-      ),
-    );
-
-    /* ===== FILES ===== */
-    formDataToSend.append("logo-upload", formData.businessLogo.file);
-
-    formDataToSend.append("license-upload", formData.license.file);
-
-    formDataToSend.append("verification-upload", formData.verificationDoc.file);
-
-    try {
-      setIsDisabled(true);
-      const res = await fetch(
-        "http://localhost:8080/api/business/addBusiness",
-        {
-          method: "POST",
-          body: formDataToSend,
-        },
-      );
-
-      if (!res.ok) {
-        throw new Error("Failed to submit");
-      } else {
-        setIsDisabled(false);
-        router.push("/");
-      }
-
-      alert("Business registration submitted!");
-    } catch (err) {
-      console.error(err);
-      alert("Submission failed");
-    }
+  /* -------------------- HANDLE CONTINUE -------------------- */
+  const handleContinue = () => {
+    if (!validate()) return; // stop if validation fails
+    onSubmit(); // move to next step
   };
 
   return (
     <div>
       <ProgressBar currentStep={2} />
+
       <h2 className={styles.sectionTitle}>Verification Documents</h2>
       <p className={styles.sectionSubtitle}>
         Upload required documents for verification
       </p>
 
-      {/* PAN */}
+      {/* -------------------- PAN -------------------- */}
       <div className={styles.formGroup}>
         <label className={styles.label}>
           <FileText size={14} color="#FF6B35" />
@@ -148,9 +114,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
         <input
           type="text"
           placeholder="Enter Business Registration / PAN Number"
-          className={`${styles.input} ${
-            errors.panNumber ? styles.inputError : ""
-          }`}
+          className={`${styles.input} ${errors.panNumber ? styles.inputError : ""}`}
           value={formData.panNumber}
           onChange={(e) =>
             setFormData({ ...formData, panNumber: e.target.value })
@@ -161,7 +125,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
         )}
       </div>
 
-      {/* ================= BUSINESS LOGO ================= */}
+      {/* -------------------- BUSINESS LOGO -------------------- */}
       <div className={styles.formGroup}>
         <label className={styles.label}>
           Business Logo <span className={styles.required}>*</span>
@@ -201,7 +165,6 @@ const StepTwo: React.FC<StepTwoProps> = ({
             </div>
             <input
               id="logo-upload"
-              name="logo-upload"
               type="file"
               hidden
               accept=".jpg,.jpeg,.png"
@@ -211,13 +174,12 @@ const StepTwo: React.FC<StepTwoProps> = ({
             />
           </div>
         )}
-
         {errors.businessLogo && (
           <p className={styles.errorText}>{errors.businessLogo}</p>
         )}
       </div>
 
-      {/* ================= LICENSE (UNCHANGED) ================= */}
+      {/* -------------------- LICENSE -------------------- */}
       <div className={styles.formGroup}>
         <label className={styles.label}>
           License / Certification <span className={styles.required}>*</span>
@@ -255,7 +217,6 @@ const StepTwo: React.FC<StepTwoProps> = ({
             </div>
             <input
               id="license-upload"
-              name="license-upload"
               type="file"
               hidden
               accept=".jpg,.jpeg,.png"
@@ -265,11 +226,10 @@ const StepTwo: React.FC<StepTwoProps> = ({
             />
           </div>
         )}
-
         {errors.license && <p className={styles.errorText}>{errors.license}</p>}
       </div>
 
-      {/* ================= VERIFICATION DOC  ================= */}
+      {/* -------------------- VERIFICATION DOC -------------------- */}
       <div className={styles.formGroup}>
         <label className={styles.label}>
           Upload Verification Document{" "}
@@ -312,7 +272,6 @@ const StepTwo: React.FC<StepTwoProps> = ({
             </div>
             <input
               id="verification-upload"
-              name="verification-upload"
               type="file"
               hidden
               accept=".pdf"
@@ -322,13 +281,12 @@ const StepTwo: React.FC<StepTwoProps> = ({
             />
           </div>
         )}
-
         {errors.verificationDoc && (
           <p className={styles.errorText}>{errors.verificationDoc}</p>
         )}
       </div>
 
-      {/* ================= CONFIRMATION (UNCHANGED UI) ================= */}
+      {/* -------------------- CONFIRMATION -------------------- */}
       <div className={styles.checkboxSection}>
         <h3 className={styles.checkboxHeading}>
           <CheckCircle size={14} color="#FF6B35" />
@@ -357,7 +315,6 @@ const StepTwo: React.FC<StepTwoProps> = ({
           </div>
         </label>
 
-        {/* 🔴 ERROR LINE ONLY */}
         {errors.confirmAuthenticity && (
           <p className={styles.errorText}>{errors.confirmAuthenticity}</p>
         )}
@@ -388,36 +345,25 @@ const StepTwo: React.FC<StepTwoProps> = ({
           </div>
         </label>
 
-        {/* 🔴 ERROR LINE ONLY */}
         {errors.agreeTerms && (
           <p className={styles.errorText}>{errors.agreeTerms}</p>
         )}
       </div>
 
+      {/* -------------------- ACTIONS -------------------- */}
       <div className={styles.buttonGroup}>
         <button
           className={`${styles.button} ${styles.buttonSecondary}`}
           onClick={onBack}
         >
-          <ArrowLeft size={16} />
-          Back
+          <ArrowLeft size={16} /> Back
         </button>
-        {/* <button
-          className={`${styles.button} ${styles.buttonPrimary}`}
-          onClick={handleSubmit} disabled={isDisabled}
-        >
-          Submit Registration
-          <ArrowRight size={16} />
-        </button> */}
+
         <button
           className={`${styles.button} ${styles.buttonPrimary}`}
-          onClick={() => {
-            if (!validate()) return;
-            onSubmit(); // move to Images step
-          }}
+          onClick={handleContinue}
         >
-          Continue
-          <ArrowRight size={16} />
+          Continue <ArrowRight size={16} />
         </button>
       </div>
     </div>
