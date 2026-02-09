@@ -25,15 +25,30 @@ const StepOne: React.FC<StepOneProps> = ({ formData, setFormData, onNext }) => {
 
     if (!formData.businessName?.trim())
       newErrors.businessName = "Business name is required";
+
     if (!formData.ownerName?.trim())
       newErrors.ownerName = "Owner name is required";
-    if (!formData.email?.trim()) newErrors.email = "Email is required";
-    if (!formData.contactNumber?.trim())
+
+    // Email validation
+    if (!formData.email?.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!formData.email.includes("@")) {
+      newErrors.email = "Email must include @";
+    }
+
+    // Contact number validation
+    if (!formData.contactNumber?.trim()) {
       newErrors.contactNumber = "Contact number is required";
+    } else if (!/^\d{10}$/.test(formData.contactNumber)) {
+      newErrors.contactNumber = "Contact number must be exactly 10 digits";
+    }
+
     if (!formData.businessAddress?.trim())
       newErrors.businessAddress = "Address is required";
+
     if (!formData.serviceType?.trim())
       newErrors.serviceType = "Service type is required";
+
     if (!formData.businessDescription?.trim())
       newErrors.businessDescription = "Description is required";
 
