@@ -13,6 +13,8 @@ public record BusinessDTO(
                 String description,
                 String city,
                 String panNumber,
-                String category) {
+                String category,
+                Double latitude,
+                Double longitude) {
 
 }

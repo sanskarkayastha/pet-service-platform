@@ -57,6 +57,7 @@ const StepFour = ({ formData, setFormData, onBack, onSubmit }: any) => {
   );
   const [locationInfo, setLocationInfo] = useState("");
   const [showOverlay, setShowOverlay] = useState(false); // <-- overlay state
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   /* -------------------- REVERSE GEOCODE -------------------- */
   const fetchAddress = async (lat: number, lng: number) => {
@@ -115,6 +116,7 @@ const StepFour = ({ formData, setFormData, onBack, onSubmit }: any) => {
   /* -------------------- FINAL SUBMIT -------------------- */
   const handleFinalSubmit = async () => {
     try {
+      setErrorMessage(null);
       console.log("🚀 FINAL FORM DATA BEFORE SUBMIT:", formData);
 
       await onSubmit(); // call your API
@@ -123,12 +125,16 @@ const StepFour = ({ formData, setFormData, onBack, onSubmit }: any) => {
       setShowOverlay(true);
 
       // Redirect after 2 seconds
-      setTimeout(() => {
-        router.push("/");
-      }, 2000);
-    } catch (err) {
+      setTimeout(() => {}, 2000);
+    } catch (err: any) {
       console.error(err);
-      // Handle error if needed
+      // Show a friendly message if the user already has a business
+      const message = typeof err?.message === "string" ? err.message : "";
+      if (message.includes("Business already exists")) {
+        setErrorMessage("You already have a business registered.");
+      } else {
+        setErrorMessage("Something went wrong while submitting. Please try again.");
+      }
     }
   };
 
@@ -210,6 +216,11 @@ const StepFour = ({ formData, setFormData, onBack, onSubmit }: any) => {
           <Send size={16} /> Submit Registration
         </button>
       </div>
+
+      {/* ERROR MESSAGE */}
+      {errorMessage && (
+        <div className={styles.errorMessage}>{errorMessage}</div>
+      )}
 
       {/* SUCCESS OVERLAY POPUP */}
       {showOverlay && (

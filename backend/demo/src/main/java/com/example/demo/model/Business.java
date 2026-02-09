@@ -42,6 +42,10 @@ public class Business {
     @Column(name = "category")
     private Set<CategoryType> category;
 
+    /* ================= LOCATION ================= */
+    private Double latitude;
+    private Double longitude;
+
     /* ================= STATUS ================= */
     @Enumerated(EnumType.STRING)
     private BusinessStatus status = BusinessStatus.PENDING;
@@ -162,5 +166,21 @@ public class Business {
 
     public void setStatus(BusinessStatus status) {
         this.status = status;
+    }
+
+    public void setLongitude(double longitude){
+        this.longitude = longitude;
+    }
+
+    public void setLatitude(double latitude){
+        this.latitude = latitude;
+    }
+
+    public double getLatitude(){
+        return latitude;
+    }
+
+    public double getLongitude(){
+        return longitude;
     }
 }

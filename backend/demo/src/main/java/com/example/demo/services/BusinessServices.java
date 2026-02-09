@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.dto.BusinessDTO;
 import com.example.demo.dto.BusinessResponseDTO;
 import com.example.demo.exceptions.ResourceNotFoundException;
+import com.example.demo.exceptions.BusinessAlreadyExistsException;
 import com.example.demo.model.Business;
 import com.example.demo.model.BusinessStatus;
 import com.example.demo.model.CategoryType;
@@ -42,10 +43,17 @@ public class BusinessServices {
             return null;
 
         } else {
+            User existingUser = user.get();
+
+            // If this user already has a business, prevent creating another one
+            if (bRepo.findByUser(existingUser).isPresent()) {
+                throw new BusinessAlreadyExistsException("Business already exists for this user");
+            }
+
             Business business = new Business();
 
             // adding values to the busineess object
-            business.setUser(user.get());
+            business.setUser(existingUser);
             business.setBusinessName(dto.businessName());
             business.setOwnerName(dto.ownerName());
             business.setEmail(dto.email());
@@ -54,6 +62,13 @@ public class BusinessServices {
             business.setDescription(dto.description());
             business.setCity(dto.city());
             business.setPanNumber(dto.panNumber());
+            // set location (may be null if not provided)
+            if (dto.latitude() != null) {
+                business.setLatitude(dto.latitude());
+            }
+            if (dto.longitude() != null) {
+                business.setLongitude(dto.longitude());
+            }
 
             // setting category type
             CategoryType category = CategoryType.valueOf(dto.category());
@@ -71,9 +86,9 @@ public class BusinessServices {
             business.setVerificationDoc(verificationDocUrl);
 
             // update users role to business
-            user.get().setRole("business");
+            existingUser.setRole("business");
 
-            uRepo.save(user.get());
+            uRepo.save(existingUser);
             bRepo.save(business);
             return business;
         }
