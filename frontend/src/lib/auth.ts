@@ -7,7 +7,7 @@ export const auth = betterAuth({
     connectionString: process.env.DATABASE_URL,
   }),
   user: {
-    modelName: "users", 
+    modelName: "users",
     fields: {
       id: "id",
       name: "name",
@@ -18,7 +18,7 @@ export const auth = betterAuth({
       role: {
         type: "string",
         defaultValue: "user",
-        input: false, 
+        input: false,
       },
     },
   },
@@ -29,11 +29,10 @@ export const auth = betterAuth({
   socialProviders: {
     google: {
       prompt: "select_account",
-      clientId: process.env.GOOGLE_CLIENT_ID as string, 
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, 
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
-  },  
-  autoMigrate: true, 
+  },
+  autoMigrate: true,
   plugins: [nextCookies()],
-  
 });

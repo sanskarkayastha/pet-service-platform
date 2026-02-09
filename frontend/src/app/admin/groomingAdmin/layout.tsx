@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Sidebar from "../groomingAdmin/components/Sidebar";
-import "./layout.module.css";
 import styles from "./layout.module.css";
 
 export const metadata: Metadata = {
@@ -8,23 +7,15 @@ export const metadata: Metadata = {
   description: "Manage grooming appointments and services",
 };
 
-export default function RootLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      </head>
-      <body className={styles.body}>
-        <div className={styles.container}>
-          <Sidebar />
-          {children}
-        </div>
-      </body>
-    </html>
+    <div className={styles.container}>
+      <Sidebar />
+      <main className={styles.content}>{children}</main>
+    </div>
   );
 }
