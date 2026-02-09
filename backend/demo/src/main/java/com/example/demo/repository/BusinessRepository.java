@@ -5,11 +5,11 @@ import org.springframework.stereotype.Repository;
 
 import com.example.demo.model.Business;
 import com.example.demo.model.BusinessStatus;
+import com.example.demo.model.User;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.example.demo.model.User;
 
 @Repository
 public interface BusinessRepository extends JpaRepository<Business, Long> {
@@ -17,4 +17,5 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
     List<Business> findByStatus(BusinessStatus status);
 
     Optional<Business> findByUser(User user);
+
 }

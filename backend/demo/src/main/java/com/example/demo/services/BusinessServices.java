@@ -108,4 +108,16 @@ public class BusinessServices {
         return business.getStatus();
     }
 
+    public Business approveBusiness(Long businessId) {
+        Business business = bRepo.findById(businessId)
+                .orElseThrow(() -> new RuntimeException("Business not found"));
+
+        if (business.getStatus() == BusinessStatus.APPROVED) {
+            return business; // already approved, no-op
+        }
+
+        business.setStatus(BusinessStatus.APPROVED);
+        return bRepo.save(business);
+    }
+
 }
