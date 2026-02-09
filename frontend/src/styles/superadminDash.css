@@ -504,6 +504,84 @@
         transform: translateY(-2px);
     }
 
+        /* SMALL POPUP MODAL (Approve / Reject) */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    }
+
+    .action-modal {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        width: 400px;
+        max-width: 90%;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        animation: fadeIn 0.2s ease-in-out;
+        text-align: center;
+    }
+
+    .action-modal h3 {
+        margin-bottom: 10px;
+        color: var(--text-dark);
+    }
+
+    .action-modal p {
+        color: var(--text-light);
+        font-size: 14px;
+    }
+
+    .action-modal textarea {
+        width: 100%;
+        min-height: 100px;
+        margin: 15px 0;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-family: inherit;
+        resize: none;
+    }
+
+    .action-modal textarea:focus {
+        border-color: var(--primary);
+        outline: none;
+    }
+
+    .action-modal .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .action-modal button {
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .action-modal button:first-child {
+        background: #eee;
+    }
+
+    .action-modal button:last-child {
+        background: var(--primary);
+        color: white;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+
     @media (max-width: 768px) {
         .sidebar {
             transform: translateX(-100%);

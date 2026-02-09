@@ -5,6 +5,8 @@ import axios from "axios";
 import styles from "./RegisterBusiness.module.css";
 import Image from "next/image";
 import img from "@/image/RegisterBusiness.png";
+import { useRouter } from "next/navigation";
+
 
 type BusinessStatusType = "NOT_APPLIED" | "PENDING" | "APPROVED";
 
@@ -15,6 +17,8 @@ interface BusinessStatusResponse {
 export default function RegisterBusiness( session: any) {
   const [status, setStatus] = useState<BusinessStatusType | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
 
   console.log(session)
   const userId = session?.session?.session?.userId; 
@@ -63,7 +67,8 @@ export default function RegisterBusiness( session: any) {
       btn = (
         <button
           className={`${styles.btn} ${styles.btnPrimary}`}
-          onClick={() => console.log("Redirect to registration page")}
+          onClick={() => router.push("/users/companyregistration")}
+
         >
           Register Your Business
         </button>
