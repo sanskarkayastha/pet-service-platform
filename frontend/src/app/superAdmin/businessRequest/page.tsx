@@ -46,7 +46,7 @@ const BusinessRequestsPage: React.FC = () => {
 
         // axios automatically gives data
         const data = res.data;
-
+        console.log(data)
         // safety check in case backend wraps response
         if (Array.isArray(data)) {
           setRequests(data);
@@ -108,7 +108,7 @@ const BusinessRequestsPage: React.FC = () => {
             <BusinessRequestCard
               key={req.userId}
               request={{
-                id: index + 1,
+                id: req.userId,
                 name: req.businessName,
                 owner: req.ownerName,
                 email: req.email,

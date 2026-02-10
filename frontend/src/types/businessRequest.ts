@@ -4,7 +4,7 @@ export interface DocumentItem {
 }
 
 export interface BusinessRequest {
-  id: number;
+  id: string;
   name: string;
   serviceType: string;
   owner: string;

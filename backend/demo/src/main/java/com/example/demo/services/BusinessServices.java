@@ -123,8 +123,13 @@ public class BusinessServices {
         return business.getStatus();
     }
 
-    public Business approveBusiness(Long businessId) {
-        Business business = bRepo.findById(businessId)
+    public Business approveBusiness(String userId) {
+
+        User user = uRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
+
+
+        Business business = bRepo.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Business not found"));
 
         if (business.getStatus() == BusinessStatus.APPROVED) {
@@ -135,6 +140,23 @@ public class BusinessServices {
         return bRepo.save(business);
     }
 
+    public Business rejectBusiness(String userId, String rejectMsg) {
+
+        User user = uRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
+
+
+        Business business = bRepo.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Business not found"));
+
+        if (business.getStatus() == BusinessStatus.APPROVED) {
+            return business; // already approved, no-op
+        }
+
+        business.setStatus(BusinessStatus.REJECTED);
+        business.setRejectionMessage(rejectMsg);
+        return bRepo.save(business);
+    }
     // Update business information
     public Business updateBusiness(Long businessId, com.example.demo.dto.BusinessUpdateRequest request) {
         Business business = bRepo.findById(businessId)
