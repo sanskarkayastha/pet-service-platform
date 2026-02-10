@@ -7,12 +7,6 @@ import img1 from "../../../../../../image/dog-salon.jpg";
 import img2 from "../../../../../../image/dog-salon2.jpg";
 import img3 from "../../../../../../image/hero-salon.jpg";
 
-const REVIEWS = [
-  { id: 1, name: "Sarah Johnson", initial: "S", time: "2 weeks ago", comment: "Amazing service! The staff was so gentle with my nervous dog. Grooming was perfect." },
-  { id: 2, name: "Michael Chen", initial: "M", time: "1 month ago", comment: "Best pet care facility in town. Professional, clean, and they really care about the animals." },
-  { id: 3, name: "Emma Wilson", initial: "E", time: "3 weeks ago", comment: "Great experience overall. The grooming was excellent, though I had to wait a bit longer." },
-];
-
 export default async function BusinessDetailPage({
   params,
 }: {
@@ -26,6 +20,8 @@ export default async function BusinessDetailPage({
     businessAddress?: string;
     city?: string;
     imageUrl?: string;
+    rating?: number;
+    totalReviews?: number;
   } | null = null;
 
   try {
@@ -47,13 +43,24 @@ export default async function BusinessDetailPage({
   const description = business?.description || "Trusted pet care services.";
   const mainImage = business?.imageUrl || img1.src;
 
+  const rating = business?.rating;
+  const reviewsCount = business?.totalReviews;
+
   return (
     <div className={styles.container}>
       <section className={styles.header}>
         <h1>{name}</h1>
         <div className={styles.rating}>
-          <span><Star size={16} fill="#facc15" strokeWidth={0} /> 5.0 (127)</span>
-          • <span>Open until 20:00</span> • <span>{address}</span>
+          {typeof rating === "number" && typeof reviewsCount === "number" ? (
+            <span>
+              <Star size={16} fill="#facc15" strokeWidth={0} />{" "}
+              {rating.toFixed(1)} ({reviewsCount})
+            </span>
+          ) : (
+            <span>New business</span>
+          )}
+          {" • "}
+          <span>{address}</span>
           <a href="#" className={styles.link}>Get directions</a>
         </div>
         <div className={styles.imageGrid}>
@@ -91,18 +98,10 @@ export default async function BusinessDetailPage({
 
       <section className={styles.reviews}>
         <h2>Customer Reviews</h2>
-        <div className={styles.reviewGrid}>
-          {REVIEWS.map((review) => (
-            <div key={review.id} className={styles.reviewCard}>
-              <div className={styles.avatar}>{review.initial}</div>
-              <div>
-                <h4>{review.name}</h4>
-                <p className={styles.time}>{review.time}</p>
-                <p>{review.comment}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <p style={{ marginTop: "16px", color: "#666" }}>
+          There are no reviews for this business yet. Once customers start
+          booking, their feedback will appear here.
+        </p>
       </section>
 
       <hr className={styles.divider} />

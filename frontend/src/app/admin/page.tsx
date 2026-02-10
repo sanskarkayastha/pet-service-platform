@@ -21,6 +21,7 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [stats, setStats] = useState({
     todayBookings: 0,
     pending: 0,
@@ -33,6 +34,7 @@ export default function AdminDashboard() {
 
   const loadDashboardData = async () => {
     try {
+      setErrorMessage(null);
       const bookingsResponse = await apiClient.get("/api/bookings/my-bookings");
       const allBookings = bookingsResponse.data;
 
@@ -52,7 +54,16 @@ export default function AdminDashboard() {
 
       setStats({ todayBookings, pending, revenue });
     } catch (error) {
-      console.error("Failed to load dashboard data:", error);
+      const status = (error as any)?.response?.status;
+      if (status === 403) {
+        setErrorMessage(
+          "You don't have permission to view this dashboard. Please sign in with a business account."
+        );
+        console.warn("Access denied while loading dashboard data (403).");
+      } else {
+        console.error("Failed to load dashboard data:", error);
+        setErrorMessage("Something went wrong while loading the dashboard.");
+      }
     } finally {
       setLoading(false);
     }
@@ -72,6 +83,28 @@ export default function AdminDashboard() {
     return (
       <main className={styles.mainContent}>
         <p>Loading...</p>
+      </main>
+    );
+  }
+
+  if (errorMessage) {
+    return (
+      <main className={styles.mainContent}>
+        <div
+          style={{
+            maxWidth: "480px",
+            margin: "80px auto",
+            padding: "24px",
+            borderRadius: "12px",
+            background: "#fff3e0",
+            border: "1px solid #ffe0b2",
+            color: "#6d4c41",
+            textAlign: "center",
+          }}
+        >
+          <h1 style={{ marginBottom: "8px", fontSize: "22px" }}>Access restricted</h1>
+          <p style={{ marginBottom: 0 }}>{errorMessage}</p>
+        </div>
       </main>
     );
   }

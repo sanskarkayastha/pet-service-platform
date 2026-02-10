@@ -36,6 +36,7 @@ export default function ServicesManagementPage() {
   const [open, setOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     loadServices();
@@ -43,6 +44,7 @@ export default function ServicesManagementPage() {
 
   const loadServices = async () => {
     try {
+      setErrorMessage(null);
       const response = await apiClient.get("/api/services/management/my-services");
       setServices(response.data);
       if (!selectedCategory && response.data.length > 0) {
@@ -54,8 +56,19 @@ export default function ServicesManagementPage() {
         setSelectedCategory("GROOMING");
       }
     } catch (error) {
-      console.error("Failed to load services:", error);
-      setSelectedCategory("GROOMING");
+      const status = (error as any)?.response?.status;
+      if (status === 403) {
+        setErrorMessage(
+          "You don't have permission to manage services. Please sign in with a business account."
+        );
+        console.warn("Access denied while loading services (403).");
+      } else {
+        console.error("Failed to load services:", error);
+        setErrorMessage("Something went wrong while loading services.");
+      }
+      if (!selectedCategory) {
+        setSelectedCategory("GROOMING");
+      }
     } finally {
       setLoading(false);
     }
@@ -65,8 +78,10 @@ export default function ServicesManagementPage() {
     ...new Set(services.map((s) => s.category)),
   ].filter(Boolean) as string[];
 
-  const displayCategories =
-    categories.length > 0 ? categories : ["GROOMING", "BOARDING", "VETERINARY"];
+  // Only show service types that this business actually offers.
+  // If there are no services yet, we keep the category bar empty
+  // and show the "Add Service" call-to-action.
+  const displayCategories = categories;
   const activeCategory = selectedCategory || displayCategories[0];
 
   const filteredServices = activeCategory
@@ -109,6 +124,28 @@ export default function ServicesManagementPage() {
     );
   }
 
+  if (errorMessage) {
+    return (
+      <main className={styles.mainContent}>
+        <div
+          style={{
+            maxWidth: "480px",
+            margin: "80px auto",
+            padding: "24px",
+            borderRadius: "12px",
+            background: "#fff3e0",
+            border: "1px solid #ffe0b2",
+            color: "#6d4c41",
+            textAlign: "center",
+          }}
+        >
+          <h1 style={{ marginBottom: "8px", fontSize: "22px" }}>Access restricted</h1>
+          <p style={{ marginBottom: 0 }}>{errorMessage}</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className={styles.mainContent}>
       <div className={styles.pageHeader}>
@@ -122,50 +159,52 @@ export default function ServicesManagementPage() {
         </button>
       </div>
 
-      {/* Category bar */}
-      <div
-        style={{
-          display: "flex",
-          gap: "8px",
-          marginBottom: "24px",
-          padding: "12px",
-          background: "white",
-          borderRadius: "12px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-          flexWrap: "wrap",
-        }}
-      >
-        {displayCategories.map((cat) => {
-          const config = CATEGORY_CONFIG[cat] || {
-            label: cat,
-            icon: Scissors,
-          };
-          const Icon = config.icon;
-          const isActive = activeCategory === cat;
+      {/* Category bar - only shows categories for this business */}
+      {displayCategories.length > 0 && (
+        <div
+          style={{
+            display: "flex",
+            gap: "8px",
+            marginBottom: "24px",
+            padding: "12px",
+            background: "white",
+            borderRadius: "12px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+            flexWrap: "wrap",
+          }}
+        >
+          {displayCategories.map((cat) => {
+            const config = CATEGORY_CONFIG[cat] || {
+              label: cat,
+              icon: Scissors,
+            };
+            const Icon = config.icon;
+            const isActive = activeCategory === cat;
 
-          return (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "10px 20px",
-                border: `2px solid ${isActive ? "#9c27b0" : "#e0e0e0"}`,
-                borderRadius: "10px",
-                background: isActive ? "#f3e5f5" : "white",
-                color: isActive ? "#7b1fa2" : "#666",
-                cursor: "pointer",
-                fontWeight: isActive ? 600 : 500,
-              }}
-            >
-              <Icon size={18} />
-              {config.label}
-            </button>
-          );
-        })}
-      </div>
+            return (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "10px 20px",
+                  border: `2px solid ${isActive ? "#9c27b0" : "#e0e0e0"}`,
+                  borderRadius: "10px",
+                  background: isActive ? "#f3e5f5" : "white",
+                  color: isActive ? "#7b1fa2" : "#666",
+                  cursor: "pointer",
+                  fontWeight: isActive ? 600 : 500,
+                }}
+              >
+                <Icon size={18} />
+                {config.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       <AddServiceModal
         isOpen={open}
