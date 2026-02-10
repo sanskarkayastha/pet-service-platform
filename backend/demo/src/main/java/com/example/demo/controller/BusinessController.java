@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,8 @@ import com.example.demo.dto.BusinessDTO;
 import com.example.demo.dto.BusinessResponseDTO;
 import com.example.demo.model.Business;
 import com.example.demo.model.BusinessStatus;
+import com.example.demo.security.CurrentUser;
+import com.example.demo.model.User;
 import com.example.demo.services.BusinessServices;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -40,9 +43,13 @@ public class BusinessController {
     }
 
     @PostMapping("/addBusiness")
-    public ResponseEntity<?> addBusiness(@RequestPart("businessInfo") BusinessDTO businessDTO,
-            @RequestPart("logo-upload") MultipartFile logo, @RequestPart("license-upload") MultipartFile license,
-            @RequestPart("verification-upload") MultipartFile verificationDoc) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> addBusiness(
+            @RequestPart("businessInfo") BusinessDTO businessDTO,
+            @RequestPart("logo-upload") MultipartFile logo, 
+            @RequestPart("license-upload") MultipartFile license,
+            @RequestPart("verification-upload") MultipartFile verificationDoc,
+            @CurrentUser User currentUser) {
         try {
             Business business = businessServices.addBusiness(businessDTO, logo, license, verificationDoc);
             if (business != null) {
@@ -64,6 +71,7 @@ public class BusinessController {
     }
 
     @GetMapping("/getPendingBusiness")
+    @PreAuthorize("hasRole('ADMIN')")
     List<BusinessResponseDTO> pendingBusiness() {
         List<Business> allPendingBusiness = businessServices.getAllPendingBusiness();
         return allPendingBusiness.stream().map((Business business) -> {
@@ -81,8 +89,16 @@ public class BusinessController {
     }
 
     @PutMapping("/{businessId}/approve")
-    public ResponseEntity<Void> approveBusiness(@PathVariable Long businessId) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> approveBusiness(@PathVariable Long businessId, @CurrentUser User currentUser) {
         businessServices.approveBusiness(businessId);
         return ResponseEntity.ok().build();
+    }
+
+    // Get business by user ID (for detail pages)
+    @GetMapping("/by-user/{userId}")
+    public ResponseEntity<BusinessResponseDTO> getBusinessByUserId(@PathVariable String userId) {
+        Business business = businessServices.getBusinessByUserId(userId);
+        return ResponseEntity.ok(toResponseDTO(business));
     }
 }

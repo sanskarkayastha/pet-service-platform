@@ -1,3 +1,5 @@
+import { apiPost } from "@/lib/api-fetch";
+
 export async function registerBusiness(formData: any) {
   try {
     const multipart = new FormData();
@@ -38,22 +40,8 @@ export async function registerBusiness(formData: any) {
       multipart.append("verification-upload", formData.verificationDoc.file);
     }
 
-    const response = await fetch(
-      "http://localhost:8080/api/business/addBusiness",
-      {
-        method: "POST",
-        body: multipart,
-      },
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Failed to register business: ${response.status} ${errorText}`,
-      );
-    }
-
-    return await response.json().catch(() => response.text());
+    // Use authenticated API utility - automatically adds JWT token
+    return await apiPost("/api/business/addBusiness", multipart);
   } catch (error) {
     console.error("Error registering business", error);
     throw error;

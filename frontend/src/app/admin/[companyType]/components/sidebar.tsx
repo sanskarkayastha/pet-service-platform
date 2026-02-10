@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Calendar, LogOut } from "lucide-react";
+import { Home, Calendar, LogOut, Settings, Package, Clock, ShoppingBag } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import styles from "./sidebar.module.css";
 import { SERVICE_CONFIG, CompanyType } from "../config";
@@ -28,9 +28,24 @@ export default function Sidebar({ companyType }: SidebarProps) {
       icon: Home,
     },
     {
-      label: service.title,
-      href: `/admin/${companyType}/overview`, // ✅ UNIQUE
-      icon: service.icon,
+      label: "Orders",
+      href: `/admin/${companyType}/orders`,
+      icon: ShoppingBag,
+    },
+    {
+      label: "Services",
+      href: `/admin/${companyType}/services`,
+      icon: Package,
+    },
+    {
+      label: "Working Hours",
+      href: `/admin/${companyType}/working-hours`,
+      icon: Clock,
+    },
+    {
+      label: "Settings",
+      href: `/admin/${companyType}/settings`,
+      icon: Settings,
     },
     {
       label: "Calendar",

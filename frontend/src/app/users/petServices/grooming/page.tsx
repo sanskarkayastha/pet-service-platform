@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { apiGet } from "@/lib/api-fetch";
 import "@/styles/Grooming.css";
 
 /* ================= TYPES ================= */
@@ -41,11 +42,8 @@ export default function GroomingPage() {
   useEffect(() => {
     const getBusinessData = async () => {
       try {
-        const res = await fetch(
-          "http://localhost:8080/api/business/allBusinesses",
-          { method: "GET" },
-        );
-        const json = await res.json();
+        // Use authenticated API utility - automatically adds JWT token if available
+        const json = await apiGet<Business[]>("/api/business/allBusinesses");
         console.log("Api is response is following:" + json);
 
         // assuming ResponseEntity { data: BusinessResponseDTO[] }
@@ -208,7 +206,7 @@ export default function GroomingPage() {
                       Book Now
                     </button>
                     <Link
-                      href={`/services/grooming/detail/${business.userId}`}
+                      href={`/users/petServices/grooming/detail/${business.userId}`}
                       className="btn-details"
                     >
                       View Details

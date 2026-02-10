@@ -98,7 +98,7 @@ public class BusinessServices {
     // this is to display cards so we don't need everything but only few things and
     // the main image
     public List<BusinessResponseDTO> getAllBusinesses() {
-        return bRepo.findAll()
+        return bRepo.findAllWithUser()
                 .stream()
                 .map(business -> toResponseDTO(business))
                 .toList();
@@ -133,6 +133,31 @@ public class BusinessServices {
 
         business.setStatus(BusinessStatus.APPROVED);
         return bRepo.save(business);
+    }
+
+    // Update business information
+    public Business updateBusiness(Long businessId, com.example.demo.dto.BusinessUpdateRequest request) {
+        Business business = bRepo.findById(businessId)
+                .orElseThrow(() -> new ResourceNotFoundException("Business not found"));
+
+        if (request.businessName() != null) business.setBusinessName(request.businessName());
+        if (request.ownerName() != null) business.setOwnerName(request.ownerName());
+        if (request.email() != null) business.setEmail(request.email());
+        if (request.contactNumber() != null) business.setContactNumber(request.contactNumber());
+        if (request.businessAddress() != null) business.setBusinessAddress(request.businessAddress());
+        if (request.description() != null) business.setDescription(request.description());
+        if (request.city() != null) business.setCity(request.city());
+        if (request.panNumber() != null) business.setPanNumber(request.panNumber());
+
+        return bRepo.save(business);
+    }
+
+    // Get business by user ID
+    public Business getBusinessByUserId(String userId) {
+        User user = uRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return bRepo.findByUser(user)
+                .orElseThrow(() -> new ResourceNotFoundException("Business not found for user"));
     }
 
 }

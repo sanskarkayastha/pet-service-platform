@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./addServiceModal.module.css";
 import { X, Plus, Trash2 } from "lucide-react";
+import apiClient from "@/lib/api-client";
 
 interface AddOn {
   title: string;
@@ -19,20 +20,67 @@ interface ServiceForm {
   addOns: AddOn[];
 }
 
+interface Service {
+  id: number;
+  title: string;
+  description: string;
+  durationMinutes: number;
+  price: number;
+  category: string;
+  addons: Array<{
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+  }>;
+}
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  companyType?: string;
+  editingService?: Service | null;
 }
 
-export default function AddServiceModal({ isOpen, onClose }: Props) {
+export default function AddServiceModal({ isOpen, onClose, companyType, editingService }: Props) {
   const [form, setForm] = useState<ServiceForm>({
-    title: "",
-    shortDescription: "",
-    detailedDescription: "",
-    duration: "",
-    basePrice: "",
-    addOns: [{ title: "", description: "", price: "" }],
+    title: editingService?.title || "",
+    shortDescription: editingService?.description || "",
+    detailedDescription: editingService?.description || "",
+    duration: editingService?.durationMinutes?.toString() || "",
+    basePrice: editingService?.price?.toString() || "",
+    addOns: editingService?.addons?.map(a => ({
+      title: a.name,
+      description: a.description,
+      price: a.price.toString()
+    })) || [{ title: "", description: "", price: "" }],
   });
+
+  useEffect(() => {
+    if (editingService) {
+      setForm({
+        title: editingService.title,
+        shortDescription: editingService.description,
+        detailedDescription: editingService.description,
+        duration: editingService.durationMinutes.toString(),
+        basePrice: editingService.price.toString(),
+        addOns: editingService.addons?.map(a => ({
+          title: a.name,
+          description: a.description,
+          price: a.price.toString()
+        })) || [{ title: "", description: "", price: "" }],
+      });
+    } else {
+      setForm({
+        title: "",
+        shortDescription: "",
+        detailedDescription: "",
+        duration: "",
+        basePrice: "",
+        addOns: [{ title: "", description: "", price: "" }],
+      });
+    }
+  }, [editingService, isOpen]);
 
   if (!isOpen) return null;
 
@@ -65,23 +113,47 @@ export default function AddServiceModal({ isOpen, onClose }: Props) {
   };
 
   /* ------------------ SAVE ------------------ */
-  const handleSave = () => {
-    const cleanedAddOns = form.addOns.filter((a) => a.title.trim() !== "");
+  const handleSave = async () => {
+    try {
+      const cleanedAddOns = form.addOns.filter((a) => a.title.trim() !== "");
 
-    const payload = {
-      ...form,
-      basePrice: Number(form.basePrice),
-      addOns: cleanedAddOns.map((a) => ({
-        ...a,
-        price: Number(a.price),
-      })),
-    };
+      // Get business ID first
+      const businessResponse = await apiClient.get("/api/business/management/my-business");
+      const businessId = businessResponse.data.id;
 
-    console.log("SERVICE PAYLOAD:", payload);
+      // Map category based on companyType
+      const categoryMap: Record<string, string> = {
+        grooming: "GROOMING",
+        vet: "VETERINARY",
+        hostel: "HOSTEL",
+      };
+      const category = categoryMap[companyType || ""] || "GROOMING";
 
-    // 👉 SEND TO BACKEND HERE
+      const payload = {
+        businessId: businessId,
+        category: category,
+        title: form.title,
+        durationMinutes: parseInt(form.duration) || 60,
+        description: form.detailedDescription || form.shortDescription,
+        price: Number(form.basePrice),
+        addons: cleanedAddOns.map((a) => ({
+          name: a.title,
+          description: a.description,
+          price: Number(a.price),
+        })),
+      };
 
-    onClose();
+      if (editingService) {
+        await apiClient.put(`/api/services/management/${editingService.id}`, payload);
+      } else {
+        await apiClient.post("/api/services/management/create", payload);
+      }
+
+      onClose();
+    } catch (error: any) {
+      console.error("Failed to save service:", error);
+      alert("Failed to save service: " + (error.response?.data?.message || error.message));
+    }
   };
 
   return (
@@ -90,7 +162,7 @@ export default function AddServiceModal({ isOpen, onClose }: Props) {
         {/* HEADER */}
         <div className={styles.header}>
           <div>
-            <h2>Add New Service</h2>
+            <h2>{editingService ? "Edit Service" : "Add New Service"}</h2>
             <p>This service will be visible to customers during booking</p>
           </div>
           <button onClick={onClose} className={styles.closeBtn}>
@@ -205,7 +277,7 @@ export default function AddServiceModal({ isOpen, onClose }: Props) {
             Cancel
           </button>
           <button className={styles.saveBtn} onClick={handleSave}>
-            Save Service
+            {editingService ? "Update Service" : "Save Service"}
           </button>
         </div>
       </div>
