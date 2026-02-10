@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.dto.BusinessDTO;
 import com.example.demo.dto.BusinessResponseDTO;
 import com.example.demo.exceptions.ResourceNotFoundException;
+import com.example.demo.exceptions.BusinessAlreadyExistsException;
 import com.example.demo.model.Business;
 import com.example.demo.model.BusinessStatus;
 import com.example.demo.model.CategoryType;
@@ -42,10 +43,17 @@ public class BusinessServices {
             return null;
 
         } else {
+            User existingUser = user.get();
+
+            // If this user already has a business, prevent creating another one
+            if (bRepo.findByUser(existingUser).isPresent()) {
+                throw new BusinessAlreadyExistsException("Business already exists for this user");
+            }
+
             Business business = new Business();
 
             // adding values to the busineess object
-            business.setUser(user.get());
+            business.setUser(existingUser);
             business.setBusinessName(dto.businessName());
             business.setOwnerName(dto.ownerName());
             business.setEmail(dto.email());
@@ -54,6 +62,13 @@ public class BusinessServices {
             business.setDescription(dto.description());
             business.setCity(dto.city());
             business.setPanNumber(dto.panNumber());
+            // set location (may be null if not provided)
+            if (dto.latitude() != null) {
+                business.setLatitude(dto.latitude());
+            }
+            if (dto.longitude() != null) {
+                business.setLongitude(dto.longitude());
+            }
 
             // setting category type
             CategoryType category = CategoryType.valueOf(dto.category());
@@ -71,9 +86,9 @@ public class BusinessServices {
             business.setVerificationDoc(verificationDocUrl);
 
             // update users role to business
-            user.get().setRole("business");
+            existingUser.setRole("business");
 
-            uRepo.save(user.get());
+            uRepo.save(existingUser);
             bRepo.save(business);
             return business;
         }
@@ -83,7 +98,7 @@ public class BusinessServices {
     // this is to display cards so we don't need everything but only few things and
     // the main image
     public List<BusinessResponseDTO> getAllBusinesses() {
-        return bRepo.findAll()
+        return bRepo.findAllWithUser()
                 .stream()
                 .map(business -> toResponseDTO(business))
                 .toList();
@@ -142,4 +157,29 @@ public class BusinessServices {
         business.setRejectionMessage(rejectMsg);
         return bRepo.save(business);
     }
+    // Update business information
+    public Business updateBusiness(Long businessId, com.example.demo.dto.BusinessUpdateRequest request) {
+        Business business = bRepo.findById(businessId)
+                .orElseThrow(() -> new ResourceNotFoundException("Business not found"));
+
+        if (request.businessName() != null) business.setBusinessName(request.businessName());
+        if (request.ownerName() != null) business.setOwnerName(request.ownerName());
+        if (request.email() != null) business.setEmail(request.email());
+        if (request.contactNumber() != null) business.setContactNumber(request.contactNumber());
+        if (request.businessAddress() != null) business.setBusinessAddress(request.businessAddress());
+        if (request.description() != null) business.setDescription(request.description());
+        if (request.city() != null) business.setCity(request.city());
+        if (request.panNumber() != null) business.setPanNumber(request.panNumber());
+
+        return bRepo.save(business);
+    }
+
+    // Get business by user ID
+    public Business getBusinessByUserId(String userId) {
+        User user = uRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return bRepo.findByUser(user)
+                .orElseThrow(() -> new ResourceNotFoundException("Business not found for user"));
+    }
+
 }

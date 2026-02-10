@@ -3,30 +3,97 @@
 import { useState, useEffect } from "react";
 import { useParams, notFound } from "next/navigation";
 import { Search, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import styles from "./page.module.css";
 import AddServiceModal from "./components/AddServiceModal";
 import { CompanyType } from "./config";
-import { DASHBOARD_CONFIG } from "./dashboardConfig";
+import apiClient from "@/lib/api-client";
+
+interface Booking {
+  id: number;
+  customerName: string;
+  petName: string;
+  serviceTitle: string;
+  bookingDateTime: string;
+  status: string;
+  totalPrice: number;
+}
 
 export default function AdminDashboard() {
   const params = useParams();
+  const router = useRouter();
   const companyType = params.companyType as CompanyType | undefined;
 
-  const dashboard = companyType ? DASHBOARD_CONFIG[companyType] : undefined;
-
-  // 🔍 Debug
-  useEffect(() => {
-    console.log("companyType:", companyType);
-    console.log("dashboard config:", dashboard);
-  }, [companyType, dashboard]);
-
-  if (!companyType || !dashboard) {
+  if (!companyType) {
     notFound();
   }
 
   const [searchQuery, setSearchQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    todayBookings: 0,
+    pending: 0,
+    revenue: 0,
+  });
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      const [bookingsResponse] = await Promise.all([
+        apiClient.get("/api/bookings/my-bookings"),
+      ]);
+
+      const allBookings = bookingsResponse.data;
+      setBookings(allBookings.slice(0, 5)); // Show latest 5
+
+      // Calculate stats
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayBookings = allBookings.filter((b: Booking) => {
+        const bookingDate = new Date(b.bookingDateTime);
+        return bookingDate >= today;
+      }).length;
+
+      const pending = allBookings.filter((b: Booking) => b.status === "PENDING").length;
+      const revenue = allBookings
+        .filter((b: Booking) => b.status === "COMPLETED")
+        .reduce((sum: number, b: Booking) => sum + b.totalPrice, 0);
+
+      setStats({
+        todayBookings,
+        pending,
+        revenue,
+      });
+    } catch (error) {
+      console.error("Failed to load dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDateTime = (dateTime: string) => {
+    const date = new Date(dateTime);
+    return date.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  if (loading) {
+    return (
+      <main className={styles.mainContent}>
+        <p>Loading...</p>
+      </main>
+    );
+  }
 
   return (
     <main className={styles.mainContent}>
@@ -46,99 +113,113 @@ export default function AdminDashboard() {
       {/* Page Header */}
       <div className={styles.pageHeader}>
         <div className={styles.pageTitle}>
-          <h1>{dashboard.title}</h1>
-          <p>{dashboard.description}</p>
+          <h1>Dashboard</h1>
+          <p>Overview of your business</p>
         </div>
 
         <div className={styles.actionButtons}>
-          <button className={styles.btnOutline} onClick={() => setOpen(true)}>
+          <button
+            className={styles.btnOutline}
+            onClick={() => router.push(`/admin/${companyType}/services`)}
+          >
             <Plus size={18} />
-            Add Service
+            Manage Services
           </button>
-          <button className={styles.btnPrimary}>
-            <Plus size={18} />
-            New Booking
+          <button
+            className={styles.btnPrimary}
+            onClick={() => router.push(`/admin/${companyType}/orders`)}
+          >
+            View Orders
           </button>
         </div>
       </div>
-
-      <AddServiceModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        companyType={companyType}
-      />
 
       {/* Stats */}
       <div className={styles.statsGrid}>
-        {dashboard.stats.map((stat, index) => (
-          <div
-            key={index}
-            className={`${styles.statCard} ${styles[`stat${stat.type}`]}`}
-          >
-            <div className={styles.statLabel}>{stat.label}</div>
-            <div className={styles.statValue}>{stat.value}</div>
-            <div className={styles.statChange}>{stat.change}</div>
-          </div>
-        ))}
+        <div className={`${styles.statCard} ${styles.statpurple}`}>
+          <div className={styles.statLabel}>Today's Bookings</div>
+          <div className={styles.statValue}>{stats.todayBookings}</div>
+          <div className={styles.statChange}>Scheduled for today</div>
+        </div>
+        <div className={`${styles.statCard} ${styles.statorange}`}>
+          <div className={styles.statLabel}>Pending</div>
+          <div className={styles.statValue}>{stats.pending}</div>
+          <div className={styles.statChange}>Needs approval</div>
+        </div>
+        <div className={`${styles.statCard} ${styles.statgreen}`}>
+          <div className={styles.statLabel}>Total Revenue</div>
+          <div className={styles.statValue}>Rs {stats.revenue.toLocaleString()}</div>
+          <div className={styles.statChange}>From completed bookings</div>
+        </div>
       </div>
 
-      {/* Bookings */}
+      {/* Recent Bookings */}
       <div className={styles.bookingsSection}>
         <div className={styles.sectionHeader}>
-          <h2>All Bookings</h2>
+          <h2>Recent Bookings</h2>
+          <button
+            className={styles.btnOutline}
+            onClick={() => router.push(`/admin/${companyType}/orders`)}
+            style={{ fontSize: "14px", padding: "6px 12px" }}
+          >
+            View All
+          </button>
         </div>
 
         <p className={styles.totalCount}>
-          {dashboard.bookings.length} total bookings
+          {bookings.length} recent bookings
         </p>
 
-        {dashboard.bookings.map((booking) => (
-          <div key={booking.id} className={styles.bookingCard}>
-            <div className={styles.bookingHeader}>
-              <div className={styles.bookingId}>
-                <span>{booking.id}</span>
-                <span className={styles.statusBadge}>{booking.status}</span>
-              </div>
-              <div className={styles.bookingPrice}>{booking.price}</div>
-            </div>
-
-            <div className={styles.bookingDetails}>
-              <div className={styles.detailItem}>
-                <h4>CUSTOMER</h4>
-                <p>{booking.customer}</p>
-              </div>
-
-              {booking.pet && (
-                <div className={styles.detailItem}>
-                  <h4>PET</h4>
-                  <p>{booking.pet}</p>
+        {bookings.length === 0 ? (
+          <p style={{ textAlign: "center", color: "#999", padding: "40px" }}>
+            No bookings yet.
+          </p>
+        ) : (
+          bookings.map((booking) => (
+            <div key={booking.id} className={styles.bookingCard}>
+              <div className={styles.bookingHeader}>
+                <div className={styles.bookingId}>
+                  <span>#{booking.id}</span>
+                  <span className={styles.statusBadge}>{booking.status}</span>
                 </div>
-              )}
-
-              <div className={styles.detailItem}>
-                <h4>SERVICE</h4>
-                <p>{booking.service}</p>
+                <div className={styles.bookingPrice}>Rs {booking.totalPrice}</div>
               </div>
 
-              <div className={styles.detailItem}>
-                <h4>DATE & TIME</h4>
-                <p>{booking.dateTime}</p>
+              <div className={styles.bookingDetails}>
+                <div className={styles.detailItem}>
+                  <h4>CUSTOMER</h4>
+                  <p>{booking.customerName}</p>
+                </div>
+
+                {booking.petName && (
+                  <div className={styles.detailItem}>
+                    <h4>PET</h4>
+                    <p>{booking.petName}</p>
+                  </div>
+                )}
+
+                <div className={styles.detailItem}>
+                  <h4>SERVICE</h4>
+                  <p>{booking.serviceTitle}</p>
+                </div>
+
+                <div className={styles.detailItem}>
+                  <h4>DATE & TIME</h4>
+                  <p>{formatDateTime(booking.bookingDateTime)}</p>
+                </div>
+              </div>
+
+              <div className={styles.bookingActions}>
+                <button
+                  className={`${styles.btnAction} ${styles.btnView}`}
+                  onClick={() => router.push(`/admin/${companyType}/orders`)}
+                >
+                  👁 View Details
+                </button>
               </div>
             </div>
-
-            <div className={styles.bookingActions}>
-              <button className={`${styles.btnAction} ${styles.btnApprove}`}>
-                ✓ Approve
-              </button>
-              <button className={`${styles.btnAction} ${styles.btnView}`}>
-                👁 View Details
-              </button>
-              <button className={`${styles.btnAction} ${styles.btnCancel}`}>
-                ✕ Cancel
-              </button>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </main>
   );

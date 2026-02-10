@@ -183,7 +183,9 @@ const LOCATION_DATA = {
    COMPONENT
 ===================== */
 
-const Page = () => {
+const Page = async ({ params }: { params: Promise<{ userId: string }> }) => {
+  const { userId } = await params;
+  
   return (
     <div className={styles.container}>
       {/* Header Section */}
@@ -217,8 +219,23 @@ const Page = () => {
 
       {/* Services Section */}
       <section className={styles.services}>
-        <h2>Our Services</h2>
-        <Services />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+          <h2>Our Services</h2>
+          <a
+            href={`/users/petServices/grooming/detail/${userId}/booking`}
+            style={{
+              padding: "10px 20px",
+              background: "linear-gradient(135deg, #9c27b0, #7b1fa2)",
+              color: "white",
+              textDecoration: "none",
+              borderRadius: "8px",
+              fontWeight: "500",
+            }}
+          >
+            Book a Service
+          </a>
+        </div>
+        <Services userId={userId} />
       </section>
 
       <hr className={styles.divider} />

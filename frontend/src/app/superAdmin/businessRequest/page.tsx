@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import apiClient from "@/lib/api-client";
+import { authClient } from "@/lib/auth-client";
 import StatCard from "../../../components/StatCard";
 import BusinessRequestCard from "../../../components/BusinessRequestCard";
 import ModalBusinessDetails from "../../../components/ModalBusinessDetails";
@@ -29,9 +30,19 @@ const BusinessRequestsPage: React.FC = () => {
   useEffect(() => {
     const getPendingBusiness = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:8080/api/business/getPendingBusiness"
-        );
+        // Debug: Check if token is available
+        try {
+          const token = await authClient.token();
+          console.log("JWT Token available:", token ? "Yes" : "No");
+          if (token) {
+            console.log("Token preview:", token.substring(0, 20) + "...");
+          }
+        } catch (tokenError) {
+          console.error("Failed to get token:", tokenError);
+        }
+
+        // Use authenticated API client - automatically adds JWT token
+        const res = await apiClient.get("/api/business/getPendingBusiness");
 
         // axios automatically gives data
         const data = res.data;
@@ -44,8 +55,18 @@ const BusinessRequestsPage: React.FC = () => {
         } else {
           setRequests([]);
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("Failed to fetch businesses", err);
+        if (err.response) {
+          console.error("Response status:", err.response.status);
+          console.error("Response data:", err.response.data);
+          if (err.response.status === 403) {
+            console.error("403 Forbidden - Check:");
+            console.error("1. User role in database should be 'admin'");
+            console.error("2. JWT_SECRET must match in frontend and backend");
+            console.error("3. User must exist in database");
+          }
+        }
       }
     };
 

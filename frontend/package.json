@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "auth:migrate": "npx @better-auth/cli migrate"
   },
   "dependencies": {
     "axios": "^1.13.4",

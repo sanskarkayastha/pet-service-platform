@@ -1,4 +1,6 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import Sidebar from "./components/sidebar";
 import styles from "./layout.module.css";
 import { CompanyType, SERVICE_CONFIG } from "./config";
@@ -10,6 +12,22 @@ export default async function Layout({
   children: React.ReactNode;
   params: Promise<{ companyType: CompanyType }>;
 }) {
+  // Check session and role
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  // If not logged in, redirect to login
+  if (!session) {
+    redirect("/users/login");
+  }
+
+  // Check if user has business role
+  const userRole = session.user.role?.toLowerCase();
+  if (userRole !== "business") {
+    redirect("/unauthorized");
+  }
+
   // ✅ unwrap params
   const { companyType } = await params;
 
