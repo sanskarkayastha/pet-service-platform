@@ -12,11 +12,15 @@ public class BusinessMapper {
     }
 
     public static BusinessResponseDTO toResponseDTO(Business business) {
-
-        List<String> category = business.getCategory().stream().map(oldCategory -> String.valueOf(oldCategory))
-                .toList();
+        // Safely get user ID - user should be eagerly fetched
+        String userId = business.getUser() != null ? business.getUser().getId() : null;
+        
+        List<String> category = business.getCategory() != null 
+            ? business.getCategory().stream().map(oldCategory -> String.valueOf(oldCategory)).toList()
+            : List.of();
+            
         return new BusinessResponseDTO(
-                business.getUser().getId(),
+                userId,
                 business.getBusinessName(),
                 business.getOwnerName(),
                 business.getEmail(),
@@ -26,6 +30,6 @@ public class BusinessMapper {
                 business.getCity(),
                 business.getPanNumber(),
                 category,
-                business.getVerificationDoc());
+                business.getBusinessLogo() != null ? business.getBusinessLogo() : business.getVerificationDoc());
     }
 }

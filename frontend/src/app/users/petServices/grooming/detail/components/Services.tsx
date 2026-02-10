@@ -1,6 +1,5 @@
-
-// "use client";
-// import React, { useEffect, useMemo, useState } from "react";
+"use client";
+import React, { useEffect, useMemo, useState } from "react";
 // import styles from "../services.module.css";
 // import { CheckCircle2, X, Clock } from "lucide-react";
 // import BookingSummary from "../components/BookingSummary";
@@ -269,7 +268,7 @@
 // FILE: Services.tsx
 // ============================================
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { CheckCircle2, Clock } from "lucide-react";
 import styles from "../services.module.css";
 import ServiceTabs, { ServiceTab } from "../components/ServiceTabs";
@@ -355,17 +354,63 @@ const AVAILABLE_TABS: ServiceTab[] = [
   { key: "boarding", label: "Pet Hostel" }
 ];
 
-export default function Services() {
+export default function Services({ userId }: { userId?: string }) {
   const [activeCategory, setActiveCategory] = useState<string>(AVAILABLE_TABS[0].key);
   const [selectedServiceIds, setSelectedServiceIds] = useState<number[]>([]);
   const [bookingItems, setBookingItems] = useState<BookingItem[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalService, setModalService] = useState<Service | null>(null);
+  const [realServices, setRealServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const services = useMemo(
-    () => SERVICES.filter((s) => s.category === activeCategory),
-    [activeCategory]
-  );
+  useEffect(() => {
+    if (userId) {
+      loadRealServices();
+    }
+  }, [userId]);
+
+  const loadRealServices = async () => {
+    if (!userId) return;
+    setLoading(true);
+    try {
+      // Get business by user ID
+      const businessRes = await fetch(`http://localhost:8080/api/business/by-user/${userId}`);
+      const business = await businessRes.json();
+      
+      // Get services for this business
+      const servicesRes = await fetch(`http://localhost:8080/api/services/business/${business.id}`);
+      const servicesData = await servicesRes.json();
+      
+      // Map to Service format
+      const mapped: Service[] = servicesData.map((s: any) => ({
+        id: s.id,
+        category: s.category.toLowerCase(),
+        title: s.title,
+        duration: `${s.durationMinutes} mins`,
+        description: s.description,
+        price: s.price,
+        addons: s.addons?.map((a: any) => ({
+          id: a.id,
+          name: a.name,
+          description: a.description,
+          price: a.price,
+        })) || [],
+      }));
+      
+      setRealServices(mapped);
+    } catch (error) {
+      console.error("Failed to load services:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const services = useMemo(() => {
+    if (realServices.length > 0) {
+      return realServices.filter((s) => s.category === activeCategory);
+    }
+    return SERVICES.filter((s) => s.category === activeCategory);
+  }, [activeCategory, realServices]);
 
   const toggleServiceSelect = (service: Service) => {
     const exists = selectedServiceIds.includes(service.id);

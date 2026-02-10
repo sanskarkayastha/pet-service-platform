@@ -5,10 +5,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.security.CurrentUser;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +24,8 @@ public class UserController {
     private UserRepository userRepository;
 
     @GetMapping("/getAllUsers")
-    public List<User> getAllUsers() {
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<User> getAllUsers(@CurrentUser User currentUser) {
         return userRepository.findAll();
     }
 
