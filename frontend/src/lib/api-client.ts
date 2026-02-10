@@ -13,10 +13,13 @@ const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     try {
-      // Get JWT token from better-auth (if available)
-      // If no session, token() will return null/undefined, which is fine for public endpoints
-      const token = await authClient.token();
-      
+      const result = await authClient.token();
+      const token = result && typeof result === "object" && "token" in result
+        ? (result as { token: string }).token
+        : typeof result === "string"
+          ? result
+          : null;
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

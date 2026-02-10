@@ -38,22 +38,28 @@ interface Service {
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  companyType?: string;
+  category: string;
   editingService?: Service | null;
 }
 
-export default function AddServiceModal({ isOpen, onClose, companyType, editingService }: Props) {
+export default function AddServiceModal({
+  isOpen,
+  onClose,
+  category,
+  editingService,
+}: Props) {
   const [form, setForm] = useState<ServiceForm>({
     title: editingService?.title || "",
     shortDescription: editingService?.description || "",
     detailedDescription: editingService?.description || "",
     duration: editingService?.durationMinutes?.toString() || "",
     basePrice: editingService?.price?.toString() || "",
-    addOns: editingService?.addons?.map(a => ({
-      title: a.name,
-      description: a.description,
-      price: a.price.toString()
-    })) || [{ title: "", description: "", price: "" }],
+    addOns:
+      editingService?.addons?.map((a) => ({
+        title: a.name,
+        description: a.description,
+        price: a.price.toString(),
+      })) || [{ title: "", description: "", price: "" }],
   });
 
   useEffect(() => {
@@ -64,11 +70,12 @@ export default function AddServiceModal({ isOpen, onClose, companyType, editingS
         detailedDescription: editingService.description,
         duration: editingService.durationMinutes.toString(),
         basePrice: editingService.price.toString(),
-        addOns: editingService.addons?.map(a => ({
-          title: a.name,
-          description: a.description,
-          price: a.price.toString()
-        })) || [{ title: "", description: "", price: "" }],
+        addOns:
+          editingService.addons?.map((a) => ({
+            title: a.name,
+            description: a.description,
+            price: a.price.toString(),
+          })) || [{ title: "", description: "", price: "" }],
       });
     } else {
       setForm({
@@ -84,19 +91,17 @@ export default function AddServiceModal({ isOpen, onClose, companyType, editingS
 
   if (!isOpen) return null;
 
-  /* ------------------ BASIC FIELD HANDLER ------------------ */
   const handleChange = (field: keyof ServiceForm, value: string) => {
     setForm({ ...form, [field]: value });
   };
 
-  /* ------------------ ADD-ON HANDLERS ------------------ */
   const handleAddOnChange = (
     index: number,
     field: keyof AddOn,
-    value: string,
+    value: string
   ) => {
     const updated = [...form.addOns];
-    updated[index][field] = value;
+    updated[index] = { ...updated[index], [field]: value };
     setForm({ ...form, addOns: updated });
   };
 
@@ -112,26 +117,18 @@ export default function AddServiceModal({ isOpen, onClose, companyType, editingS
     setForm({ ...form, addOns: updated });
   };
 
-  /* ------------------ SAVE ------------------ */
   const handleSave = async () => {
     try {
       const cleanedAddOns = form.addOns.filter((a) => a.title.trim() !== "");
 
-      // Get business ID first
-      const businessResponse = await apiClient.get("/api/business/management/my-business");
+      const businessResponse = await apiClient.get(
+        "/api/business/management/my-business"
+      );
       const businessId = businessResponse.data.id;
 
-      // Map category based on companyType
-      const categoryMap: Record<string, string> = {
-        grooming: "GROOMING",
-        vet: "VETERINARY",
-        hostel: "HOSTEL",
-      };
-      const category = categoryMap[companyType || ""] || "GROOMING";
-
       const payload = {
-        businessId: businessId,
-        category: category,
+        businessId,
+        category: category || "GROOMING",
         title: form.title,
         durationMinutes: parseInt(form.duration) || 60,
         description: form.detailedDescription || form.shortDescription,
@@ -144,22 +141,28 @@ export default function AddServiceModal({ isOpen, onClose, companyType, editingS
       };
 
       if (editingService) {
-        await apiClient.put(`/api/services/management/${editingService.id}`, payload);
+        await apiClient.put(
+          `/api/services/management/${editingService.id}`,
+          payload
+        );
       } else {
         await apiClient.post("/api/services/management/create", payload);
       }
 
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to save service:", error);
-      alert("Failed to save service: " + (error.response?.data?.message || error.message));
+      const err = error as { response?: { data?: { message?: string } }; message?: string };
+      alert(
+        "Failed to save service: " +
+          (err.response?.data?.message || err.message || "Unknown error")
+      );
     }
   };
 
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        {/* HEADER */}
         <div className={styles.header}>
           <div>
             <h2>{editingService ? "Edit Service" : "Add New Service"}</h2>
@@ -170,7 +173,6 @@ export default function AddServiceModal({ isOpen, onClose, companyType, editingS
           </button>
         </div>
 
-        {/* BODY */}
         <div className={styles.body}>
           <h4>BASIC SERVICE INFORMATION</h4>
 
@@ -203,9 +205,9 @@ export default function AddServiceModal({ isOpen, onClose, companyType, editingS
 
           <div className={styles.row}>
             <div>
-              <label>Estimated Duration</label>
+              <label>Estimated Duration (minutes)</label>
               <input
-                placeholder="e.g., 2-3 hours"
+                placeholder="e.g., 60"
                 value={form.duration}
                 onChange={(e) => handleChange("duration", e.target.value)}
               />
@@ -251,7 +253,7 @@ export default function AddServiceModal({ isOpen, onClose, companyType, editingS
                   handleAddOnChange(
                     index,
                     "price",
-                    e.target.value.replace(/\D/g, ""),
+                    e.target.value.replace(/\D/g, "")
                   )
                 }
               />
@@ -271,7 +273,6 @@ export default function AddServiceModal({ isOpen, onClose, companyType, editingS
           </button>
         </div>
 
-        {/* FOOTER */}
         <div className={styles.footer}>
           <button className={styles.cancelBtn} onClick={onClose}>
             Cancel

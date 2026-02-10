@@ -124,35 +124,37 @@ public class BusinessServices {
     }
 
     public Business approveBusiness(String userId) {
-
         User user = uRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
-
-
         Business business = bRepo.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Business not found"));
+        return approveBusiness(business.getId());
+    }
 
+    public Business approveBusiness(Long businessId) {
+        Business business = bRepo.findById(businessId)
+                .orElseThrow(() -> new ResourceNotFoundException("Business not found: " + businessId));
         if (business.getStatus() == BusinessStatus.APPROVED) {
-            return business; // already approved, no-op
+            return business;
         }
-
         business.setStatus(BusinessStatus.APPROVED);
         return bRepo.save(business);
     }
 
     public Business rejectBusiness(String userId, String rejectMsg) {
-
         User user = uRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
-
-
         Business business = bRepo.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Business not found"));
+        return rejectBusiness(business.getId(), rejectMsg);
+    }
 
+    public Business rejectBusiness(Long businessId, String rejectMsg) {
+        Business business = bRepo.findById(businessId)
+                .orElseThrow(() -> new ResourceNotFoundException("Business not found: " + businessId));
         if (business.getStatus() == BusinessStatus.APPROVED) {
-            return business; // already approved, no-op
+            return business;
         }
-
         business.setStatus(BusinessStatus.REJECTED);
         business.setRejectionMessage(rejectMsg);
         return bRepo.save(business);
@@ -180,6 +182,12 @@ public class BusinessServices {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return bRepo.findByUser(user)
                 .orElseThrow(() -> new ResourceNotFoundException("Business not found for user"));
+    }
+
+    // Get business by business ID
+    public Business getBusinessById(Long businessId) {
+        return bRepo.findById(businessId)
+                .orElseThrow(() -> new ResourceNotFoundException("Business not found: " + businessId));
     }
 
 }

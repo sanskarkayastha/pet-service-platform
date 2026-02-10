@@ -11,7 +11,7 @@ export default function PaymentPage() {
     <div className={styles.backgroundColor}>
         <div className={styles.wrapper}>
         {/* Top Back */}
-        <Link href="/services/grooming/detail/receipt" className={styles.backBtn}>
+        <Link href="/users/petServices/grooming/detail/receipt" className={styles.backBtn}>
             <ArrowLeft size={20} /> Back to Receipt
         </Link>
 

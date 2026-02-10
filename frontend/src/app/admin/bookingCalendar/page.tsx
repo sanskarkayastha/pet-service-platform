@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Sidebar from "../groomingAdmin/components/Sidebar";
 import styles from "./page.module.css";
 
 export default function BookingCalendarPage() {
@@ -23,8 +22,6 @@ export default function BookingCalendarPage() {
 
   return (
     <div className={styles.layout}>
-      <Sidebar />
-
       <main className={styles.main}>
         {/* TOP BAR */}
         <div className={styles.topBar}>

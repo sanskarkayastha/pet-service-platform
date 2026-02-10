@@ -20,6 +20,7 @@ public class BusinessMapper {
             : List.of();
             
         return new BusinessResponseDTO(
+                business.getId(),
                 userId,
                 business.getBusinessName(),
                 business.getOwnerName(),

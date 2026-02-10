@@ -119,6 +119,13 @@ public class BookingService {
         return toResponseDTO(booking);
     }
 
+    public List<BookingResponseDTO> getBookingsByUser(String userId) {
+        List<Booking> bookings = bookingRepository.findByUser_Id(userId);
+        return bookings.stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
     private BookingResponseDTO toResponseDTO(Booking booking) {
         List<BookingResponseDTO.AddonResponse> addons = booking.getSelectedAddons() != null
                 ? booking.getSelectedAddons().stream()

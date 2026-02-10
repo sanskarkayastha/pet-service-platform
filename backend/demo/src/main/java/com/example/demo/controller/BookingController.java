@@ -80,9 +80,8 @@ public class BookingController {
     @GetMapping("/my-orders")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<BookingResponseDTO>> getMyOrders(@CurrentUser User currentUser) {
-        // This would need a method in BookingService to get by user
-        // For now, returning empty list - can be implemented later
-        return ResponseEntity.ok(List.of());
+        List<BookingResponseDTO> bookings = bookingService.getBookingsByUser(currentUser.getId());
+        return ResponseEntity.ok(bookings);
     }
 
     public record BookingStatusUpdateRequest(BookingStatus status) {}

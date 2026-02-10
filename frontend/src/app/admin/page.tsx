@@ -1,13 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, notFound } from "next/navigation";
 import { Search, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-
 import styles from "./page.module.css";
-import AddServiceModal from "./components/AddServiceModal";
-import { CompanyType } from "./config";
 import apiClient from "@/lib/api-client";
 
 interface Booking {
@@ -21,16 +17,8 @@ interface Booking {
 }
 
 export default function AdminDashboard() {
-  const params = useParams();
   const router = useRouter();
-  const companyType = params.companyType as CompanyType | undefined;
-
-  if (!companyType) {
-    notFound();
-  }
-
   const [searchQuery, setSearchQuery] = useState("");
-  const [open, setOpen] = useState(false);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -45,14 +33,11 @@ export default function AdminDashboard() {
 
   const loadDashboardData = async () => {
     try {
-      const [bookingsResponse] = await Promise.all([
-        apiClient.get("/api/bookings/my-bookings"),
-      ]);
-
+      const bookingsResponse = await apiClient.get("/api/bookings/my-bookings");
       const allBookings = bookingsResponse.data;
-      setBookings(allBookings.slice(0, 5)); // Show latest 5
 
-      // Calculate stats
+      setBookings(allBookings.slice(0, 5));
+
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const todayBookings = allBookings.filter((b: Booking) => {
@@ -65,11 +50,7 @@ export default function AdminDashboard() {
         .filter((b: Booking) => b.status === "COMPLETED")
         .reduce((sum: number, b: Booking) => sum + b.totalPrice, 0);
 
-      setStats({
-        todayBookings,
-        pending,
-        revenue,
-      });
+      setStats({ todayBookings, pending, revenue });
     } catch (error) {
       console.error("Failed to load dashboard data:", error);
     } finally {
@@ -97,47 +78,43 @@ export default function AdminDashboard() {
 
   return (
     <main className={styles.mainContent}>
-      {/* Search */}
       <div className={styles.header}>
         <div className={styles.searchBar}>
           <Search size={18} />
           <input
             type="text"
-            placeholder={`Search ${dashboard.title.toLowerCase()}...`}
+            placeholder="Search bookings..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
 
-      {/* Page Header */}
       <div className={styles.pageHeader}>
         <div className={styles.pageTitle}>
           <h1>Dashboard</h1>
           <p>Overview of your business</p>
         </div>
-
         <div className={styles.actionButtons}>
           <button
             className={styles.btnOutline}
-            onClick={() => router.push(`/admin/${companyType}/services`)}
+            onClick={() => router.push("/admin/services")}
           >
             <Plus size={18} />
             Manage Services
           </button>
           <button
             className={styles.btnPrimary}
-            onClick={() => router.push(`/admin/${companyType}/orders`)}
+            onClick={() => router.push("/admin/orders")}
           >
             View Orders
           </button>
         </div>
       </div>
 
-      {/* Stats */}
       <div className={styles.statsGrid}>
         <div className={`${styles.statCard} ${styles.statpurple}`}>
-          <div className={styles.statLabel}>Today's Bookings</div>
+          <div className={styles.statLabel}>Today&apos;s Bookings</div>
           <div className={styles.statValue}>{stats.todayBookings}</div>
           <div className={styles.statChange}>Scheduled for today</div>
         </div>
@@ -153,22 +130,18 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Recent Bookings */}
       <div className={styles.bookingsSection}>
         <div className={styles.sectionHeader}>
           <h2>Recent Bookings</h2>
           <button
             className={styles.btnOutline}
-            onClick={() => router.push(`/admin/${companyType}/orders`)}
+            onClick={() => router.push("/admin/orders")}
             style={{ fontSize: "14px", padding: "6px 12px" }}
           >
             View All
           </button>
         </div>
-
-        <p className={styles.totalCount}>
-          {bookings.length} recent bookings
-        </p>
+        <p className={styles.totalCount}>{bookings.length} recent bookings</p>
 
         {bookings.length === 0 ? (
           <p style={{ textAlign: "center", color: "#999", padding: "40px" }}>
@@ -184,35 +157,30 @@ export default function AdminDashboard() {
                 </div>
                 <div className={styles.bookingPrice}>Rs {booking.totalPrice}</div>
               </div>
-
               <div className={styles.bookingDetails}>
                 <div className={styles.detailItem}>
                   <h4>CUSTOMER</h4>
                   <p>{booking.customerName}</p>
                 </div>
-
                 {booking.petName && (
                   <div className={styles.detailItem}>
                     <h4>PET</h4>
                     <p>{booking.petName}</p>
                   </div>
                 )}
-
                 <div className={styles.detailItem}>
                   <h4>SERVICE</h4>
                   <p>{booking.serviceTitle}</p>
                 </div>
-
                 <div className={styles.detailItem}>
                   <h4>DATE & TIME</h4>
                   <p>{formatDateTime(booking.bookingDateTime)}</p>
                 </div>
               </div>
-
               <div className={styles.bookingActions}>
                 <button
                   className={`${styles.btnAction} ${styles.btnView}`}
-                  onClick={() => router.push(`/admin/${companyType}/orders`)}
+                  onClick={() => router.push("/admin/orders")}
                 >
                   👁 View Details
                 </button>

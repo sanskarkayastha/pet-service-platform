@@ -12,15 +12,25 @@ const BusinessRequestCard: React.FC<Props> = ({ request, onView }) => {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
 
+  const businessId = request.businessId ?? request.id;
+
   // 🔹 Approve API
   const handleApprove = async () => {
     try {
-      await fetch(`http://localhost:8080/api/business/${request.id}/approve`, {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+      const token = await (await import("@/lib/auth-client")).authClient.token();
+      await fetch(`${baseUrl}/api/business/${businessId}/approve`, {
         method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
       setShowApproveModal(false);
+      window.location.reload();
     } catch (err) {
       console.error(err);
+      alert("Failed to approve business");
     }
   };
 
@@ -32,16 +42,22 @@ const BusinessRequestCard: React.FC<Props> = ({ request, onView }) => {
     }
 
     try {
-      await fetch(`http://localhost:8080/api/business/${request.id}/reject`, {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+      const token = await (await import("@/lib/auth-client")).authClient.token();
+      await fetch(`${baseUrl}/api/business/${businessId}/reject`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason: rejectReason }),
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ message: rejectReason }),
       });
-
       setShowRejectModal(false);
       setRejectReason("");
+      window.location.reload();
     } catch (err) {
       console.error(err);
+      alert("Failed to reject business");
     }
   };
 

@@ -7,6 +7,7 @@ import "@/styles/Grooming.css";
 /* ================= TYPES ================= */
 
 interface Business {
+  id: number;
   userId: string;
   businessName: string;
   ownerName: string;
@@ -30,13 +31,6 @@ export default function GroomingPage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(
-    null,
-  );
-  const [showBooking, setShowBooking] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<number | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
-
   /* ================= FETCH BUSINESSES ================= */
 
   useEffect(() => {
@@ -44,9 +38,6 @@ export default function GroomingPage() {
       try {
         // Use authenticated API utility - automatically adds JWT token if available
         const json = await apiGet<Business[]>("/api/business/allBusinesses");
-        console.log("Api is response is following:" + json);
-
-        // assuming ResponseEntity { data: BusinessResponseDTO[] }
         setBusinesses(json);
       } catch (err) {
         console.error("Failed to fetch businesses", err);
@@ -57,8 +48,6 @@ export default function GroomingPage() {
 
     getBusinessData();
   }, []);
-
-  console.log(businesses);
 
   /* ================= FILTER ================= */
 
@@ -84,24 +73,6 @@ export default function GroomingPage() {
       },
     );
   };
-
-  /* ================= MODAL ================= */
-
-  const openModal = (business: Business) => {
-    setSelectedBusiness(business);
-    setShowBooking(false);
-    setSelectedTime(null);
-    setSelectedDate(null);
-    document.body.style.overflow = "hidden";
-  };
-
-  const closeModal = () => {
-    setSelectedBusiness(null);
-    document.body.style.overflow = "auto";
-  };
-
-  const handleDateSelect = (index: number) => setSelectedDate(index);
-  const handleTimeSelect = (time: string) => setSelectedTime(time);
 
   /* ================= UI ================= */
 
@@ -176,7 +147,7 @@ export default function GroomingPage() {
             </p>
           ) : (
             filteredBusinesses.map((business) => (
-              <div className="service-card" key={business.userId}>
+              <div className="service-card" key={business.id}>
                 <div
                   className="card-image"
                   style={{
@@ -189,24 +160,18 @@ export default function GroomingPage() {
                   <div className="description">{business.description}</div>
 
                   <div className="card-meta">
-                    {/* TODO: Add ratings later */}
-                    {/* <div className="rating">⭐ 4.8 (234)</div> */}
-
-                    {/* TODO: Add distance system later */}
-                    {/* <div className="distance">📍 2.3 km</div> */}
-
                     <div>📍 {business.city}</div>
                   </div>
 
                   <div className="card-footer">
-                    <button
+                    <Link
+                      href={`/users/petServices/grooming/detail/${business.id}/booking`}
                       className="btn-book"
-                      onClick={() => openModal(business)}
                     >
                       Book Now
-                    </button>
+                    </Link>
                     <Link
-                      href={`/users/petServices/grooming/detail/${business.userId}`}
+                      href={`/users/petServices/grooming/detail/${business.id}`}
                       className="btn-details"
                     >
                       View Details
@@ -218,45 +183,6 @@ export default function GroomingPage() {
           )}
         </div>
       </div>
-
-      {/* MODAL */}
-      {selectedBusiness && (
-        <div className="modal" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <button className="close-btn" onClick={closeModal}>
-                ×
-              </button>
-              <h2>{selectedBusiness.businessName}</h2>
-
-              {/* TODO: rating system later */}
-              {/* <div className="rating">⭐ 4.8 (234 reviews)</div> */}
-
-              <p>
-                📍 {selectedBusiness.businessAddress}, {selectedBusiness.city}
-              </p>
-            </div>
-
-            <div className="modal-body">
-              <div className="section">
-                <h3>About</h3>
-                <p>{selectedBusiness.description}</p>
-              </div>
-
-              <div className="section">
-                <h3>Contact</h3>
-                <p>👤 Owner: {selectedBusiness.ownerName}</p>
-                <p>📞 {selectedBusiness.contactNumber}</p>
-                <p>📧 {selectedBusiness.email}</p>
-              </div>
-
-              {/* TODO: Services list will come from backend later */}
-              {/* TODO: Booking system integration later */}
-              {/* TODO: Reviews system later */}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

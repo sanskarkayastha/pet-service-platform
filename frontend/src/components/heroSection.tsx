@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import styles from "./../styles/HeroSection.module.css";
 
 const destinations = [
@@ -47,10 +48,10 @@ export default function HeroSection() {
 
           <p className={styles.heroDescription}>{active.description}</p>
 
-          <button className={styles.discoverBtn}>
+          <Link href="/users/petServices/grooming" className={styles.discoverBtn}>
             <span className={styles.btnIcon}>📍</span>
             Discover Location
-          </button>
+          </Link>
         </div>
 
         <div className={styles.cardSliderContainer}>

@@ -38,7 +38,6 @@ export default function WorkingHoursPage() {
       const response = await apiClient.get("/api/working-hours/my-hours");
       const data = response.data;
 
-      // Initialize with all days if empty
       if (data.length === 0) {
         const defaultHours: DayHours[] = DAYS_OF_WEEK.map((day) => ({
           dayOfWeek: day,
@@ -50,10 +49,8 @@ export default function WorkingHoursPage() {
         }));
         setWorkingHours(defaultHours);
       } else {
-        // Map existing hours and fill missing days
-        const existingDays = new Set(data.map((wh: any) => wh.dayOfWeek));
         const allHours: DayHours[] = DAYS_OF_WEEK.map((day) => {
-          const existing = data.find((wh: any) => wh.dayOfWeek === day);
+          const existing = data.find((wh: { dayOfWeek: string }) => wh.dayOfWeek === day);
           if (existing) {
             return {
               dayOfWeek: day,
@@ -75,9 +72,7 @@ export default function WorkingHoursPage() {
         });
         setWorkingHours(allHours);
       }
-    } catch (error) {
-      console.error("Failed to load working hours:", error);
-      // Initialize with defaults
+    } catch {
       const defaultHours: DayHours[] = DAYS_OF_WEEK.map((day) => ({
         dayOfWeek: day,
         startTime: "09:00",
@@ -116,7 +111,7 @@ export default function WorkingHoursPage() {
         })),
       });
       alert("Working hours updated successfully!");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to update working hours:", error);
       alert("Failed to update working hours");
     } finally {
@@ -183,7 +178,14 @@ export default function WorkingHoursPage() {
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "12px", color: "#999", marginBottom: "5px" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "12px",
+                    color: "#999",
+                    marginBottom: "5px",
+                  }}
+                >
                   Start Time
                 </label>
                 <input
@@ -202,7 +204,14 @@ export default function WorkingHoursPage() {
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "12px", color: "#999", marginBottom: "5px" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "12px",
+                    color: "#999",
+                    marginBottom: "5px",
+                  }}
+                >
                   End Time
                 </label>
                 <input
@@ -221,13 +230,22 @@ export default function WorkingHoursPage() {
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "12px", color: "#999", marginBottom: "5px" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "12px",
+                    color: "#999",
+                    marginBottom: "5px",
+                  }}
+                >
                   Break Start
                 </label>
                 <input
                   type="time"
                   value={day.breakStartTime}
-                  onChange={(e) => handleChange(index, "breakStartTime", e.target.value)}
+                  onChange={(e) =>
+                    handleChange(index, "breakStartTime", e.target.value)
+                  }
                   disabled={!day.isAvailable}
                   style={{
                     width: "100%",
@@ -240,13 +258,22 @@ export default function WorkingHoursPage() {
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "12px", color: "#999", marginBottom: "5px" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "12px",
+                    color: "#999",
+                    marginBottom: "5px",
+                  }}
+                >
                   Break End
                 </label>
                 <input
                   type="time"
                   value={day.breakEndTime}
-                  onChange={(e) => handleChange(index, "breakEndTime", e.target.value)}
+                  onChange={(e) =>
+                    handleChange(index, "breakEndTime", e.target.value)
+                  }
                   disabled={!day.isAvailable}
                   style={{
                     width: "100%",

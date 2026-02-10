@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const Footer: React.FC = () => {
   return (
-    <footer className={styles.footer}>
+    <footer className={styles.footer} id="contact">
       <div className={styles.footerTop}>
         <div className={styles.footerSection}>
           <h3>About Us</h3>
@@ -22,16 +22,16 @@ const Footer: React.FC = () => {
           <h3>Quick Links</h3>
           <ul>
             <li>
-              <Link href="/">Home</Link>
+              <Link href="/users">Home</Link>
             </li>
             <li>
-              <Link href="/services">Services</Link>
+              <Link href="/users#services">Services</Link>
             </li>
             <li>
-              <Link href="/gallery">Gallery</Link>
+              <Link href="/users/petServices/grooming">Grooming</Link>
             </li>
             <li>
-              <Link href="/contact">Contact</Link>
+              <Link href="/users#contact">Contact</Link>
             </li>
           </ul>
         </div>

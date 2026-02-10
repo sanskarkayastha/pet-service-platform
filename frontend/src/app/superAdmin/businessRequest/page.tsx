@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import apiClient from "@/lib/api-client";
-import { authClient } from "@/lib/auth-client";
 import StatCard from "../../../components/StatCard";
 import BusinessRequestCard from "../../../components/BusinessRequestCard";
 import ModalBusinessDetails from "../../../components/ModalBusinessDetails";
@@ -10,6 +9,7 @@ import "../../../styles/superadminDash.css";
 
 /* ✅ Type now MATCHES backend */
 export interface BusinessRequest {
+  id?: number;
   userId: string;
   businessName: string;
   ownerName: string;
@@ -31,16 +31,6 @@ const BusinessRequestsPage: React.FC = () => {
     const getPendingBusiness = async () => {
       try {
         // Debug: Check if token is available
-        try {
-          const token = await authClient.token();
-          console.log("JWT Token available:", token ? "Yes" : "No");
-          if (token) {
-            console.log("Token preview:", token.substring(0, 20) + "...");
-          }
-        } catch (tokenError) {
-          console.error("Failed to get token:", tokenError);
-        }
-
         // Use authenticated API client - automatically adds JWT token
         const res = await apiClient.get("/api/business/getPendingBusiness");
 
@@ -104,21 +94,23 @@ const BusinessRequestsPage: React.FC = () => {
 
         {/* Business Cards */}
         <div className="requests-grid">
-          {requests.map((req, index) => (
+          {requests.map((req) => (
             <BusinessRequestCard
               key={req.userId}
               request={{
-                id: req.userId,
+                id: req.id ?? req.userId,
+                businessId: req.id,
+                userId: req.userId,
                 name: req.businessName,
                 owner: req.ownerName,
                 email: req.email,
                 contact: req.contactNumber,
-                location: `${req.city ?? ""} ${req.businessAddress ?? ""}`,
+                location: `${req.city ?? ""} ${req.businessAddress ?? ""}`.trim(),
                 serviceType: req.category?.join(", ") ?? "",
                 pan: req.panNumber ?? "",
                 submitted: "",
                 description: req.description ?? "",
-                documents: [],
+                documents: req.imageUrl ? [{ name: "Business Documents", icon: "📄" }] : [],
               }}
               onView={setSelectedRequest}
             />
