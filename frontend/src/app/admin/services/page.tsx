@@ -1,11 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2, Scissors, Hotel, Stethoscope } from "lucide-react";
 import styles from "../page.module.css";
 import AddServiceModal from "../components/AddServiceModal";
 import apiClient from "@/lib/api-client";
+
+const CATEGORY_CONFIG: Record<
+  string,
+  { label: string; icon: typeof Scissors }
+> = {
+  GROOMING: { label: "Grooming", icon: Scissors },
+  BOARDING: { label: "Pet Hostel", icon: Hotel },
+  VETERINARY: { label: "Veterinary", icon: Stethoscope },
+};
 
 interface Service {
   id: number;
@@ -23,11 +31,11 @@ interface Service {
 }
 
 export default function ServicesManagementPage() {
-  const params = useParams();
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   useEffect(() => {
     loadServices();
@@ -37,12 +45,33 @@ export default function ServicesManagementPage() {
     try {
       const response = await apiClient.get("/api/services/management/my-services");
       setServices(response.data);
+      if (!selectedCategory && response.data.length > 0) {
+        const categories = [
+          ...new Set(response.data.map((s: Service) => String(s.category))),
+        ] as string[];
+        setSelectedCategory(categories[0] ?? "GROOMING");
+      } else if (!selectedCategory) {
+        setSelectedCategory("GROOMING");
+      }
     } catch (error) {
       console.error("Failed to load services:", error);
+      setSelectedCategory("GROOMING");
     } finally {
       setLoading(false);
     }
   };
+
+  const categories = [
+    ...new Set(services.map((s) => s.category)),
+  ].filter(Boolean) as string[];
+
+  const displayCategories =
+    categories.length > 0 ? categories : ["GROOMING", "BOARDING", "VETERINARY"];
+  const activeCategory = selectedCategory || displayCategories[0];
+
+  const filteredServices = activeCategory
+    ? services.filter((s) => s.category === activeCategory)
+    : services;
 
   const handleDelete = async (serviceId: number) => {
     if (!confirm("Are you sure you want to delete this service?")) return;
@@ -58,6 +87,11 @@ export default function ServicesManagementPage() {
 
   const handleEdit = (service: Service) => {
     setEditingService(service);
+    setOpen(true);
+  };
+
+  const handleAddNew = () => {
+    setEditingService(null);
     setOpen(true);
   };
 
@@ -80,34 +114,85 @@ export default function ServicesManagementPage() {
       <div className={styles.pageHeader}>
         <div className={styles.pageTitle}>
           <h1>Services Management</h1>
-          <p>Manage your services that customers can book</p>
+          <p>Manage your services by category</p>
         </div>
-        <button className={styles.btnPrimary} onClick={() => setOpen(true)}>
+        <button className={styles.btnPrimary} onClick={handleAddNew}>
           <Plus size={18} />
           Add Service
         </button>
       </div>
 
+      {/* Category bar */}
+      <div
+        style={{
+          display: "flex",
+          gap: "8px",
+          marginBottom: "24px",
+          padding: "12px",
+          background: "white",
+          borderRadius: "12px",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+          flexWrap: "wrap",
+        }}
+      >
+        {displayCategories.map((cat) => {
+          const config = CATEGORY_CONFIG[cat] || {
+            label: cat,
+            icon: Scissors,
+          };
+          const Icon = config.icon;
+          const isActive = activeCategory === cat;
+
+          return (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "10px 20px",
+                border: `2px solid ${isActive ? "#9c27b0" : "#e0e0e0"}`,
+                borderRadius: "10px",
+                background: isActive ? "#f3e5f5" : "white",
+                color: isActive ? "#7b1fa2" : "#666",
+                cursor: "pointer",
+                fontWeight: isActive ? 600 : 500,
+              }}
+            >
+              <Icon size={18} />
+              {config.label}
+            </button>
+          );
+        })}
+      </div>
+
       <AddServiceModal
         isOpen={open}
         onClose={handleClose}
-        companyType={params.companyType as string}
+        category={activeCategory}
         editingService={editingService}
       />
 
       <div className={styles.bookingsSection}>
         <div className={styles.sectionHeader}>
-          <h2>All Services</h2>
+          <h2>
+            {CATEGORY_CONFIG[activeCategory]?.label || activeCategory} Services
+          </h2>
         </div>
-        <p className={styles.totalCount}>{services.length} total services</p>
+        <p className={styles.totalCount}>
+          {filteredServices.length} service
+          {filteredServices.length !== 1 ? "s" : ""} in this category
+        </p>
 
-        {services.length === 0 ? (
+        {filteredServices.length === 0 ? (
           <p style={{ textAlign: "center", color: "#999", padding: "40px" }}>
-            No services yet. Click "Add Service" to create your first service.
+            No services in this category yet. Click &quot;Add Service&quot; to
+            create one.
           </p>
         ) : (
           <div style={{ display: "grid", gap: "20px" }}>
-            {services.map((service) => (
+            {filteredServices.map((service) => (
               <div key={service.id} className={styles.bookingCard}>
                 <div className={styles.bookingHeader}>
                   <div className={styles.bookingId}>

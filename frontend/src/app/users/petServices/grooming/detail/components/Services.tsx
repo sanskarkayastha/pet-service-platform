@@ -1,9 +1,10 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
-// import styles from "../services.module.css";
-// import { CheckCircle2, X, Clock } from "lucide-react";
-// import BookingSummary from "../components/BookingSummary";
-// import ServiceTabs, { ServiceTab } from "../components/ServiceTabs";
+import { useEffect, useMemo, useState } from "react";
+import { CheckCircle2, Clock } from "lucide-react";
+import styles from "../services.module.css";
+import ServiceTabs, { ServiceTab } from "../components/ServiceTabs";
+import ServiceDetailsModal, { Service, Addon } from "../components/ServiceDetailsModal";
+import BookingSummary from "../components/BookingSummary";
 
 // /* ================= TYPES ================= */
 
@@ -267,13 +268,6 @@ import React, { useEffect, useMemo, useState } from "react";
 // ============================================
 // FILE: Services.tsx
 // ============================================
-"use client";
-import React, { useState, useMemo, useEffect } from "react";
-import { CheckCircle2, Clock } from "lucide-react";
-import styles from "../services.module.css";
-import ServiceTabs, { ServiceTab } from "../components/ServiceTabs";
-import ServiceDetailsModal, { Service, Addon } from "../components/ServiceDetailsModal";
-import BookingSummary from "../components/BookingSummary";
 
 type BookingItem = {
   service: Service;
@@ -354,7 +348,7 @@ const AVAILABLE_TABS: ServiceTab[] = [
   { key: "boarding", label: "Pet Hostel" }
 ];
 
-export default function Services({ userId }: { userId?: string }) {
+export default function Services({ userId, businessId }: { userId?: string; businessId?: string }) {
   const [activeCategory, setActiveCategory] = useState<string>(AVAILABLE_TABS[0].key);
   const [selectedServiceIds, setSelectedServiceIds] = useState<number[]>([]);
   const [bookingItems, setBookingItems] = useState<BookingItem[]>([]);
@@ -363,28 +357,39 @@ export default function Services({ userId }: { userId?: string }) {
   const [realServices, setRealServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const id = businessId || userId;
+
   useEffect(() => {
-    if (userId) {
+    if (id) {
       loadRealServices();
     }
-  }, [userId]);
+  }, [id]);
 
   const loadRealServices = async () => {
-    if (!userId) return;
+    if (!id) return;
     setLoading(true);
     try {
-      // Get business by user ID
-      const businessRes = await fetch(`http://localhost:8080/api/business/by-user/${userId}`);
-      const business = await businessRes.json();
-      
-      // Get services for this business
-      const servicesRes = await fetch(`http://localhost:8080/api/services/business/${business.id}`);
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+      let bizId: number;
+      if (businessId) {
+        bizId = Number(businessId);
+      } else {
+        const businessRes = await fetch(`${baseUrl}/api/business/by-user/${id}`);
+        const business = await businessRes.json();
+        bizId = business.id;
+      }
+      const servicesRes = await fetch(`${baseUrl}/api/services/business/${bizId}`);
       const servicesData = await servicesRes.json();
       
       // Map to Service format
+      const mapCategory = (c: string) => {
+        const lower = (c || "").toLowerCase();
+        if (lower === "veterinary") return "vet";
+        return lower || "grooming";
+      };
       const mapped: Service[] = servicesData.map((s: any) => ({
         id: s.id,
-        category: s.category.toLowerCase(),
+        category: mapCategory(s.category),
         title: s.title,
         duration: `${s.durationMinutes} mins`,
         description: s.description,

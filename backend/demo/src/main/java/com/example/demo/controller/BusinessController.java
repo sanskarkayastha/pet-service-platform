@@ -89,15 +89,6 @@ public class BusinessController {
                 "status", status.name()));
     }
 
-    @PutMapping("/{userId}/approve")
-    public ResponseEntity<Void> approveBusiness(@PathVariable String userId) {
-        businessServices.approveBusiness(userId);
-        return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("/{userId}/reject")
-    public ResponseEntity<Void> rejectBusiness(@PathVariable String userId ,@RequestBody String rejectMsg ){
-        businessServices.rejectBusiness(userId, rejectMsg);
     @PutMapping("/{businessId}/approve")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> approveBusiness(@PathVariable Long businessId, @CurrentUser User currentUser) {
@@ -105,10 +96,25 @@ public class BusinessController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/{businessId}/reject")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> rejectBusiness(@PathVariable Long businessId, @RequestBody Map<String, String> body) {
+        String rejectMsg = body != null && body.containsKey("message") ? body.get("message") : "";
+        businessServices.rejectBusiness(businessId, rejectMsg);
+        return ResponseEntity.ok().build();
+    }
+
     // Get business by user ID (for detail pages)
     @GetMapping("/by-user/{userId}")
     public ResponseEntity<BusinessResponseDTO> getBusinessByUserId(@PathVariable String userId) {
         Business business = businessServices.getBusinessByUserId(userId);
+        return ResponseEntity.ok(toResponseDTO(business));
+    }
+
+    // Get business by business ID (for detail pages - preferred)
+    @GetMapping("/{businessId}")
+    public ResponseEntity<BusinessResponseDTO> getBusinessById(@PathVariable Long businessId) {
+        Business business = businessServices.getBusinessById(businessId);
         return ResponseEntity.ok(toResponseDTO(business));
     }
 }

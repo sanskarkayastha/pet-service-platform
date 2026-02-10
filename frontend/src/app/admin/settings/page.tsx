@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
 import { Save } from "lucide-react";
 import styles from "../page.module.css";
 import apiClient from "@/lib/api-client";
@@ -19,7 +18,6 @@ interface BusinessInfo {
 }
 
 export default function BusinessSettingsPage() {
-  const params = useParams();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [business, setBusiness] = useState<BusinessInfo | null>(null);
@@ -81,7 +79,7 @@ export default function BusinessSettingsPage() {
       });
       alert("Business information updated successfully!");
       loadBusinessInfo();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to update business:", error);
       alert("Failed to update business information");
     } finally {
@@ -119,7 +117,14 @@ export default function BusinessSettingsPage() {
 
         <div style={{ display: "grid", gap: "20px" }}>
           <div>
-            <label style={{ display: "block", marginBottom: "8px", color: "#666", fontSize: "14px" }}>
+            <label
+              style={{
+                display: "block",
+                marginBottom: "8px",
+                color: "#666",
+                fontSize: "14px",
+              }}
+            >
               Business Name
             </label>
             <input
@@ -137,7 +142,14 @@ export default function BusinessSettingsPage() {
           </div>
 
           <div>
-            <label style={{ display: "block", marginBottom: "8px", color: "#666", fontSize: "14px" }}>
+            <label
+              style={{
+                display: "block",
+                marginBottom: "8px",
+                color: "#666",
+                fontSize: "14px",
+              }}
+            >
               Owner Name
             </label>
             <input
@@ -156,7 +168,14 @@ export default function BusinessSettingsPage() {
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
             <div>
-              <label style={{ display: "block", marginBottom: "8px", color: "#666", fontSize: "14px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "8px",
+                  color: "#666",
+                  fontSize: "14px",
+                }}
+              >
                 Email
               </label>
               <input
@@ -174,7 +193,14 @@ export default function BusinessSettingsPage() {
             </div>
 
             <div>
-              <label style={{ display: "block", marginBottom: "8px", color: "#666", fontSize: "14px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "8px",
+                  color: "#666",
+                  fontSize: "14px",
+                }}
+              >
                 Contact Number
               </label>
               <input
@@ -193,7 +219,14 @@ export default function BusinessSettingsPage() {
           </div>
 
           <div>
-            <label style={{ display: "block", marginBottom: "8px", color: "#666", fontSize: "14px" }}>
+            <label
+              style={{
+                display: "block",
+                marginBottom: "8px",
+                color: "#666",
+                fontSize: "14px",
+              }}
+            >
               Business Address
             </label>
             <input
@@ -212,7 +245,14 @@ export default function BusinessSettingsPage() {
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
             <div>
-              <label style={{ display: "block", marginBottom: "8px", color: "#666", fontSize: "14px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "8px",
+                  color: "#666",
+                  fontSize: "14px",
+                }}
+              >
                 City
               </label>
               <input
@@ -230,7 +270,14 @@ export default function BusinessSettingsPage() {
             </div>
 
             <div>
-              <label style={{ display: "block", marginBottom: "8px", color: "#666", fontSize: "14px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "8px",
+                  color: "#666",
+                  fontSize: "14px",
+                }}
+              >
                 PAN Number
               </label>
               <input
@@ -249,7 +296,14 @@ export default function BusinessSettingsPage() {
           </div>
 
           <div>
-            <label style={{ display: "block", marginBottom: "8px", color: "#666", fontSize: "14px" }}>
+            <label
+              style={{
+                display: "block",
+                marginBottom: "8px",
+                color: "#666",
+                fontSize: "14px",
+              }}
+            >
               Description
             </label>
             <textarea

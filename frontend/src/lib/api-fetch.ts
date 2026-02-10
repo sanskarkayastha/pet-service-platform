@@ -11,13 +11,16 @@ export async function authenticatedFetch(
 ): Promise<Response> {
   try {
     // Get JWT token from better-auth (if available)
-    // If no session, token() will return null/undefined, which is fine for public endpoints
     let token: string | null = null;
     try {
-      token = await authClient.token() || null;
-    } catch (error) {
+      const result = await authClient.token();
+      token = result && typeof result === "object" && "token" in result
+        ? (result as { token: string }).token
+        : typeof result === "string"
+          ? result
+          : null;
+    } catch {
       // No session available - this is OK for public endpoints
-      // Continue without token
     }
     
     // Merge headers

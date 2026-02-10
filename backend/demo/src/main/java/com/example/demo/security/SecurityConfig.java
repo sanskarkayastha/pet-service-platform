@@ -32,6 +32,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Public read-only endpoints (browsing)
                 .requestMatchers("GET", "/api/business/allBusinesses").permitAll()
+                .requestMatchers("GET", "/api/business/{businessId}").permitAll()
                 .requestMatchers("GET", "/api/business/getBusinessStatus/**").permitAll()
                 .requestMatchers("GET", "/api/services/business/**").permitAll()
                 .requestMatchers("GET", "/api/services/{serviceId}").permitAll()

@@ -88,7 +88,7 @@ export default function RegisterBusiness( session: any) {
       btn = (
         <button
           className={`${styles.btn} ${styles.btnPrimary}`}
-          onClick={() => console.log("Redirect to dashboard")}
+          onClick={() => router.push("/admin")}
         >
           Go to Dashboard
         </button>

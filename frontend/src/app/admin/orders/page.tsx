@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
 import { CheckCircle, XCircle, Clock } from "lucide-react";
 import styles from "../page.module.css";
 import apiClient from "@/lib/api-client";
@@ -33,7 +32,6 @@ interface Booking {
 }
 
 export default function OrdersPage() {
-  const params = useParams();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>("all");
@@ -82,7 +80,7 @@ export default function OrdersPage() {
   };
 
   const getStatusBadge = (status: string) => {
-    const statusConfig: Record<string, { bg: string; color: string; icon: any }> = {
+    const statusConfig: Record<string, { bg: string; color: string; icon: typeof Clock }> = {
       PENDING: { bg: "#fff3e0", color: "#ff9800", icon: Clock },
       CONFIRMED: { bg: "#e8f5e9", color: "#4caf50", icon: CheckCircle },
       COMPLETED: { bg: "#e3f2fd", color: "#2196f3", icon: CheckCircle },
@@ -102,8 +100,6 @@ export default function OrdersPage() {
   const stats = {
     total: bookings.length,
     pending: bookings.filter((b) => b.status === "PENDING").length,
-    confirmed: bookings.filter((b) => b.status === "CONFIRMED").length,
-    completed: bookings.filter((b) => b.status === "COMPLETED").length,
     revenue: bookings
       .filter((b) => b.status === "COMPLETED")
       .reduce((sum, b) => sum + b.totalPrice, 0),
@@ -118,7 +114,6 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      {/* Stats */}
       <div className={styles.statsGrid}>
         <div className={`${styles.statCard} ${styles.statpurple}`}>
           <div className={styles.statLabel}>Total Bookings</div>
@@ -134,8 +129,7 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      {/* Filters */}
-      <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
+      <div style={{ marginBottom: "20px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
         {["all", "PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"].map((status) => (
           <button
             key={status}
@@ -150,12 +144,11 @@ export default function OrdersPage() {
               fontSize: "14px",
             }}
           >
-            {status.charAt(0) + status.slice(1).toLowerCase()}
+            {status === "all" ? "All" : status.charAt(0) + status.slice(1).toLowerCase()}
           </button>
         ))}
       </div>
 
-      {/* Bookings */}
       <div className={styles.bookingsSection}>
         <div className={styles.sectionHeader}>
           <h2>All Bookings</h2>
@@ -197,8 +190,12 @@ export default function OrdersPage() {
                   <div className={styles.detailItem}>
                     <h4>CUSTOMER</h4>
                     <p>{booking.customerName}</p>
-                    <p style={{ fontSize: "12px", color: "#999" }}>{booking.customerEmail}</p>
-                    <p style={{ fontSize: "12px", color: "#999" }}>{booking.customerPhone}</p>
+                    {booking.customerEmail && (
+                      <p style={{ fontSize: "12px", color: "#999" }}>{booking.customerEmail}</p>
+                    )}
+                    {booking.customerPhone && (
+                      <p style={{ fontSize: "12px", color: "#999" }}>{booking.customerPhone}</p>
+                    )}
                   </div>
 
                   {booking.petName && (
@@ -219,14 +216,23 @@ export default function OrdersPage() {
                   <div className={styles.detailItem}>
                     <h4>DATE & TIME</h4>
                     <p>{formatDateTime(booking.bookingDateTime)}</p>
-                    <p style={{ fontSize: "12px", color: "#999" }}>
-                      Ends: {formatDateTime(booking.endDateTime)}
-                    </p>
+                    {booking.endDateTime && (
+                      <p style={{ fontSize: "12px", color: "#999" }}>
+                        Ends: {formatDateTime(booking.endDateTime)}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 {booking.notes && (
-                  <div style={{ marginTop: "15px", padding: "10px", background: "#f5f5f5", borderRadius: "6px" }}>
+                  <div
+                    style={{
+                      marginTop: "15px",
+                      padding: "10px",
+                      background: "#f5f5f5",
+                      borderRadius: "6px",
+                    }}
+                  >
                     <strong>Notes:</strong> {booking.notes}
                   </div>
                 )}
@@ -234,7 +240,14 @@ export default function OrdersPage() {
                 {booking.addons && booking.addons.length > 0 && (
                   <div style={{ marginTop: "15px" }}>
                     <strong style={{ fontSize: "12px", color: "#999" }}>ADD-ONS:</strong>
-                    <div style={{ display: "flex", gap: "10px", marginTop: "5px", flexWrap: "wrap" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "10px",
+                        marginTop: "5px",
+                        flexWrap: "wrap",
+                      }}
+                    >
                       {booking.addons.map((addon) => (
                         <span
                           key={addon.id}
