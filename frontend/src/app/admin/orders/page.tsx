@@ -35,6 +35,7 @@ export default function OrdersPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>("all");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     loadBookings();
@@ -42,6 +43,7 @@ export default function OrdersPage() {
 
   const loadBookings = async () => {
     try {
+      setErrorMessage(null);
       let response;
       if (filter === "all") {
         response = await apiClient.get("/api/bookings/my-bookings");
@@ -50,7 +52,16 @@ export default function OrdersPage() {
       }
       setBookings(response.data);
     } catch (error) {
-      console.error("Failed to load bookings:", error);
+      const status = (error as any)?.response?.status;
+      if (status === 403) {
+        setErrorMessage(
+          "You don't have permission to view these bookings. Please sign in with a business account."
+        );
+        console.warn("Access denied while loading bookings (403).");
+      } else {
+        console.error("Failed to load bookings:", error);
+        setErrorMessage("Something went wrong while loading bookings.");
+      }
     } finally {
       setLoading(false);
     }
@@ -93,6 +104,28 @@ export default function OrdersPage() {
     return (
       <main className={styles.mainContent}>
         <p>Loading...</p>
+      </main>
+    );
+  }
+
+  if (errorMessage) {
+    return (
+      <main className={styles.mainContent}>
+        <div
+          style={{
+            maxWidth: "480px",
+            margin: "80px auto",
+            padding: "24px",
+            borderRadius: "12px",
+            background: "#fff3e0",
+            border: "1px solid #ffe0b2",
+            color: "#6d4c41",
+            textAlign: "center",
+          }}
+        >
+          <h1 style={{ marginBottom: "8px", fontSize: "22px" }}>Access restricted</h1>
+          <p style={{ marginBottom: 0 }}>{errorMessage}</p>
+        </div>
       </main>
     );
   }

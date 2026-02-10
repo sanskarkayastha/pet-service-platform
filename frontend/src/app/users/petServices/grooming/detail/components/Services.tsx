@@ -275,81 +275,14 @@ type BookingItem = {
   qty: number;
 };
 
-// Static Data
-const SERVICES: Service[] = [
-  {
-    id: 1,
-    category: "grooming",
-    title: "Full Grooming Package",
-    duration: "2-3 hours",
-    description: "Our comprehensive grooming package includes a luxurious bath with premium shampoo and conditioner, professional haircut styled to your preference, nail trimming and filing, ear cleaning, teeth brushing, and a finishing spritz of pet-safe cologne. Your pet will leave looking and feeling their absolute best.",
-    price: 7500,
-    addons: [
-      { id: 11, name: "Paw Balm Treatment", price: 1000, description: "Moisturizing paw care" },
-      { id: 12, name: "Flea Treatment", price: 2000, description: "Anti-flea shampoo and treatment" },
-      { id: 13, name: "Teeth Brushing", price: 1500, description: "Professional dental cleaning" },
-      { id: 14, name: "De-shedding Treatment", price: 2500, description: "Reduce shedding by up to 80%" }
-    ]
-  },
-  {
-    id: 2,
-    category: "grooming",
-    title: "Bath & Brush",
-    duration: "1 hour",
-    description: "Relaxing bath with premium products and thorough brushing.",
-    price: 4500
-  },
-  {
-    id: 3,
-    category: "grooming",
-    title: "Puppy's First Grooming",
-    duration: "1.5 hours",
-    description: "Gentle introduction to grooming for puppies under 6 months.",
-    price: 5000,
-    addons: [{ id: 31, name: "Comfort Toy", price: 1500, description: "Comfort toy for puppies" }]
-  },
-  {
-    id: 4,
-    category: "grooming",
-    title: "Express Nail Trim",
-    duration: "15 mins",
-    description: "Quick and professional nail trimming service.",
-    price: 1500
-  },
-  {
-    id: 10,
-    category: "vet",
-    title: "Vaccination Consultation",
-    duration: "30 mins",
-    description: "Routine vaccination check and admin.",
-    price: 4000
-  },
-  {
-    id: 11,
-    category: "vet",
-    title: "Wellness Check-up",
-    duration: "45 mins",
-    description: "Comprehensive health check for your pet.",
-    price: 6000
-  },
-  {
-    id: 20,
-    category: "boarding",
-    title: "Overnight Boarding",
-    duration: "24 hours",
-    description: "Safe and comfortable overnight boarding for pets.",
-    price: 3500
-  }
-];
-
-const AVAILABLE_TABS: ServiceTab[] = [
+const BASE_TABS: ServiceTab[] = [
   { key: "grooming", label: "Pet Grooming" },
   { key: "vet", label: "Veterinary Care" },
   { key: "boarding", label: "Pet Hostel" }
 ];
 
 export default function Services({ userId, businessId }: { userId?: string; businessId?: string }) {
-  const [activeCategory, setActiveCategory] = useState<string>(AVAILABLE_TABS[0].key);
+  const [activeCategory, setActiveCategory] = useState<string>("grooming");
   const [selectedServiceIds, setSelectedServiceIds] = useState<number[]>([]);
   const [bookingItems, setBookingItems] = useState<BookingItem[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -411,11 +344,27 @@ export default function Services({ userId, businessId }: { userId?: string; busi
   };
 
   const services = useMemo(() => {
-    if (realServices.length > 0) {
-      return realServices.filter((s) => s.category === activeCategory);
-    }
-    return SERVICES.filter((s) => s.category === activeCategory);
+    return realServices.filter((s) => s.category === activeCategory);
   }, [activeCategory, realServices]);
+
+  // Determine which tabs to show based on the actual
+  // service types that this specific business offers.
+  const availableCategories = useMemo(
+    () => [...new Set(realServices.map((s) => s.category))],
+    [realServices]
+  );
+
+  const tabs: ServiceTab[] =
+    availableCategories.length > 0
+      ? BASE_TABS.filter((tab) => availableCategories.includes(tab.key))
+      : BASE_TABS;
+
+  // Keep active category in sync with available tabs
+  useEffect(() => {
+    if (!tabs.some((t) => t.key === activeCategory) && tabs.length > 0) {
+      setActiveCategory(tabs[0].key);
+    }
+  }, [tabs, activeCategory]);
 
   const toggleServiceSelect = (service: Service) => {
     const exists = selectedServiceIds.includes(service.id);
@@ -468,12 +417,17 @@ export default function Services({ userId, businessId }: { userId?: string; busi
           {/* Left Column - Services */}
           <div className={styles.leftColumn}>
             <ServiceTabs
-              tabs={AVAILABLE_TABS}
+              tabs={tabs}
               activeKey={activeCategory}
               onChange={setActiveCategory}
             />
 
             <div className={styles.servicesList}>
+              {services.length === 0 && (
+                <p className={styles.emptyState}>
+                  No services are available in this category yet.
+                </p>
+              )}
               {services.map((svc) => {
                 const isSelected = selectedServiceIds.includes(svc.id);
                 return (
