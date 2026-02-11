@@ -9,6 +9,7 @@ export type LoginError = {
   cred?: string;
   email?: string;
   password?: string;
+  verification?: string;
 }
 
 export type FormState = {
@@ -62,13 +63,20 @@ export async function logUserIn(prevState:FormState, formData:FormData) {
       body: {
         email: email,
         password: password,
-        callbackURL: '/'
+        callbackURL: '/',
       }
     })
   }catch(error){
     if( error instanceof APIError){
       hasError = true;
-      errors.cred = error.message
+
+      const code = (error as APIError & { body?: { code?: string } }).body?.code;
+
+      if(code === "EMAIL_NOT_VERIFIED"){
+        errors.verification = "Please verify your email to continue.";
+      }else{
+        errors.cred = error.message;
+      }
     }
   }
   

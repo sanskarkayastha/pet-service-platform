@@ -1,7 +1,5 @@
 package com.example.demo.websocket;
 
-import com.example.demo.model.User;
-import com.example.demo.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
@@ -16,17 +14,14 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import java.util.Map;
-import java.util.Optional;
 
 @Component
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
     private final JwtDecoder jwtDecoder;
-    private final UserRepository userRepository;
 
-    public JwtHandshakeInterceptor(JwtDecoder jwtDecoder, UserRepository userRepository) {
+    public JwtHandshakeInterceptor(JwtDecoder jwtDecoder) {
         this.jwtDecoder = jwtDecoder;
-        this.userRepository = userRepository;
     }
 
     @Override
@@ -59,15 +54,10 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
                 return false;
             }
 
-            Optional<User> userOptional = userRepository.findById(userId);
-            if (userOptional.isEmpty()) {
-                response.setStatusCode(HttpStatus.UNAUTHORIZED);
-                return false;
-            }
+            String role = getClaim(jwt, "role");
 
-            User user = userOptional.get();
-            attributes.put("user", user);
-            attributes.put("role", user.getRole());
+            attributes.put("userId", userId);
+            attributes.put("role", role != null ? role : "USER");
             return true;
         } catch (JwtException ex) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);

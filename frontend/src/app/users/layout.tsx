@@ -1,4 +1,5 @@
 import Navbar from "@/components/navbar";
+import VerifyEmailReminder from "@/components/VerifyEmailReminder";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
@@ -7,16 +8,18 @@ export default async function UserLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  const session = await auth.api.getSession(
-    {
-      headers: await headers(),
-    }
-  )
-  console.log("User Layout Session:", session);
+  const isUnverified = session?.user && !session.user.emailVerified;
+
   return (
     <>
-      < Navbar session = { session }/>
+      <Navbar session={session} />
+      {isUnverified && session?.user?.email ? (
+        <VerifyEmailReminder email={session.user.email} />
+      ) : null}
       {children}
     </>
   );

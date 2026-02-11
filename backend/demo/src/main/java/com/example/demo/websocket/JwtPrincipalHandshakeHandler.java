@@ -1,6 +1,5 @@
 package com.example.demo.websocket;
 
-import com.example.demo.model.User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
@@ -17,9 +16,11 @@ public class JwtPrincipalHandshakeHandler extends DefaultHandshakeHandler {
             WebSocketHandler wsHandler,
             Map<String, Object> attributes
     ) {
-        Object userObj = attributes.get("user");
-        if (userObj instanceof User user) {
-            return new StompUserPrincipal(user.getId(), user.getRole());
+        Object userIdObj = attributes.get("userId");
+        if (userIdObj instanceof String userId && !userId.isBlank()) {
+            Object roleObj = attributes.get("role");
+            String role = roleObj instanceof String ? (String) roleObj : null;
+            return new StompUserPrincipal(userId, role);
         }
         return null;
     }

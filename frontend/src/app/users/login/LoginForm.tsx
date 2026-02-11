@@ -1,9 +1,14 @@
 "use client";
 
-import React, { FormEvent, useActionState, useState } from "react";
+import React, { FormEvent, useActionState } from "react";
 import "./Login.css";
 import {FormState, logUserIn, logUserInWithGoogle } from "@/actions/login";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+  resendVerificationEmail,
+  VerificationFormState,
+} from "@/actions/emailVerification";
 
 export default function LoginForm() {
 
@@ -24,6 +29,12 @@ export default function LoginForm() {
   }
 
  const [state, formAction, isPending] =  useActionState(logUserIn, initialState)
+ const [resendState, resendAction, resendPending] = useActionState(
+  resendVerificationEmail,
+  {
+    status: "idle",
+  } as VerificationFormState,
+);
 
   return (
     <div className="login-page">
@@ -68,9 +79,9 @@ export default function LoginForm() {
                   <label className="remember">
                   <input type="checkbox" /> Remember me
                   </label>
-                  <a href="#" className="forgot">
+                  <Link href="/users/forgot-password" className="forgot">
                   Forgot Password?
-                  </a>
+                  </Link>
               </div>
 
               <button type="submit" className="login-submit" disabled={isPending}>
@@ -92,9 +103,36 @@ export default function LoginForm() {
               </button>
 
               <div className="register-link">
-                  Don’t have an account? <a href="#">Register</a>
+                  Don’t have an account? <Link href="/users/register">Register</Link>
               </div>
               </form>
+
+              {state.error.verification && (
+                <div className="resend-wrapper">
+                  <p className="error-message">{state.error.verification}</p>
+                  <form action={resendAction} className="resend-form">
+                    <input type="hidden" name="email" value={state.prevData.email} />
+                    <button
+                      type="submit"
+                      className="resend-button"
+                      disabled={resendPending}
+                    >
+                      {resendPending ? "Resending..." : "Resend verification email"}
+                    </button>
+                  </form>
+                  {resendState.message && (
+                    <p
+                      className={
+                        resendState.status === "success"
+                          ? "success-message"
+                          : "error-message"
+                      }
+                    >
+                      {resendState.message}
+                    </p>
+                  )}
+                </div>
+              )}
           </div>
       </div>
       
