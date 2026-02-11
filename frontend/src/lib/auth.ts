@@ -42,12 +42,12 @@ export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000",
   autoMigrate: true,
   plugins: [
-    nextCookies(),
-    jwt({
-      secret: process.env.JWT_SECRET || process.env.BETTER_AUTH_SECRET || "change-this-jwt-secret-in-production-min-256-bits",
-      expiresIn: 60 * 60 * 24, // 24 hours
-      // Use symmetric key (HS256) - doesn't require JWKS table
-      algorithm: "HS256",
-    }),
+    nextCookies(),jwt({
+      jwks: {
+        keyPairConfig: {
+          alg: "RS256",
+        }
+      }
+    })
   ],
 });

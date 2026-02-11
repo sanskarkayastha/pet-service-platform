@@ -8,11 +8,16 @@ import com.example.demo.model.User;
 import com.example.demo.security.CurrentUser;
 import com.example.demo.services.BookingService;
 import com.example.demo.services.BusinessServices;
+import com.example.demo.services.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.util.List;
 
@@ -23,9 +28,28 @@ public class BookingController {
 
     @Autowired
     private BookingService bookingService;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private BusinessServices businessServices;
+
+    private String extractUserIdFromJwt(Authentication authentication) {
+        if (authentication instanceof JwtAuthenticationToken) {
+            JwtAuthenticationToken jwtAuth = (JwtAuthenticationToken) authentication;
+            Jwt jwt = jwtAuth.getToken();
+            
+            // Try userId claim
+            Object userIdClaim = jwt.getClaim("userId");
+            if (userIdClaim == null) {
+                userIdClaim = jwt.getClaim("sub"); // standard JWT subject claim
+            }
+            
+            return userIdClaim != null ? userIdClaim.toString() : null;
+        }
+        return null;
+    }
 
     // Create booking (user)
     @PostMapping("/create")
@@ -40,8 +64,16 @@ public class BookingController {
     // Get bookings for current business (business owner)
     @GetMapping("/my-bookings")
     @PreAuthorize("hasRole('BUSINESS')")
-    public ResponseEntity<List<BookingResponseDTO>> getMyBookings(@CurrentUser User currentUser) {
-        Business business = businessServices.getBusinessByUserId(currentUser.getId());
+    public ResponseEntity<?> getMyBookings(Authentication authentication) {
+
+        String userId = extractUserIdFromJwt(authentication);
+
+        if(userId == null){
+            return ResponseEntity.badRequest().body("unable to find user");
+        }
+        User user = userService.findById(userId);
+
+        Business business = businessServices.getBusinessByUserId(user.getId());
         List<BookingResponseDTO> bookings = bookingService.getBookingsByBusiness(business);
         return ResponseEntity.ok(bookings);
     }
