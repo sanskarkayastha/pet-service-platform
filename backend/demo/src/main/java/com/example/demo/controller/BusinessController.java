@@ -47,7 +47,7 @@ public class BusinessController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> addBusiness(
             @RequestPart("businessInfo") BusinessDTO businessDTO,
-            @RequestPart("logo-upload") MultipartFile logo, 
+            @RequestPart("logo-upload") MultipartFile logo,
             @RequestPart("license-upload") MultipartFile license,
             @RequestPart("verification-upload") MultipartFile verificationDoc) {
         try {

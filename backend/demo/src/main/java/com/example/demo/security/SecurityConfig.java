@@ -19,7 +19,6 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 
-import java.lang.System.Logger;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,48 +31,45 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-            .authorizeHttpRequests(auth -> auth
-                // Public browsing
-                .requestMatchers(HttpMethod.GET, "/api/business/allBusinesses").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/business/*").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/business/getBusinessStatus/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/services/business/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/services/*").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/working-hours/business/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/users/testUser/**").permitAll()
-                .requestMatchers("/error").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        // Public browsing
+                        .requestMatchers(HttpMethod.GET, "/api/business/allBusinesses").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/business/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/business/getBusinessStatus/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/services/business/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/services/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/working-hours/business/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users/testUser/**").permitAll()
+                        .requestMatchers("/error").permitAll()
 
-                // ADMIN
-                .requestMatchers("/api/business/getPendingBusiness").hasRole("ADMIN")
-                .requestMatchers("/api/business/*/approve").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/users/getAllUsers").hasRole("ADMIN")
+                        // ADMIN
+                        .requestMatchers("/api/business/getPendingBusiness").hasRole("ADMIN")
+                        .requestMatchers("/api/business/*/approve").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/users/getAllUsers").hasRole("ADMIN")
 
-                // BUSINESS
-                .requestMatchers("/api/business/management/**").hasRole("BUSINESS")
-                .requestMatchers("/api/services/management/**").hasRole("BUSINESS")
-                .requestMatchers("/api/working-hours/my-hours", "/api/working-hours/update").hasRole("BUSINESS")
-                .requestMatchers("/api/bookings/my-bookings/**").hasRole("BUSINESS")
+                        // BUSINESS
+                        .requestMatchers("/api/business/management/**").hasRole("BUSINESS")
+                        .requestMatchers("/api/services/management/**").hasRole("BUSINESS")
+                        .requestMatchers("/api/working-hours/my-hours", "/api/working-hours/update").hasRole("BUSINESS")
+                        .requestMatchers("/api/bookings/my-bookings/**").hasRole("BUSINESS")
 
-                // Authenticated writes
-                .requestMatchers(HttpMethod.POST, "/api/business/addBusiness").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/bookings/create").hasRole("USER")
-                .requestMatchers(HttpMethod.PUT, "/api/bookings/**").authenticated()
+                        // Authenticated writes
+                        .requestMatchers(HttpMethod.POST, "/api/business/addBusiness").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/bookings/create").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/bookings/**").authenticated()
 
-                // Everything else requires login
-                .anyRequest().authenticated()
-            )
+                        // Everything else requires login
+                        .anyRequest().authenticated())
 
-            // JWT validation via Better Auth JWKS
-            .oauth2ResourceServer(oauth -> oauth
-                .jwt(jwt -> jwt
-                    .decoder(jwtDecoder())
-                    .jwtAuthenticationConverter(jwtAuthenticationConverter())
-                )
-            );
+                // JWT validation via Better Auth JWKS
+                .oauth2ResourceServer(oauth -> oauth
+                        .jwt(jwt -> jwt
+                                .decoder(jwtDecoder())
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
         return http.build();
     }
@@ -89,7 +85,7 @@ public class SecurityConfig {
 
         JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
         authenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
-            
+
             Collection<GrantedAuthority> authorities = defaultConverter.convert(jwt);
             return authorities.stream()
                     .map(auth -> new SimpleGrantedAuthority(auth.getAuthority().toUpperCase()))
@@ -104,8 +100,7 @@ public class SecurityConfig {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri("http://localhost:3000/api/auth/jwks").build();
 
         decoder.setJwtValidator(
-            JwtValidators.createDefaultWithIssuer("http://localhost:3000")
-        );
+                JwtValidators.createDefaultWithIssuer("http://localhost:3000"));
 
         return decoder;
     }

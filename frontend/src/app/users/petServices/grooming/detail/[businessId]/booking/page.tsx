@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { apiGet, apiPost } from "@/lib/api-fetch";
 import styles from "../../page.module.css";
 import { authClient } from "@/lib/auth-client";
+import apiClient from "@/lib/api-client";
 
 interface Service {
   id: number;
@@ -72,12 +72,12 @@ export default function BookingPage() {
   const loadBusinessData = async () => {
     try {
       const [servicesRes, hoursRes] = await Promise.all([
-        apiGet<Service[]>(`/api/services/business/${businessId}`),
-        apiGet<WorkingHours[]>(`/api/working-hours/business/${businessId}`),
+        apiClient.get<Service[]>(`/api/services/business/${businessId}`),
+        apiClient.get<WorkingHours[]>(`/api/working-hours/business/${businessId}`),
       ]);
 
-      setServices(servicesRes);
-      setWorkingHours(hoursRes);
+      setServices(servicesRes.data);
+      setWorkingHours(hoursRes.data);
 
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
@@ -145,7 +145,7 @@ export default function BookingPage() {
     setSubmitting(true);
     try {
       const bookingDateTime = new Date(`${selectedDate}T${selectedTime}`);
-      await apiPost("/api/bookings/create", {
+      await apiClient.post("/api/bookings/create", {
         serviceId: selectedService.id,
         bookingDateTime: bookingDateTime.toISOString(),
         customerName,

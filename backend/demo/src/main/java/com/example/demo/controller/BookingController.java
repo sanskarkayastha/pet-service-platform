@@ -27,7 +27,7 @@ public class BookingController {
 
     @Autowired
     private BookingService bookingService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -36,7 +36,7 @@ public class BookingController {
 
     // Create booking (user)
     @PostMapping("/create")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createBooking(
             @RequestBody BookingRequest request,
             Authentication authentication) {
@@ -44,7 +44,7 @@ public class BookingController {
         System.out.println("Authorities: " + authentication.getAuthorities());
         System.out.println("Principal: " + authentication.getPrincipal());
         String userId = JwtUtils.extractUserId(authentication);
-        if(userId == null){
+        if (userId == null) {
             return ResponseEntity.badRequest().body("User is not available");
         }
         BookingResponseDTO booking = bookingService.createBooking(request, userId);
@@ -58,7 +58,7 @@ public class BookingController {
 
         String userId = JwtUtils.extractUserId(authentication);
 
-        if(userId == null){
+        if (userId == null) {
             return ResponseEntity.badRequest().body("unable to find user");
         }
         User user = userService.findById(userId);
@@ -74,10 +74,10 @@ public class BookingController {
     public ResponseEntity<?> getBookingsByStatus(
             @PathVariable String status,
             Authentication authentication) {
-        
+
         String userId = JwtUtils.extractUserId(authentication);
 
-        if(userId == null){
+        if (userId == null) {
             return ResponseEntity.badRequest().body("unable to find user");
         }
         Business business = businessServices.getBusinessByUserId(userId);
@@ -107,10 +107,12 @@ public class BookingController {
     // Get user's bookings
     @GetMapping("/my-orders")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<BookingResponseDTO>> getMyOrders(@CurrentUser User currentUser) {
-        List<BookingResponseDTO> bookings = bookingService.getBookingsByUser(currentUser.getId());
+    public ResponseEntity<List<BookingResponseDTO>> getMyOrders(Authentication authentication) {
+        String userId = JwtUtils.extractUserId(authentication);
+        List<BookingResponseDTO> bookings = bookingService.getBookingsByUser(userId);
         return ResponseEntity.ok(bookings);
     }
 
-    public record BookingStatusUpdateRequest(BookingStatus status) {}
+    public record BookingStatusUpdateRequest(BookingStatus status) {
+    }
 }
