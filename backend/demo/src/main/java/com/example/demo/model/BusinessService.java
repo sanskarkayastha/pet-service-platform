@@ -43,6 +43,14 @@ public class BusinessService {
 
     private Double price;
 
+    /**
+     * Maximum number of customers/pets that can be handled
+     * concurrently for this service in a single time slot.
+     * If null, defaults to 1 in business logic.
+     */
+    @Column(name = "capacity_per_slot")
+    private Integer capacityPerSlot;
+
     /* ================= ADD-ONS ================= */
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ServiceAddon> addons;
@@ -99,6 +107,14 @@ public class BusinessService {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Integer getCapacityPerSlot() {
+        return capacityPerSlot;
+    }
+
+    public void setCapacityPerSlot(Integer capacityPerSlot) {
+        this.capacityPerSlot = capacityPerSlot;
     }
 
     public List<ServiceAddon> getAddons() {

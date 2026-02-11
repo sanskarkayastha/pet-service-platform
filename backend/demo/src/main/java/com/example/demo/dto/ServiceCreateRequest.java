@@ -11,6 +11,8 @@ public class ServiceCreateRequest {
     private Integer durationMinutes;
     private String description;
     private Double price;
+    // Maximum customers per slot for this service
+    private Integer capacityPerSlot;
     private List<AddonRequest> addons;
 
     public static class AddonRequest {
@@ -91,6 +93,14 @@ public class ServiceCreateRequest {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Integer getCapacityPerSlot() {
+        return capacityPerSlot;
+    }
+
+    public void setCapacityPerSlot(Integer capacityPerSlot) {
+        this.capacityPerSlot = capacityPerSlot;
     }
 
     public List<AddonRequest> getAddons() {

@@ -11,6 +11,7 @@ interface Booking {
   bookingDateTime: string;
   status: string;
   totalPrice: number;
+  statusMessage?: string | null;
 }
 
 export default function YourBookingsPage() {
@@ -74,27 +75,64 @@ export default function YourBookingsPage() {
                 border: "1px solid #e0e0e0",
                 borderRadius: "8px",
                 display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
+                flexDirection: "column",
+                gap: "8px",
               }}
             >
-              <div>
-                <strong>{b.serviceTitle}</strong> at {b.businessName}
-                <p style={{ fontSize: "14px", color: "#666", marginTop: "4px" }}>
-                  {formatDate(b.bookingDateTime)} • Rs {b.totalPrice}
-                </p>
-              </div>
-              <span
+              <div
                 style={{
-                  padding: "4px 12px",
-                  borderRadius: "12px",
-                  fontSize: "12px",
-                  background: "#e8f5e9",
-                  color: "#2e7d32",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: "12px",
                 }}
               >
-                {b.status}
-              </span>
+                <div>
+                  <strong>{b.serviceTitle}</strong> at {b.businessName}
+                  <p style={{ fontSize: "14px", color: "#666", marginTop: "4px" }}>
+                    {formatDate(b.bookingDateTime)} • Rs {b.totalPrice}
+                  </p>
+                </div>
+                <span
+                  style={{
+                    padding: "4px 12px",
+                    borderRadius: "12px",
+                    fontSize: "12px",
+                    background:
+                      b.status === "CANCELLED"
+                        ? "#ffebee"
+                        : b.status === "CONFIRMED"
+                        ? "#e3f2fd"
+                        : "#e8f5e9",
+                    color:
+                      b.status === "CANCELLED"
+                        ? "#b71c1c"
+                        : b.status === "CONFIRMED"
+                        ? "#0d47a1"
+                        : "#2e7d32",
+                  }}
+                >
+                  {b.status}
+                </span>
+              </div>
+
+              {b.statusMessage && (
+                <div
+                  style={{
+                    marginTop: "4px",
+                    padding: "10px 12px",
+                    borderRadius: "6px",
+                    background: b.status === "CANCELLED" ? "#ffebee" : "#e3f2fd",
+                    color: b.status === "CANCELLED" ? "#b71c1c" : "#0d47a1",
+                    fontSize: "13px",
+                  }}
+                >
+                  <strong>
+                    {b.status === "CANCELLED" ? "Reason for cancellation:" : "Message from business:"}
+                  </strong>{" "}
+                  {b.statusMessage}
+                </div>
+              )}
             </div>
           ))}
         </div>

@@ -151,7 +151,9 @@ export default function GroomingPage() {
                 <div
                   className="card-image"
                   style={{
-                    backgroundImage: `url('${business.imageUrl || "/placeholder.jpg"}')`,
+                    backgroundImage: business.imageUrl
+                      ? `url('${business.imageUrl}')`
+                      : "linear-gradient(135deg, #f97316, #ec4899)",
                   }}
                 ></div>
 

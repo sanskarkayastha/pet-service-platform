@@ -40,15 +40,17 @@ public class BookingController {
     public ResponseEntity<?> createBooking(
             @RequestBody BookingRequest request,
             Authentication authentication) {
-        System.out.println("Authentication: " + authentication);
-        System.out.println("Authorities: " + authentication.getAuthorities());
-        System.out.println("Principal: " + authentication.getPrincipal());
         String userId = JwtUtils.extractUserId(authentication);
         if (userId == null) {
             return ResponseEntity.badRequest().body("User is not available");
         }
-        BookingResponseDTO booking = bookingService.createBooking(request, userId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(booking);
+        try {
+            BookingResponseDTO booking = bookingService.createBooking(request, userId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(booking);
+        } catch (IllegalStateException ex) {
+            // Used for validation failures like slot capacity or availability.
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
 
     // Get bookings for current business (business owner)
@@ -92,7 +94,7 @@ public class BookingController {
     public ResponseEntity<BookingResponseDTO> updateBookingStatus(
             @PathVariable Long bookingId,
             @RequestBody BookingStatusUpdateRequest request) {
-        BookingResponseDTO updated = bookingService.updateBookingStatus(bookingId, request.status());
+        BookingResponseDTO updated = bookingService.updateBookingStatus(bookingId, request.status(), request.message());
         return ResponseEntity.ok(updated);
     }
 
@@ -113,6 +115,6 @@ public class BookingController {
         return ResponseEntity.ok(bookings);
     }
 
-    public record BookingStatusUpdateRequest(BookingStatus status) {
+    public record BookingStatusUpdateRequest(BookingStatus status, String message) {
     }
 }

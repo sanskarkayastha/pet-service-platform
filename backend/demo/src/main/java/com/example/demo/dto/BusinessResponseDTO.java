@@ -14,6 +14,8 @@ public record BusinessResponseDTO(
                 String city,
                 String panNumber,
                 List<String> category,
-                String imageUrl) {
+                String imageUrl,
+                Double latitude,
+                Double longitude) {
 
 }

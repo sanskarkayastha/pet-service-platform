@@ -20,19 +20,13 @@ interface Service {
   }>;
 }
 
-interface WorkingHours {
-  dayOfWeek: string;
-  startTime: string;
-  endTime: string;
-  isAvailable: boolean;
-  breakStartTime: string | null;
-  breakEndTime: string | null;
-}
-
 interface TimeSlot {
-  date: string;
-  time: string;
-  available: boolean;
+  start: string;
+  end: string;
+  capacity: number;
+  bookedCount: number;
+  blocked: boolean;
+  full: boolean;
 }
 
 export default function BookingPage() {
@@ -41,14 +35,14 @@ export default function BookingPage() {
   const businessId = params.businessId as string;
 
   const [services, setServices] = useState<Service[]>([]);
-  const [workingHours, setWorkingHours] = useState<WorkingHours[]>([]);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedAddons, setSelectedAddons] = useState<number[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
-  const [selectedTime, setSelectedTime] = useState<string>("");
+  const [selectedSlotStart, setSelectedSlotStart] = useState<string>("");
   const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [errorToast, setErrorToast] = useState<string | null>(null);
 
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
@@ -65,19 +59,37 @@ export default function BookingPage() {
 
   useEffect(() => {
     if (selectedDate && selectedService) {
-      generateTimeSlots();
+      loadTimeSlots(selectedService.id, selectedDate);
     }
-  }, [selectedDate, selectedService, workingHours]);
+  }, [selectedDate, selectedService]);
+
+  // Prefill customer info from session
+  useEffect(() => {
+    const fillFromSession = async () => {
+      try {
+        const session = await authClient.getSession();
+        const user = session?.data?.user;
+        if (user) {
+          if (!customerName) setCustomerName(user.name || "");
+          if (!customerEmail) setCustomerEmail(user.email || "");
+          // phone/phoneNumber may vary depending on auth setup
+          const phone = (user as any).phone || (user as any).phoneNumber;
+          if (!customerPhone && phone) setCustomerPhone(phone);
+        }
+      } catch (err) {
+        console.error("Failed to load session for booking form:", err);
+      }
+    };
+    fillFromSession();
+    // we intentionally omit dependencies to run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const loadBusinessData = async () => {
     try {
-      const [servicesRes, hoursRes] = await Promise.all([
-        apiClient.get<Service[]>(`/api/services/business/${businessId}`),
-        apiClient.get<WorkingHours[]>(`/api/working-hours/business/${businessId}`),
-      ]);
+      const servicesRes = await apiClient.get<Service[]>(`/api/services/business/${businessId}`);
 
       setServices(servicesRes.data);
-      setWorkingHours(hoursRes.data);
 
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
@@ -89,37 +101,20 @@ export default function BookingPage() {
     }
   };
 
-  const generateTimeSlots = () => {
-    if (!selectedService || !selectedDate) return;
-
-    const selectedDay = new Date(selectedDate).toLocaleDateString("en-US", { weekday: "long" }).toUpperCase();
-    const dayHours = workingHours.find((wh) => wh.dayOfWeek === selectedDay);
-
-    if (!dayHours || !dayHours.isAvailable) {
+  const loadTimeSlots = async (serviceId: number, date: string) => {
+    try {
+      const res = await apiClient.get<TimeSlot[]>(
+        `/api/time-slots/business/${businessId}/service/${serviceId}?date=${date}`,
+      );
+      // Only keep slots that are not blocked and not full
+      const slots = res.data.filter((s) => !s.blocked && !s.full);
+      setAvailableSlots(slots);
+      setSelectedSlotStart(""); // reset previously selected slot when reloading
+    } catch (error) {
+      console.error("Failed to load time slots:", error);
       setAvailableSlots([]);
-      return;
+      setSelectedSlotStart("");
     }
-
-    const slots: TimeSlot[] = [];
-    const start = new Date(`${selectedDate}T${dayHours.startTime}`);
-    const end = new Date(`${selectedDate}T${dayHours.endTime}`);
-    const breakStart = dayHours.breakStartTime ? new Date(`${selectedDate}T${dayHours.breakStartTime}`) : null;
-    const breakEnd = dayHours.breakEndTime ? new Date(`${selectedDate}T${dayHours.breakEndTime}`) : null;
-    const serviceDuration = selectedService.durationMinutes;
-    let current = new Date(start);
-
-    while (current < end) {
-      const slotEnd = new Date(current.getTime() + serviceDuration * 60000);
-      const isDuringBreak =
-        breakStart && breakEnd &&
-        ((current >= breakStart && current < breakEnd) || (slotEnd > breakStart && slotEnd <= breakEnd));
-
-      if (!isDuringBreak && slotEnd <= end) {
-        slots.push({ date: selectedDate, time: current.toTimeString().slice(0, 5), available: true });
-      }
-      current.setMinutes(current.getMinutes() + 30);
-    }
-    setAvailableSlots(slots);
   };
 
   const calculateTotal = () => {
@@ -133,8 +128,8 @@ export default function BookingPage() {
   };
 
   const handleSubmit = async () => {
-    if (!selectedService || !selectedDate || !selectedTime) {
-      alert("Please select a service, date, and time");
+    if (!selectedService || !selectedDate || !selectedSlotStart) {
+      alert("Please select a service, date, and time slot");
       return;
     }
     if (!customerName || !customerEmail || !customerPhone) {
@@ -143,11 +138,15 @@ export default function BookingPage() {
     }
 
     setSubmitting(true);
+    setErrorToast(null);
     try {
-      const bookingDateTime = new Date(`${selectedDate}T${selectedTime}`);
-      await apiClient.post("/api/bookings/create", {
+      const res = await apiClient.post<{
+        id: number;
+      }>("/api/bookings/create", {
         serviceId: selectedService.id,
-        bookingDateTime: bookingDateTime.toISOString(),
+        // Send the exact local date-time string from the slot,
+        // so it matches backend LocalDateTime and working hours.
+        bookingDateTime: selectedSlotStart,
         customerName,
         customerEmail,
         customerPhone,
@@ -157,10 +156,28 @@ export default function BookingPage() {
         addonIds: selectedAddons,
       });
       alert("Booking created successfully!");
-      router.push(`/users/petServices/grooming`);
-    } catch (error: unknown) {
-      const err = error as { message?: string };
-      alert("Failed to create booking: " + (err.message || "Unknown error"));
+      router.push(
+        `/users/petServices/grooming/detail/receipt?bookingId=${res.data.id}`,
+      );
+    } catch (error: any) {
+      const backendMessage: string | undefined = error?.response?.data;
+      const genericMessage = "We couldn't complete this booking. Please try another time or slot.";
+
+      if (
+        error?.response?.status === 400 &&
+        typeof backendMessage === "string" &&
+        backendMessage.toLowerCase().includes("slot is full")
+      ) {
+        setErrorToast(
+          "That time slot has just been fully booked. Please pick a different time."
+        );
+      } else {
+        setErrorToast(
+          typeof backendMessage === "string" && backendMessage.length < 160
+            ? backendMessage
+            : genericMessage
+        );
+      }
     } finally {
       setSubmitting(false);
     }
@@ -178,6 +195,31 @@ export default function BookingPage() {
 
   return (
     <div className={styles.container}>
+      {errorToast && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            maxWidth: "320px",
+            backgroundColor: "#fef2f2",
+            color: "#b91c1c",
+            border: "1px solid #fecaca",
+            borderRadius: "12px",
+            padding: "12px 16px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.12)",
+            fontSize: "0.9rem",
+            zIndex: 40,
+          }}
+          onClick={() => setErrorToast(null)}
+        >
+          <strong style={{ display: "block", marginBottom: 4 }}>Booking not completed</strong>
+          <span>{errorToast}</span>
+          <div style={{ marginTop: 6, fontSize: "0.8rem", opacity: 0.8 }}>
+            Tap to dismiss.
+          </div>
+        </div>
+      )}
       <div className={styles.bookingPage}>
         <header className={styles.bookingHeader}>
           <h1 className={styles.bookingTitle}>Book a service</h1>
@@ -275,17 +317,21 @@ export default function BookingPage() {
                   ) : (
                     <div className={styles.timeGrid}>
                       {availableSlots.map((slot, index) => {
-                        const isSelected = selectedTime === slot.time;
+                        const startLabel = new Date(slot.start).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        });
+                        const isSelected = selectedSlotStart === slot.start;
                         return (
                           <button
                             key={index}
                             type="button"
-                            onClick={() => setSelectedTime(slot.time)}
+                            onClick={() => setSelectedSlotStart(slot.start)}
                             className={`${styles.timeButton} ${
                               isSelected ? styles.timeButtonSelected : ""
                             }`}
                           >
-                            {slot.time}
+                            {startLabel}
                           </button>
                         );
                       })}
@@ -376,20 +422,24 @@ export default function BookingPage() {
                   </div>
                 </div>
 
-                {selectedDate && selectedTime && (
+                {selectedDate && selectedSlotStart && (
                   <div className={styles.summaryDatePill}>
                     <div style={{ fontSize: "0.8rem", color: "#6b7280" }}>
                       Date &amp; time
                     </div>
                     <div style={{ fontWeight: 500 }}>
-                      {new Date(selectedDate).toLocaleDateString()} at {selectedTime}
+                      {new Date(selectedDate).toLocaleDateString()} at{" "}
+                      {new Date(selectedSlotStart).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </div>
                   </div>
                 )}
 
                 <button
                   onClick={handleSubmit}
-                  disabled={submitting || !selectedDate || !selectedTime}
+                  disabled={submitting || !selectedDate || !selectedSlotStart}
                   className={styles.primaryButton}
                 >
                   {submitting ? "Booking..." : "Confirm booking"}

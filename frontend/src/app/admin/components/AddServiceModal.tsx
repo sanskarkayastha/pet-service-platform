@@ -17,6 +17,7 @@ interface ServiceForm {
   detailedDescription: string;
   duration: string;
   basePrice: string;
+   capacityPerSlot: string;
   addOns: AddOn[];
 }
 
@@ -54,6 +55,7 @@ export default function AddServiceModal({
     detailedDescription: editingService?.description || "",
     duration: editingService?.durationMinutes?.toString() || "",
     basePrice: editingService?.price?.toString() || "",
+    capacityPerSlot: "",
     addOns:
       editingService?.addons?.map((a) => ({
         title: a.name,
@@ -70,6 +72,7 @@ export default function AddServiceModal({
         detailedDescription: editingService.description,
         duration: editingService.durationMinutes.toString(),
         basePrice: editingService.price.toString(),
+        capacityPerSlot: "", // will default to 1 if left blank
         addOns:
           editingService.addons?.map((a) => ({
             title: a.name,
@@ -84,6 +87,7 @@ export default function AddServiceModal({
         detailedDescription: "",
         duration: "",
         basePrice: "",
+        capacityPerSlot: "",
         addOns: [{ title: "", description: "", price: "" }],
       });
     }
@@ -133,6 +137,7 @@ export default function AddServiceModal({
         durationMinutes: parseInt(form.duration) || 60,
         description: form.detailedDescription || form.shortDescription,
         price: Number(form.basePrice),
+        capacityPerSlot: form.capacityPerSlot ? Number(form.capacityPerSlot) : 1,
         addons: cleanedAddOns.map((a) => ({
           name: a.title,
           description: a.description,
@@ -222,6 +227,25 @@ export default function AddServiceModal({
                   handleChange("basePrice", e.target.value.replace(/\D/g, ""))
                 }
               />
+            </div>
+          </div>
+
+          <div className={styles.row}>
+            <div>
+              <label>Max pets per time slot</label>
+              <input
+                placeholder="e.g., 3"
+                value={form.capacityPerSlot}
+                onChange={(e) =>
+                  handleChange(
+                    "capacityPerSlot",
+                    e.target.value.replace(/\D/g, ""),
+                  )
+                }
+              />
+              <small>
+                How many customers/pets you can handle at the same time for this service.
+              </small>
             </div>
           </div>
 

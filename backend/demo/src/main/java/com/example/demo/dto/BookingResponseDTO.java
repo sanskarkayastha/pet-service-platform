@@ -22,7 +22,8 @@ public record BookingResponseDTO(
     String notes,
     Double totalPrice,
     List<AddonResponse> addons,
-    LocalDateTime createdAt
+    LocalDateTime createdAt,
+    String statusMessage
 ) {
     public record AddonResponse(
         Long id,

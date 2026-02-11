@@ -11,6 +11,7 @@ public record ServiceResponseDTO(
     Integer durationMinutes,
     String description,
     Double price,
+    Integer capacityPerSlot,
     List<AddonResponseDTO> addons
 ) {
     public record AddonResponseDTO(
