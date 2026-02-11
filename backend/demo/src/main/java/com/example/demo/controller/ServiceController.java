@@ -13,10 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ServiceCreateRequest;
 import com.example.demo.dto.ServiceResponseDTO;
-import com.example.demo.model.Business;
-import com.example.demo.model.User;
-import com.example.demo.security.CurrentUser;
-import com.example.demo.services.BusinessServices;
 import com.example.demo.services.ServiceService;
 
 import java.util.List;
@@ -29,14 +25,11 @@ public class ServiceController {
     @Autowired
     private ServiceService serviceService;
 
-    @Autowired
-    private BusinessServices businessServices;
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('BUSINESS') or hasRole('ADMIN')")
     public ResponseEntity<?> createService(
-            @RequestBody ServiceCreateRequest request,
-            @CurrentUser User currentUser) {
+            @RequestBody ServiceCreateRequest request) {
 
         Long serviceId = serviceService.createService(request);
         return ResponseEntity.ok(serviceId);

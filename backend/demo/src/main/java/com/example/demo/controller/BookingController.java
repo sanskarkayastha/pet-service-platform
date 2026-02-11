@@ -9,6 +9,7 @@ import com.example.demo.security.CurrentUser;
 import com.example.demo.services.BookingService;
 import com.example.demo.services.BusinessServices;
 import com.example.demo.services.UserService;
+import com.example.demo.util.JwtUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.util.List;
 
@@ -35,29 +34,20 @@ public class BookingController {
     @Autowired
     private BusinessServices businessServices;
 
-    private String extractUserIdFromJwt(Authentication authentication) {
-        if (authentication instanceof JwtAuthenticationToken) {
-            JwtAuthenticationToken jwtAuth = (JwtAuthenticationToken) authentication;
-            Jwt jwt = jwtAuth.getToken();
-            
-            // Try userId claim
-            Object userIdClaim = jwt.getClaim("userId");
-            if (userIdClaim == null) {
-                userIdClaim = jwt.getClaim("sub"); // standard JWT subject claim
-            }
-            
-            return userIdClaim != null ? userIdClaim.toString() : null;
-        }
-        return null;
-    }
-
     // Create booking (user)
     @PostMapping("/create")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<BookingResponseDTO> createBooking(
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> createBooking(
             @RequestBody BookingRequest request,
-            @CurrentUser User currentUser) {
-        BookingResponseDTO booking = bookingService.createBooking(request, currentUser.getId());
+            Authentication authentication) {
+        System.out.println("Authentication: " + authentication);
+        System.out.println("Authorities: " + authentication.getAuthorities());
+        System.out.println("Principal: " + authentication.getPrincipal());
+        String userId = JwtUtils.extractUserId(authentication);
+        if(userId == null){
+            return ResponseEntity.badRequest().body("User is not available");
+        }
+        BookingResponseDTO booking = bookingService.createBooking(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(booking);
     }
 
@@ -66,7 +56,7 @@ public class BookingController {
     @PreAuthorize("hasRole('BUSINESS')")
     public ResponseEntity<?> getMyBookings(Authentication authentication) {
 
-        String userId = extractUserIdFromJwt(authentication);
+        String userId = JwtUtils.extractUserId(authentication);
 
         if(userId == null){
             return ResponseEntity.badRequest().body("unable to find user");
@@ -81,10 +71,16 @@ public class BookingController {
     // Get bookings by status (business owner)
     @GetMapping("/my-bookings/status/{status}")
     @PreAuthorize("hasRole('BUSINESS')")
-    public ResponseEntity<List<BookingResponseDTO>> getBookingsByStatus(
+    public ResponseEntity<?> getBookingsByStatus(
             @PathVariable String status,
-            @CurrentUser User currentUser) {
-        Business business = businessServices.getBusinessByUserId(currentUser.getId());
+            Authentication authentication) {
+        
+        String userId = JwtUtils.extractUserId(authentication);
+
+        if(userId == null){
+            return ResponseEntity.badRequest().body("unable to find user");
+        }
+        Business business = businessServices.getBusinessByUserId(userId);
         BookingStatus bookingStatus = BookingStatus.valueOf(status.toUpperCase());
         List<BookingResponseDTO> bookings = bookingService.getBookingsByBusinessAndStatus(business, bookingStatus);
         return ResponseEntity.ok(bookings);

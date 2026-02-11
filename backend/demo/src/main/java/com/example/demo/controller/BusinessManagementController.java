@@ -3,12 +3,14 @@ package com.example.demo.controller;
 import com.example.demo.dto.BusinessUpdateRequest;
 import com.example.demo.model.Business;
 import com.example.demo.model.User;
-import com.example.demo.repository.BusinessRepository;
 import com.example.demo.security.CurrentUser;
 import com.example.demo.services.BusinessServices;
+import com.example.demo.util.JwtUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,24 +21,29 @@ public class BusinessManagementController {
     @Autowired
     private BusinessServices businessServices;
 
-    @Autowired
-    private BusinessRepository businessRepository;
-
     // Get current user's business
     @GetMapping("/my-business")
     @PreAuthorize("hasRole('BUSINESS')")
-    public ResponseEntity<Business> getMyBusiness(@CurrentUser User currentUser) {
-        Business business = businessServices.getBusinessByUserId(currentUser.getId());
+    public ResponseEntity<?> getMyBusiness( Authentication authentication) {
+        String userId = JwtUtils.extractUserId(authentication);
+        if(userId == null){
+            return ResponseEntity.badRequest().body("User not found");
+        }
+        Business business = businessServices.getBusinessByUserId(userId);
         return ResponseEntity.ok(business);
     }
 
     // Update business information
     @PutMapping("/update")
     @PreAuthorize("hasRole('BUSINESS')")
-    public ResponseEntity<Business> updateBusiness(
+    public ResponseEntity<?> updateBusiness(
             @RequestBody BusinessUpdateRequest request,
-            @CurrentUser User currentUser) {
-        Business business = businessServices.getBusinessByUserId(currentUser.getId());
+            Authentication authentication) {
+        String userId = JwtUtils.extractUserId(authentication);
+        if(userId==null){
+            return ResponseEntity.badRequest().body("User not found");
+        }
+        Business business = businessServices.getBusinessByUserId(userId);
         Business updated = businessServices.updateBusiness(business.getId(), request);
         return ResponseEntity.ok(updated);
     }

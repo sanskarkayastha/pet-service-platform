@@ -27,7 +27,6 @@ public class ServiceService {
         Business business = businessRepository.findById(request.getBusinessId())
                 .orElseThrow(() -> new RuntimeException("Business not found"));
 
-        //  Validate category if it matches to business or not
         if (!business.getCategory().contains(request.getCategory())) {
             throw new IllegalArgumentException(
                     "Business does not support this service category");
@@ -41,10 +40,10 @@ public class ServiceService {
         service.setDescription(request.getDescription());
         service.setPrice(request.getPrice());
 
-        // Handle add-ons
-        if (request.getAddons() != null) {
-            var addons = new ArrayList<ServiceAddon>();
+        // ✅ Ensure collection is initialized
+        service.setAddons(new ArrayList<>());
 
+        if (request.getAddons() != null) {
             for (var addonReq : request.getAddons()) {
                 ServiceAddon addon = new ServiceAddon();
                 addon.setService(service);
@@ -52,9 +51,8 @@ public class ServiceService {
                 addon.setDescription(addonReq.getDescription());
                 addon.setPrice(addonReq.getPrice());
 
-                addons.add(addon);
+                service.getAddons().add(addon); // ✅ add to existing list
             }
-            service.setAddons(addons);
         }
 
         return serviceRepository.save(service).getId();
@@ -78,6 +76,7 @@ public class ServiceService {
 
     @Transactional
     public ServiceResponseDTO updateService(Long serviceId, ServiceCreateRequest request) {
+
         BusinessService service = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
 
@@ -94,28 +93,30 @@ public class ServiceService {
         service.setDescription(request.getDescription());
         service.setPrice(request.getPrice());
 
-        // Update add-ons
+        // ✅ Correct way to update addons with orphanRemoval=true
         if (request.getAddons() != null) {
-            // Remove existing addons
-            if (service.getAddons() != null) {
-                service.getAddons().clear();
+
+            // Ensure collection exists
+            if (service.getAddons() == null) {
+                service.setAddons(new ArrayList<>());
             }
 
-            // Add new addons
-            var addons = new ArrayList<ServiceAddon>();
+            // Clear existing addons (orphanRemoval will delete them)
+            service.getAddons().clear();
+
+            // Add new addons to SAME collection instance
             for (var addonReq : request.getAddons()) {
                 ServiceAddon addon = new ServiceAddon();
                 addon.setService(service);
                 addon.setName(addonReq.getName());
                 addon.setDescription(addonReq.getDescription());
                 addon.setPrice(addonReq.getPrice());
-                addons.add(addon);
+
+                service.getAddons().add(addon); // ✅ DO NOT replace list
             }
-            service.setAddons(addons);
         }
 
-        BusinessService updated = serviceRepository.save(service);
-        return toResponseDTO(updated);
+        return toResponseDTO(service); // no need to save explicitly (managed entity)
     }
 
     @Transactional
@@ -126,15 +127,17 @@ public class ServiceService {
     }
 
     private ServiceResponseDTO toResponseDTO(BusinessService service) {
-        List<ServiceResponseDTO.AddonResponseDTO> addons = service.getAddons() != null
-                ? service.getAddons().stream()
+
+        List<ServiceResponseDTO.AddonResponseDTO> addons =
+                service.getAddons() != null
+                        ? service.getAddons().stream()
                         .map(addon -> new ServiceResponseDTO.AddonResponseDTO(
                                 addon.getId(),
                                 addon.getName(),
                                 addon.getDescription(),
                                 addon.getPrice()))
                         .toList()
-                : new ArrayList<>();
+                        : new ArrayList<>();
 
         return new ServiceResponseDTO(
                 service.getId(),

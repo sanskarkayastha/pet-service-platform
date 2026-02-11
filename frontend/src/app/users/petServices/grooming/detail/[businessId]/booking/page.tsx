@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { apiGet, apiPost } from "@/lib/api-fetch";
 import styles from "../../page.module.css";
+import { authClient } from "@/lib/auth-client";
 
 interface Service {
   id: number;
@@ -59,7 +60,7 @@ export default function BookingPage() {
   useEffect(() => {
     if (businessId) {
       loadBusinessData();
-    }
+    } 
   }, [businessId]);
 
   useEffect(() => {

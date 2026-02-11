@@ -18,7 +18,7 @@ export const auth = betterAuth({
     additionalFields: {
       role: {
         type: "string",
-        defaultValue: "user",
+        defaultValue: "USER", // Change to uppercase
         input: false,
       },
     },
@@ -35,19 +35,28 @@ export const auth = betterAuth({
     },
   },
   session: {
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
-    updateAge: 60 * 60 * 24, // 1 day
+    expiresIn: 60 * 60 * 24 * 7,
+    updateAge: 60 * 60 * 24,
   },
   secret: process.env.BETTER_AUTH_SECRET || process.env.AUTH_SECRET || "change-this-secret-in-production",
   baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000",
   autoMigrate: true,
   plugins: [
-    nextCookies(),jwt({
+    nextCookies(),
+    jwt({
       jwks: {
         keyPairConfig: {
           alg: "RS256",
         }
-      }
+      },
+      jwt: {
+        // Use definePayload to add role to JWT
+        definePayload: (session) => {
+          return {
+            role: session.user.role || "USER",
+          };
+        },
+      },
     })
   ],
 });

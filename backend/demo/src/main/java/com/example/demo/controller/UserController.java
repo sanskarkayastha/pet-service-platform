@@ -25,7 +25,7 @@ public class UserController {
 
     @GetMapping("/getAllUsers")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<User> getAllUsers(@CurrentUser User currentUser) {
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
