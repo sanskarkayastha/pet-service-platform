@@ -49,8 +49,7 @@ public class BusinessController {
             @RequestPart("businessInfo") BusinessDTO businessDTO,
             @RequestPart("logo-upload") MultipartFile logo, 
             @RequestPart("license-upload") MultipartFile license,
-            @RequestPart("verification-upload") MultipartFile verificationDoc,
-            @CurrentUser User currentUser) {
+            @RequestPart("verification-upload") MultipartFile verificationDoc) {
         try {
             Business business = businessServices.addBusiness(businessDTO, logo, license, verificationDoc);
             if (business != null) {

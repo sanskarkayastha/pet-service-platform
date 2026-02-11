@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 
+import java.lang.System.Logger;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,7 +60,7 @@ public class SecurityConfig {
 
                 // Authenticated writes
                 .requestMatchers(HttpMethod.POST, "/api/business/addBusiness").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/bookings/create").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/bookings/create").hasRole("USER")
                 .requestMatchers(HttpMethod.PUT, "/api/bookings/**").authenticated()
 
                 // Everything else requires login
@@ -88,8 +89,8 @@ public class SecurityConfig {
 
         JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
         authenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            
             Collection<GrantedAuthority> authorities = defaultConverter.convert(jwt);
-
             return authorities.stream()
                     .map(auth -> new SimpleGrantedAuthority(auth.getAuthority().toUpperCase()))
                     .collect(Collectors.toList());

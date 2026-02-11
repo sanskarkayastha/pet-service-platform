@@ -7,9 +7,12 @@ import com.example.demo.model.User;
 import com.example.demo.security.CurrentUser;
 import com.example.demo.services.BusinessServices;
 import com.example.demo.services.WorkingHoursService;
+import com.example.demo.util.JwtUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,8 +31,9 @@ public class WorkingHoursController {
     // Get working hours for current business
     @GetMapping("/my-hours")
     @PreAuthorize("hasRole('BUSINESS')")
-    public ResponseEntity<List<WorkingHoursResponseDTO>> getMyWorkingHours(@CurrentUser User currentUser) {
-        Business business = businessServices.getBusinessByUserId(currentUser.getId());
+    public ResponseEntity<List<WorkingHoursResponseDTO>> getMyWorkingHours(Authentication authentication) {
+        String userId = JwtUtils.extractUserId(authentication);
+        Business business = businessServices.getBusinessByUserId(userId);
         List<WorkingHoursResponseDTO> hours = workingHoursService.getWorkingHours(business.getId());
         return ResponseEntity.ok(hours);
     }
@@ -39,8 +43,9 @@ public class WorkingHoursController {
     @PreAuthorize("hasRole('BUSINESS')")
     public ResponseEntity<List<WorkingHoursResponseDTO>> updateWorkingHours(
             @RequestBody WorkingHoursRequest request,
-            @CurrentUser User currentUser) {
-        Business business = businessServices.getBusinessByUserId(currentUser.getId());
+            Authentication authentication) {
+        String userId = JwtUtils.extractUserId(authentication);
+        Business business = businessServices.getBusinessByUserId(userId);
         List<WorkingHoursResponseDTO> updated = workingHoursService.updateWorkingHours(business.getId(), request);
         return ResponseEntity.ok(updated);
     }
