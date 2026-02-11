@@ -17,6 +17,9 @@ apiClient.interceptors.request.use(async (config) => {
   if (data) {
     config.headers.Authorization = `Bearer ${data.token}`;
   }
+  if(error){
+    console.error("Failed to get auth token:", error);
+  }
 
   return config;
 });

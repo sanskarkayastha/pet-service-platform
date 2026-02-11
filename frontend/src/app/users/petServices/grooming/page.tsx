@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { apiGet } from "@/lib/api-fetch";
 import "@/styles/Grooming.css";
+import apiClient from "@/lib/api-client";
 
 /* ================= TYPES ================= */
 
@@ -37,8 +37,8 @@ export default function GroomingPage() {
     const getBusinessData = async () => {
       try {
         // Use authenticated API utility - automatically adds JWT token if available
-        const json = await apiGet<Business[]>("/api/business/allBusinesses");
-        setBusinesses(json);
+        const json = await apiClient.get<Business[]>("/api/business/allBusinesses");
+        setBusinesses(json.data);
       } catch (err) {
         console.error("Failed to fetch businesses", err);
       } finally {

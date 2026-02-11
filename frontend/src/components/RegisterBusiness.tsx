@@ -6,6 +6,7 @@ import styles from "./RegisterBusiness.module.css";
 import Image from "next/image";
 import img from "@/image/RegisterBusiness.png";
 import { useRouter } from "next/navigation";
+import apiClient from "@/lib/api-client";
 
 
 type BusinessStatusType = "NOT_APPLIED" | "PENDING" | "APPROVED";
@@ -26,7 +27,7 @@ export default function RegisterBusiness( session: any) {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const res = await axios.get<BusinessStatusResponse>(
+        const res = await apiClient.get<BusinessStatusResponse>(
           `http://localhost:8080/api/business/getBusinessStatus/${userId}`
         );
 

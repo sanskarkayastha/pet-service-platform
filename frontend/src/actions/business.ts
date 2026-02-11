@@ -1,4 +1,4 @@
-import { apiPost } from "@/lib/api-fetch";
+import apiClient from "@/lib/api-client";
 
 export async function registerBusiness(formData: any) {
   try {
@@ -41,7 +41,7 @@ export async function registerBusiness(formData: any) {
     }
 
     // Use authenticated API utility - automatically adds JWT token
-    return await apiPost("/api/business/addBusiness", multipart);
+    return await apiClient.post("/api/business/addBusiness", multipart);
   } catch (error) {
     console.error("Error registering business", error);
     throw error;

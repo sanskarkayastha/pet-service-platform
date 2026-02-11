@@ -1,6 +1,4 @@
 import { auth } from "@/lib/auth";
-import HeroSection from "../components/heroSection";
-import ServicesSection from "../components/servicesSection";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 

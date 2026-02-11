@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BusinessRequest } from "../types/businessRequest";
 import "../styles/superadminDash.css";
+import apiClient from "@/lib/api-client";
 
 interface Props {
   request: BusinessRequest;
@@ -14,52 +15,40 @@ const BusinessRequestCard: React.FC<Props> = ({ request, onView }) => {
 
   const businessId = request.businessId ?? request.id;
 
-  // 🔹 Approve API
-  const handleApprove = async () => {
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-      const token = await (await import("@/lib/auth-client")).authClient.token();
-      await fetch(`${baseUrl}/api/business/${businessId}/approve`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
-      setShowApproveModal(false);
-      window.location.reload();
-    } catch (err) {
-      console.error(err);
-      alert("Failed to approve business");
-    }
-  };
+  //  Approve API
+const handleApprove = async () => {
+  try {
+    await apiClient.put(`/api/business/${businessId}/approve`);
 
-  // 🔹 Reject API
-  const handleReject = async () => {
-    if (!rejectReason.trim()) {
-      alert("Please provide a rejection reason.");
-      return;
-    }
+    setShowApproveModal(false);
+    window.location.reload();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to approve business");
+  }
+};
 
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-      const token = await (await import("@/lib/auth-client")).authClient.token();
-      await fetch(`${baseUrl}/api/business/${businessId}/reject`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ message: rejectReason }),
-      });
-      setShowRejectModal(false);
-      setRejectReason("");
-      window.location.reload();
-    } catch (err) {
-      console.error(err);
-      alert("Failed to reject business");
-    }
-  };
+  //  Reject API
+const handleReject = async () => {
+  if (!rejectReason.trim()) {
+    alert("Please provide a rejection reason.");
+    return;
+  }
+
+  try {
+    await apiClient.put(
+      `/api/business/${businessId}/reject`,
+      { message: rejectReason }
+    );
+
+    setShowRejectModal(false);
+    setRejectReason("");
+    window.location.reload();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to reject business");
+  }
+};
 
   return (
     <>

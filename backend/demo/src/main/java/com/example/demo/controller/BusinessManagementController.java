@@ -2,8 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.BusinessUpdateRequest;
 import com.example.demo.model.Business;
-import com.example.demo.model.User;
-import com.example.demo.security.CurrentUser;
 import com.example.demo.services.BusinessServices;
 import com.example.demo.util.JwtUtils;
 
@@ -24,9 +22,9 @@ public class BusinessManagementController {
     // Get current user's business
     @GetMapping("/my-business")
     @PreAuthorize("hasRole('BUSINESS')")
-    public ResponseEntity<?> getMyBusiness( Authentication authentication) {
+    public ResponseEntity<?> getMyBusiness(Authentication authentication) {
         String userId = JwtUtils.extractUserId(authentication);
-        if(userId == null){
+        if (userId == null) {
             return ResponseEntity.badRequest().body("User not found");
         }
         Business business = businessServices.getBusinessByUserId(userId);
@@ -40,7 +38,7 @@ public class BusinessManagementController {
             @RequestBody BusinessUpdateRequest request,
             Authentication authentication) {
         String userId = JwtUtils.extractUserId(authentication);
-        if(userId==null){
+        if (userId == null) {
             return ResponseEntity.badRequest().body("User not found");
         }
         Business business = businessServices.getBusinessByUserId(userId);
