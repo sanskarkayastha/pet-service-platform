@@ -45,7 +45,7 @@ export default function Navbar( {session}: {session: any}) {
             </ul>
           </li>
           <li><Link href="/users/aboutUs">About Us</Link></li>
-          <li><Link href="/users#contact">Contact Us</Link></li>
+          <li><Link href="/users/contact">Contact Us</Link></li>
           
         </ul>
 
