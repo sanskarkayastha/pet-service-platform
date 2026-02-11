@@ -34,7 +34,6 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
                 .authorizeHttpRequests(auth -> auth
                         // Public browsing
                         .requestMatchers(HttpMethod.GET, "/api/business/allBusinesses").permitAll()
@@ -45,6 +44,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/working-hours/business/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/testUser/**").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/ws").permitAll()
+
+                        // Messaging
+                        .requestMatchers(HttpMethod.GET, "/api/messages/customer").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/messages/business").hasRole("BUSINESS")
+                        .requestMatchers(HttpMethod.POST, "/api/messages/conversations").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/messages/conversations/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/messages/conversations/*/read").authenticated()
 
                         // ADMIN
                         .requestMatchers("/api/business/getPendingBusiness").hasRole("ADMIN")
@@ -59,7 +66,7 @@ public class SecurityConfig {
 
                         // Authenticated writes
                         .requestMatchers(HttpMethod.POST, "/api/business/addBusiness").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/bookings/create").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/bookings/create").hasRole("USER")
                         .requestMatchers(HttpMethod.PUT, "/api/bookings/**").authenticated()
 
                         // Everything else requires login

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, LogOut, Settings, Package, Clock, ShoppingBag, Calendar } from "lucide-react";
+import { Home, LogOut, Settings, Package, Clock, ShoppingBag, Calendar, MessageCircle } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import styles from "./sidebar.module.css";
 import { logOut } from "@/actions/logout";
@@ -20,6 +20,7 @@ const menuItems: MenuItem[] = [
   { label: "Calendar", href: "/admin/bookingCalendar", icon: Calendar },
   { label: "Working Hours", href: "/admin/working-hours", icon: Clock },
   { label: "Settings", href: "/admin/settings", icon: Settings },
+  { label: "Messages", href: "/admin/messages", icon: MessageCircle },
 ];
 
 export default function AdminSidebar() {
