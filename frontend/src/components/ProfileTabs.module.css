@@ -6,6 +6,7 @@
   margin-top: 70px;
   flex-wrap: wrap;
   justify-content: center; /* ✅ center the tabs horizontally */
+  font-family: 'Poppins', sans-serif;
 }
 
 .tabItem {
@@ -19,11 +20,11 @@
 }
 
 .tabItem:hover {
-  color: #FF6B35;
+  color: #f28b2e;
 }
 
 .tabActive {
-  color: #FF6B35;
-  border-bottom-color: #FF6B35;
+  color: #f28b2e;
+  border-bottom-color: #f28b2e;
   font-weight: 600;
 }

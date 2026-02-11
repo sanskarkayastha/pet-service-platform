@@ -55,7 +55,7 @@ export default function BookingHistoryPage() {
             style={{
               display: "inline-block",
               padding: "12px 24px",
-              background: "linear-gradient(135deg, #9c27b0, #7b1fa2)",
+              background: "#f28b2e",
               color: "white",
               borderRadius: "8px",
               textDecoration: "none",
