@@ -2,10 +2,86 @@
 
 import { ArrowLeft, Lock, CreditCard, Wallet, Landmark } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./payment.module.css";
+import apiClient from "@/lib/api-client";
 
-export default function PaymentPage() {
-  const total = 100.1001; // replace with real total if needed
+type Booking = {
+  id: number;
+  totalPrice: number;
+};
+
+export default function PaymentPage({
+  searchParams,
+}: {
+  searchParams: { bookingId?: string };
+}) {
+  const bookingId = searchParams.bookingId;
+  const [booking, setBooking] = useState<Booking | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!bookingId) {
+      setLoading(false);
+      return;
+    }
+    const load = async () => {
+      try {
+        const res = await apiClient.get<Booking>(`/api/bookings/${bookingId}`);
+        setBooking(res.data);
+      } catch (err) {
+        console.error("Failed to load booking for payment", err);
+        setError("Unable to load booking for payment.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [bookingId]);
+
+  const handleConfirm = async () => {
+    if (!bookingId) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      await apiClient.put(`/api/bookings/${bookingId}/status`, {
+        status: "CONFIRMED",
+        message: "Paid online",
+      });
+      router.push("/users/profile/bookings");
+    } catch (err) {
+      console.error("Failed to confirm payment", err);
+      setError("Payment was processed, but we couldn't update the booking. Please check your bookings.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (!bookingId) {
+    return (
+      <div className={styles.backgroundColor}>
+        <div className={styles.wrapper}>
+          <p>Missing booking reference.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading || !booking) {
+    return (
+      <div className={styles.backgroundColor}>
+        <div className={styles.wrapper}>
+          <p>Loading payment details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const total = booking.totalPrice;
 
   return (
     <div className={styles.backgroundColor}>
@@ -76,7 +152,27 @@ export default function PaymentPage() {
         </div>
 
         {/* Confirm Button */}
-        <button className={styles.confirmBtn}>Confirm payment</button>
+        {error && (
+          <div
+            style={{
+              marginBottom: 8,
+              padding: "8px 10px",
+              borderRadius: 8,
+              background: "#fef2f2",
+              color: "#b91c1c",
+              fontSize: "0.85rem",
+            }}
+          >
+            {error}
+          </div>
+        )}
+        <button
+          className={styles.confirmBtn}
+          onClick={handleConfirm}
+          disabled={submitting}
+        >
+          {submitting ? "Processing..." : "Confirm payment"}
+        </button>
 
         <div className={styles.securityNote}>
             <Lock size={16} className={styles.lockIcon} />

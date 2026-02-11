@@ -32,6 +32,9 @@ public class BookingService {
     @Autowired
     private ServiceAddonRepository serviceAddonRepository;
 
+    @Autowired
+    private TimeSlotRepository timeSlotRepository;
+
     @Transactional
     public BookingResponseDTO createBooking(BookingRequest request, String userId) {
         BusinessService service = serviceRepository.findById(request.serviceId())
@@ -45,6 +48,9 @@ public class BookingService {
         // Calculate end time based on service duration
         LocalDateTime endDateTime = request.bookingDateTime()
                 .plusMinutes(service.getDurationMinutes());
+
+        // Validate against available slots and capacity
+        validateAvailabilityAndCapacity(business, service, request.bookingDateTime(), endDateTime);
 
         // Calculate total price
         double totalPrice = service.getPrice();
@@ -89,6 +95,46 @@ public class BookingService {
         return toResponseDTO(savedBooking);
     }
 
+    /**
+     * Ensure the requested time is:
+     * - matched to an existing time slot for the business
+     * - not over capacity for that slot
+     */
+    private void validateAvailabilityAndCapacity(Business business,
+                                                 BusinessService service,
+                                                 LocalDateTime start,
+                                                 LocalDateTime end) {
+
+        // Find matching explicit time slot for this business/day/start time
+        TimeSlot slot = timeSlotRepository.findByBusinessAndDateAndStartTime(
+                        business,
+                        start.toLocalDate(),
+                        start.toLocalTime()
+                )
+                .orElseThrow(() -> new IllegalStateException("No available slot for selected time"));
+
+        int capacity = slot.getCapacity() != null ? slot.getCapacity() : 1;
+
+        // Capacity check: count existing bookings starting at the same time for this business
+        LocalDateTime slotStart = start;
+        LocalDateTime slotEnd = end;
+
+        List<Booking> existing = bookingRepository.findByBusinessAndDateRange(
+                        business,
+                        slotStart,
+                        slotEnd.plusSeconds(1) // inclusive-ish
+                )
+                .stream()
+                .filter(b -> b.getService().getId().equals(service.getId()))
+                .filter(b -> b.getStatus() != BookingStatus.CANCELLED)
+                .filter(b -> b.getBookingDateTime().equals(slotStart))
+                .toList();
+
+        if (existing.size() >= capacity) {
+            throw new IllegalStateException("Selected slot is full for this service");
+        }
+    }
+
     public List<BookingResponseDTO> getBookingsByBusiness(Business business) {
         List<Booking> bookings = bookingRepository.findByBusinessWithDetails(business);
         return bookings.stream()
@@ -104,11 +150,14 @@ public class BookingService {
     }
 
     @Transactional
-    public BookingResponseDTO updateBookingStatus(Long bookingId, BookingStatus status) {
+    public BookingResponseDTO updateBookingStatus(Long bookingId, BookingStatus status, String message) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
         booking.setStatus(status);
+        if (message != null && !message.isBlank()) {
+            booking.setStatusMessage(message);
+        }
         Booking updated = bookingRepository.save(booking);
         return toResponseDTO(updated);
     }
@@ -155,7 +204,8 @@ public class BookingService {
                 booking.getNotes(),
                 booking.getTotalPrice(),
                 addons,
-                booking.getCreatedAt()
+                booking.getCreatedAt(),
+                booking.getStatusMessage()
         );
     }
 }

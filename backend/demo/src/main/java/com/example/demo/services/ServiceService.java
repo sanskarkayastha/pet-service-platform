@@ -39,6 +39,7 @@ public class ServiceService {
         service.setDurationMinutes(request.getDurationMinutes());
         service.setDescription(request.getDescription());
         service.setPrice(request.getPrice());
+        service.setCapacityPerSlot(request.getCapacityPerSlot());
 
         // ✅ Ensure collection is initialized
         service.setAddons(new ArrayList<>());
@@ -92,6 +93,7 @@ public class ServiceService {
         service.setDurationMinutes(request.getDurationMinutes());
         service.setDescription(request.getDescription());
         service.setPrice(request.getPrice());
+        service.setCapacityPerSlot(request.getCapacityPerSlot());
 
         // ✅ Correct way to update addons with orphanRemoval=true
         if (request.getAddons() != null) {
@@ -147,6 +149,7 @@ public class ServiceService {
                 service.getDurationMinutes(),
                 service.getDescription(),
                 service.getPrice(),
+                service.getCapacityPerSlot(),
                 addons
         );
     }

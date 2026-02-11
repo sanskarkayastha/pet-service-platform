@@ -29,6 +29,7 @@ interface Booking {
     price: number;
   }>;
   createdAt: string;
+  statusMessage?: string | null;
 }
 
 export default function OrdersPage() {
@@ -68,9 +69,19 @@ export default function OrdersPage() {
   };
 
   const handleStatusUpdate = async (bookingId: number, newStatus: string) => {
+    const defaultMessage =
+      newStatus === "CANCELLED"
+        ? "Could you briefly explain why this booking is being cancelled? (optional)"
+        : newStatus === "CONFIRMED"
+        ? "Add a short confirmation note for the customer (optional)"
+        : "Add a short note for the customer (optional)";
+
+    const message = window.prompt(defaultMessage, "");
+
     try {
       await apiClient.put(`/api/bookings/${bookingId}/status`, {
         status: newStatus,
+        message: message && message.trim() ? message.trim() : null,
       });
       loadBookings();
     } catch (error) {
@@ -295,6 +306,24 @@ export default function OrdersPage() {
                         </span>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {booking.statusMessage && (
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      padding: "10px 12px",
+                      borderRadius: "6px",
+                      background: booking.status === "CANCELLED" ? "#ffebee" : "#e3f2fd",
+                      color: booking.status === "CANCELLED" ? "#b71c1c" : "#0d47a1",
+                      fontSize: "13px",
+                    }}
+                  >
+                    <strong>
+                      {booking.status === "CANCELLED" ? "Cancellation reason:" : "Message for customer:"}
+                    </strong>{" "}
+                    {booking.statusMessage}
                   </div>
                 )}
 

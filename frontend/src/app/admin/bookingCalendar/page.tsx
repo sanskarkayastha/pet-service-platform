@@ -1,240 +1,244 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./page.module.css";
+import apiClient from "@/lib/api-client";
+
+type DayOfWeek =
+  | "MONDAY"
+  | "TUESDAY"
+  | "WEDNESDAY"
+  | "THURSDAY"
+  | "FRIDAY"
+  | "SATURDAY"
+  | "SUNDAY";
+
+interface TimeSlot {
+  id: number;
+  start: string;
+  end: string;
+  capacity: number;
+  bookedCount: number;
+  blocked: boolean;
+  full: boolean;
+}
 
 export default function BookingCalendarPage() {
-  const [showWorkingHours, setShowWorkingHours] = useState(false);
-  const [showAddNew, setShowAddNew] = useState(false);
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 0)); // Jan 2026
-  const [activeDay, setActiveDay] = useState<number | null>(28);
+  const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<string>(
+    new Date().toISOString().split("T")[0],
+  );
+  const [slots, setSlots] = useState<TimeSlot[]>([]);
+  const [newStartTime, setNewStartTime] = useState("");
+  const [newEndTime, setNewEndTime] = useState("");
+  const [newCapacity, setNewCapacity] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+  useEffect(() => {
+    loadSlots();
+  }, [selectedDate]);
 
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const firstDayIndex = new Date(year, month, 1).getDay();
-
-  const changeMonth = (direction: number) => {
-    setCurrentDate(new Date(year, month + direction, 1));
-    setActiveDay(null);
+  const loadSlots = async () => {
+    try {
+      setError(null);
+      setSuccess(null);
+      const res = await apiClient.get<TimeSlot[]>(
+        `/api/time-slots/my?date=${selectedDate}`,
+      );
+      setSlots(res.data);
+    } catch (err) {
+      console.error("Failed to load slots", err);
+      setError("Failed to load time slots for this day.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      setError(null);
+      setSuccess(null);
+      if (!newStartTime || !newEndTime || !newCapacity) {
+        setError("Please fill all fields to create a slot.");
+        return;
+      }
+
+      await apiClient.post("/api/time-slots/my", {
+        date: selectedDate,
+        startTime: newStartTime,
+        endTime: newEndTime,
+        // reuse 'reason' field on backend as capacity
+        reason: newCapacity,
+      });
+
+      setNewStartTime("");
+      setNewEndTime("");
+      setNewCapacity("");
+      await loadSlots();
+      setSuccess("Slot created successfully.");
+    } catch (err) {
+      console.error("Failed to create slot", err);
+      setError("Failed to create slot. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (slotId: number) => {
+    try {
+      setError(null);
+      setSuccess(null);
+      await apiClient.delete(
+        `/api/time-slots/my/${slotId}`,
+      );
+      await loadSlots();
+      setSuccess("Slot deleted.");
+    } catch (err) {
+      console.error("Failed to delete slot", err);
+      setError("Failed to delete slot.");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className={styles.layout}>
+        <main className={styles.main}>
+          <p>Loading working hours...</p>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.layout}>
       <main className={styles.main}>
-        {/* TOP BAR */}
         <div className={styles.topBar}>
           <div>
-            <h1>Booking Calendar</h1>
-            <p>Manage appointments, breaks, and holidays</p>
-          </div>
-
-          <div className={styles.actions}>
-            <button
-              className={styles.secondaryBtn}
-              onClick={() => setShowWorkingHours(true)}
-            >
-              ⚙ Working Hours
-            </button>
-            <button
-              className={styles.primaryBtn}
-              onClick={() => setShowAddNew(true)}
-            >
-              + Add New
-            </button>
+            <h1>Booking Slots & Capacity</h1>
+            <p>Create and manage per-day time slots and max pets per slot.</p>
           </div>
         </div>
 
-        {/* DASHBOARD STATS */}
-        <div className={styles.statsGrid}>
-          <div className={`${styles.statCard} ${styles.orange}`}>
-            <h2>12</h2>
-            <p>Today's Appointments</p>
+        <div className={styles.card}>
+          <h3 className={styles.title}>Per-day time slots</h3>
+          <p className={styles.subtitle}>
+            Pick a date, then add one or more time slots with capacity. Customers
+            will only see slots that are not yet full.
+          </p>
+
+          {error && (
+            <div className={styles.errorBanner}>
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className={styles.successBanner}>
+              {success}
+            </div>
+          )}
+
+          <div className={styles.dateRow}>
+            <label>Select date</label>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
           </div>
 
-          <div className={`${styles.statCard} ${styles.yellow}`}>
-            <h2>1</h2>
-            <p>Scheduled Breaks</p>
-          </div>
-
-          <div className={`${styles.statCard} ${styles.red}`}>
-            <h2>0</h2>
-            <p>Upcoming Holidays</p>
-          </div>
-
-          <div className={`${styles.statCard} ${styles.purple}`}>
-            <h2>6</h2>
-            <p>Working Days</p>
-          </div>
-        </div>
-
-        {/* MAIN GRID */}
-        <div className={styles.dashboardGrid}>
-          {/* LEFT CALENDAR */}
-          <div className={styles.card}>
-            <h3 className={styles.title}>Select Date</h3>
-
-            <div className={styles.calendar}>
-              {/* MONTH HEADER */}
-              <div className={styles.monthHeader}>
-                <button
-                  className={styles.navBtn}
-                  onClick={() => changeMonth(-1)}
-                >
-                  ‹
-                </button>
-
-                <p className={styles.month}>
-                  {currentDate.toLocaleString("default", {
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </p>
-
-                <button
-                  className={styles.navBtn}
-                  onClick={() => changeMonth(1)}
-                >
-                  ›
-                </button>
+          <div className={styles.slotForm}>
+            <h4>Create a new slot</h4>
+            <div className={styles.timeInputs}>
+              <div>
+                <label>Start</label>
+                <input
+                  type="time"
+                  value={newStartTime}
+                  onChange={(e) => setNewStartTime(e.target.value)}
+                />
               </div>
-
-              {/* WEEK DAYS */}
-              <div className={styles.weekDays}>
-                {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
-                  <span key={d}>{d}</span>
-                ))}
+              <div>
+                <label>End</label>
+                <input
+                  type="time"
+                  value={newEndTime}
+                  onChange={(e) => setNewEndTime(e.target.value)}
+                />
               </div>
+              <div>
+                <label>Max pets</label>
+                <input
+                  type="number"
+                  min={1}
+                  value={newCapacity}
+                  onChange={(e) => setNewCapacity(e.target.value)}
+                />
+              </div>
+            </div>
 
-              {/* DAYS GRID */}
-              <div className={styles.calendarGrid}>
-                {/* Empty cells before month start */}
-                {Array.from({ length: firstDayIndex }).map((_, i) => (
-                  <div key={`empty-${i}`} />
-                ))}
+            <div className={styles.footer}>
+              <button
+                className={styles.primaryBtn}
+                onClick={handleSave}
+                disabled={saving}
+              >
+                {saving ? "Saving..." : "Add slot"}
+              </button>
+            </div>
+          </div>
 
-                {/* Month days */}
-                {Array.from({ length: daysInMonth }, (_, i) => (
-                  <div
-                    key={i}
-                    onClick={() => setActiveDay(i + 1)}
-                    className={`${styles.day} ${
-                      activeDay === i + 1 ? styles.activeDay : ""
-                    }`}
-                  >
-                    {i + 1}
+          <div className={styles.slotList}>
+            <h4>Slots for this day</h4>
+            {slots.length === 0 ? (
+              <p className={styles.emptyState}>
+                No slots for this date yet. Add at least one time slot above.
+              </p>
+            ) : (
+              slots.map((slot) => {
+                const start = new Date(slot.start);
+                const end = new Date(slot.end);
+                const startLabel = start.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+                const endLabel = end.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+                const remaining = slot.capacity - slot.bookedCount;
+                return (
+                  <div key={slot.id} className={styles.slotRow}>
+                    <div>
+                      <div className={styles.slotTime}>
+                        {startLabel} – {endLabel}
+                      </div>
+                      <div className={styles.slotMeta}>
+                        Capacity {slot.capacity} •{" "}
+                        {slot.bookedCount} booked •{" "}
+                        {remaining > 0 ? `${remaining} left` : "FULL"}
+                      </div>
+                    </div>
+                    <button
+                      className={styles.deleteBtn}
+                      onClick={() => handleDelete(slot.id)}
+                    >
+                      Delete
+                    </button>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* DAY INFO */}
-            <div className={styles.dayInfo}>
-              <span className={styles.dayName}>
-                {activeDay
-                  ? new Date(year, month, activeDay).toLocaleDateString(
-                      "default",
-                      {
-                        weekday: "long",
-                      },
-                    )
-                  : "Select a day"}
-              </span>
-
-              <span className={styles.openBadge}>Open</span>
-            </div>
-
-            <small className={styles.time}>09:00 AM - 06:00 PM</small>
+                );
+              })
+            )}
           </div>
+        </div>
 
-          {/* RIGHT SIDE */}
-          <div className={styles.rightColumn}>
-            {/* BREAKS */}
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <h3>Breaks & Holidays</h3>
-                <div className={styles.inlineBtns}>
-                  <button>☕ Break</button>
-                  <button>🏖 Holiday</button>
-                </div>
-              </div>
-
-              <div className={styles.breakItem}>
-                <strong>Lunch Break</strong>
-                <p>12:00 PM - 01:00 PM</p>
-              </div>
-            </div>
-
-            {/* APPOINTMENTS */}
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <h3>Wednesday, January 28, 2026</h3>
-                <span className={styles.countBadge}>4 appointments</span>
-              </div>
-
-              {[
-                { time: "09:00 AM", name: "Max", status: "confirmed" },
-                { time: "11:00 AM", name: "Bella", status: "pending" },
-                { time: "02:00 PM", name: "Charlie", status: "confirmed" },
-                { time: "04:00 PM", name: "Luna", status: "confirmed" },
-              ].map((a, i) => (
-                <div key={i} className={styles.appointment}>
-                  <span className={styles.time}>{a.time}</span>
-                  <strong>{a.name}</strong>
-                  <span className={`${styles.status} ${styles[a.status]}`}>
-                    {a.status}
-                  </span>
-                  <button className={styles.viewBtn}>View</button>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className={styles.helperText}>
+          Customers will see only non-full slots for this date when booking. Use
+          this screen to open or close specific times and control capacity.
         </div>
       </main>
-
-      {/* WORKING HOURS MODAL */}
-      {showWorkingHours && (
-        <div className={styles.overlay}>
-          <div className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <h3>Working Hours</h3>
-              <button onClick={() => setShowWorkingHours(false)}>✕</button>
-            </div>
-
-            <div className={styles.modalBody}>
-              <p>Set your business operating hours here.</p>
-              {/* time pickers later */}
-            </div>
-
-            <div className={styles.modalFooter}>
-              <button onClick={() => setShowWorkingHours(false)}>Cancel</button>
-              <button className={styles.primaryBtn}>Save Hours</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ADD NEW MODAL */}
-      {showAddNew && (
-        <div className={styles.overlay}>
-          <div className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <h3>Add Break / Holiday</h3>
-              <button onClick={() => setShowAddNew(false)}>✕</button>
-            </div>
-
-            <div className={styles.modalBody}>
-              <p>Select break or holiday details.</p>
-            </div>
-
-            <div className={styles.modalFooter}>
-              <button onClick={() => setShowAddNew(false)}>Cancel</button>
-              <button className={styles.primaryBtn}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

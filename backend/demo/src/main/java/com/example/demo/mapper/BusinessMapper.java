@@ -31,6 +31,8 @@ public class BusinessMapper {
                 business.getCity(),
                 business.getPanNumber(),
                 category,
-                business.getBusinessLogo() != null ? business.getBusinessLogo() : business.getVerificationDoc());
+                business.getBusinessLogo() != null ? business.getBusinessLogo() : business.getVerificationDoc(),
+                business.getLatitude(),
+                business.getLongitude());
     }
 }

@@ -1,11 +1,11 @@
 import React from "react";
-import { Star, MapPin } from "lucide-react";
+import { Star } from "lucide-react";
 import Link from "next/link";
 import styles from "../page.module.css";
 import Services from "../components/Services";
 import img1 from "../../../../../../image/dog-salon.jpg";
-import img2 from "../../../../../../image/dog-salon2.jpg";
-import img3 from "../../../../../../image/hero-salon.jpg";
+import BusinessMap from "../components/BusinessMap";
+import ReviewsSection from "../components/ReviewsSection";
 
 export default async function BusinessDetailPage({
   params,
@@ -22,6 +22,8 @@ export default async function BusinessDetailPage({
     imageUrl?: string;
     rating?: number;
     totalReviews?: number;
+    latitude?: number;
+    longitude?: number;
   } | null = null;
 
   try {
@@ -45,6 +47,8 @@ export default async function BusinessDetailPage({
 
   const rating = business?.rating;
   const reviewsCount = business?.totalReviews;
+  const latitude = business?.latitude;
+  const longitude = business?.longitude;
 
   return (
     <div className={styles.container}>
@@ -66,10 +70,6 @@ export default async function BusinessDetailPage({
         <div className={styles.imageGrid}>
           <div className={styles.mainImage}>
             <img src={mainImage} alt="Pet Grooming Room" />
-          </div>
-          <div className={styles.sideImages}>
-            <img src={img2.src} alt="Grooming" />
-            <img src={img3.src} alt="Boarding" />
           </div>
         </div>
       </section>
@@ -96,13 +96,7 @@ export default async function BusinessDetailPage({
 
       <hr className={styles.divider} />
 
-      <section className={styles.reviews}>
-        <h2>Customer Reviews</h2>
-        <p style={{ marginTop: "16px", color: "#666" }}>
-          There are no reviews for this business yet. Once customers start
-          booking, their feedback will appear here.
-        </p>
-      </section>
+      <ReviewsSection businessId={businessId} />
 
       <hr className={styles.divider} />
 
@@ -115,11 +109,21 @@ export default async function BusinessDetailPage({
 
       <section className={styles.location}>
         <h2>Location</h2>
-        <div className={styles.mapBox}>
-          <MapPin size={28} />
-          <p>{address}</p>
-          <p className={styles.mapNote}>Map integration available</p>
-        </div>
+        {typeof latitude === "number" && typeof longitude === "number" ? (
+          <BusinessMap
+            name={name}
+            address={address}
+            latitude={latitude}
+            longitude={longitude}
+          />
+        ) : (
+          <div className={styles.mapBox}>
+            <p>{address}</p>
+            <p className={styles.mapNote}>
+              Map will appear here once a location is set for this business.
+            </p>
+          </div>
+        )}
       </section>
     </div>
   );
