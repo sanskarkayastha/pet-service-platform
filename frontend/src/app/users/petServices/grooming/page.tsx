@@ -166,7 +166,7 @@ export default function GroomingPage() {
                   <div className="card-footer">
                     <Link
                       href={`/users/petServices/grooming/detail/${business.id}/booking`}
-                      className="btn-book"
+                      className="btn-primary"
                     >
                       Book Now
                     </Link>
