@@ -117,14 +117,12 @@
             background-color: #f28b2e;
             color: white;
             border: none;
-            padding: 0.8rem 2.5rem;
+            padding: 0.9rem 2.5rem;
             border-radius: 12px;
-            font-weight: 700;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 1rem;
             font-size: 0.95rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            letter-spacing: 0.5px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(244, 162, 97, 0.3);
         }
@@ -231,7 +229,7 @@
             transition: all 0.3s ease;
         }
 
-        .btn-book:hover {
+        .btn-primary:hover {
             background: #f4a261;
             transform: scale(1.02);
         }
@@ -241,11 +239,14 @@
             background: white;
             color: #f28b2e;
             border: 2px solid #f28b2e;
-            padding: 0.8rem 1.5rem;
+            padding: 0.8rem 2.2rem;
             border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            letter-spacing: 0.5px;
+            font-size: 0.95rem;
+            
         }
 
         .btn-details:hover {
