@@ -4,37 +4,22 @@ import { authClient } from "./auth-client";
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 // Request interceptor to add JWT token
-apiClient.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
-    try {
-      const result = await authClient.token();
-      const token = result && typeof result === "object" && "token" in result
-        ? (result as { token: string }).token
-        : typeof result === "string"
-          ? result
-          : null;
+apiClient.interceptors.request.use(async (config) => {
+  const {data,error} = await authClient.token();
 
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      // If no token, continue without Authorization header (for public endpoints)
-    } catch (error) {
-      // No session available - this is OK for public endpoints
-      // Continue without token
-    }
-    
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
+  if (data) {
+    config.headers.Authorization = `Bearer ${data.token}`;
   }
-);
+
+  return config;
+});
 
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
