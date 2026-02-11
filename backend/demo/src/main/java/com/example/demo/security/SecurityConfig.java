@@ -46,6 +46,14 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/working-hours/business/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/users/testUser/**").permitAll()
                 .requestMatchers("/error").permitAll()
+                .requestMatchers("/ws").permitAll()
+
+                // Messaging
+                .requestMatchers(HttpMethod.GET, "/api/messages/customer").hasRole("USER")
+                .requestMatchers(HttpMethod.GET, "/api/messages/business").hasRole("BUSINESS")
+                .requestMatchers(HttpMethod.POST, "/api/messages/conversations").hasRole("USER")
+                .requestMatchers(HttpMethod.GET, "/api/messages/conversations/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/messages/conversations/*/read").authenticated()
 
                 // ADMIN
                 .requestMatchers("/api/business/getPendingBusiness").hasRole("ADMIN")

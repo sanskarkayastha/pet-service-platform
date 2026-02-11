@@ -9,6 +9,7 @@ export default function ProfileTabs() {
 
   const tabs = [
     { label: "Account Settings", path: "/users/profile" },
+    { label: "Messages", path: "/users/profile/messages" },
     { label: "Your Bookings", path: "/users/profile/bookings" },
     { label: "Booking History", path: "/users/profile/history" },
     { label: "Register Your Business", path: "/users/profile/business" },

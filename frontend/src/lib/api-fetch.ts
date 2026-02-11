@@ -1,6 +1,8 @@
 import { authClient } from "./auth-client";
+import { extractAuthToken } from "./auth-helpers";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 /**
  * Authenticated fetch wrapper that automatically adds JWT token to requests
@@ -14,11 +16,7 @@ export async function authenticatedFetch(
     let token: string | null = null;
     try {
       const result = await authClient.token();
-      token = result && typeof result === "object" && "token" in result
-        ? (result as { token: string }).token
-        : typeof result === "string"
-          ? result
-          : null;
+      token = extractAuthToken(result);
     } catch {
       // No session available - this is OK for public endpoints
     }
@@ -63,7 +61,7 @@ export async function apiGet<T>(url: string): Promise<T> {
  */
 export async function apiPost<T>(
   url: string,
-  data?: any,
+  data?: unknown,
   options?: RequestInit
 ): Promise<T> {
   const headers = new Headers(options?.headers);
@@ -76,7 +74,12 @@ export async function apiPost<T>(
   const response = await authenticatedFetch(url, {
     method: "POST",
     headers,
-    body: data instanceof FormData ? data : JSON.stringify(data),
+    body:
+      data instanceof FormData
+        ? data
+        : data === undefined
+          ? undefined
+          : JSON.stringify(data),
     ...options,
   });
   
@@ -93,7 +96,7 @@ export async function apiPost<T>(
  */
 export async function apiPut<T>(
   url: string,
-  data?: any,
+  data?: unknown,
   options?: RequestInit
 ): Promise<T> {
   const headers = new Headers(options?.headers);
@@ -105,7 +108,12 @@ export async function apiPut<T>(
   const response = await authenticatedFetch(url, {
     method: "PUT",
     headers,
-    body: data instanceof FormData ? data : JSON.stringify(data),
+    body:
+      data instanceof FormData
+        ? data
+        : data === undefined
+          ? undefined
+          : JSON.stringify(data),
     ...options,
   });
   

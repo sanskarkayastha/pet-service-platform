@@ -1,11 +1,12 @@
 import React from "react";
 import { Star, MapPin } from "lucide-react";
-import Link from "next/link";
 import styles from "../page.module.css";
 import Services from "../components/Services";
 import img1 from "../../../../../../image/dog-salon.jpg";
 import img2 from "../../../../../../image/dog-salon2.jpg";
 import img3 from "../../../../../../image/hero-salon.jpg";
+import { MessageBusinessButton } from "@/components/messages/MessageBusinessButton";
+import { BookServiceButton } from "@/components/BookServiceButton";
 
 export default async function BusinessDetailPage({
   params,
@@ -13,6 +14,7 @@ export default async function BusinessDetailPage({
   params: Promise<{ businessId: string }>;
 }) {
   const { businessId } = await params;
+  const businessNumericId = Number(businessId);
 
   let business: {
     businessName: string;
@@ -75,21 +77,35 @@ export default async function BusinessDetailPage({
       </section>
 
       <section className={styles.services}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "20px",
+            gap: "16px",
+            flexWrap: "wrap",
+          }}
+        >
           <h2>Our Services</h2>
-          <Link
-            href={`/users/petServices/grooming/detail/${businessId}/booking`}
+          <div
             style={{
-              padding: "10px 20px",
-              background: "linear-gradient(135deg, #9c27b0, #7b1fa2)",
-              color: "white",
-              textDecoration: "none",
-              borderRadius: "8px",
-              fontWeight: "500",
+              display: "flex",
+              gap: "12px",
+              alignItems: "center",
+              flexWrap: "wrap",
             }}
           >
-            Book a Service
-          </Link>
+            {Number.isFinite(businessNumericId) && (
+              <MessageBusinessButton
+                businessId={businessNumericId}
+                businessName={name}
+              />
+            )}
+            <BookServiceButton
+              href={`/users/petServices/grooming/detail/${businessId}/booking`}
+            />
+          </div>
         </div>
         <Services businessId={businessId} />
       </section>

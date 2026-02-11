@@ -19,6 +19,8 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
 
     Optional<Business> findByUser(User user);
 
+    Optional<Business> findByUser_Id(String userId);
+
     // Eagerly fetch user to avoid LazyInitializationException
     @Query("SELECT b FROM Business b JOIN FETCH b.user")
     List<Business> findAllWithUser();
