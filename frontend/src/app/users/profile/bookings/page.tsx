@@ -70,6 +70,7 @@ export default function YourBookingsPage() {
             <div
               key={b.id}
               style={{
+                color:"#f28b2e",
                 padding: "16px",
                 border: "1px solid #e0e0e0",
                 borderRadius: "8px",

@@ -42,7 +42,7 @@
 
 .title {
   font-size: 54px;
-  color: #FF6B35;
+  color: #f28b2e;
   margin-bottom: 15px;
 }
 
@@ -59,21 +59,20 @@
   gap: 15px;
 }
 
-.btn {
-  padding: 14px 0;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 500;
-  transition: all 0.3s;
-  width: 200px;
-  text-align: center;
-}
+
 
 .btnPrimary {
-  background: #FF6B35;
-  color: #fff;
+  background-color: #f28b2e;
+  color: white;
+  border: none;
+  padding: 0.9rem 2.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(244, 162, 97, 0.3);
 }
 .btnPrimary:hover { opacity: 0.85; }
 
