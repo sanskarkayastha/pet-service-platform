@@ -19,7 +19,7 @@ const requestsData: ServiceRequest[] = [
     existingServices: ["Grooming", "Nail Trimming"],
     location: "Thamel, Kathmandu",
     submitted: "Dec 12, 2025",
-    reason: "We want to expand our services for luxury pet care."
+    reason: "We want to expand our services for luxury pet care.",
   },
   {
     id: 2,
@@ -30,12 +30,14 @@ const requestsData: ServiceRequest[] = [
     existingServices: ["Pet Hostel", "Pet Sitting"],
     location: "Lalitpur",
     submitted: "Dec 11, 2025",
-    reason: "Many clients requested daily dog walking service."
+    reason: "Many clients requested daily dog walking service.",
   },
 ];
 
 const ServiceRequestsPage: React.FC = () => {
-  const [selectedRequest, setSelectedRequest] = useState<ServiceRequest | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<ServiceRequest | null>(
+    null,
+  );
 
   return (
     <>
@@ -51,12 +53,6 @@ const ServiceRequestsPage: React.FC = () => {
             <div className="search-box">
               <input type="text" placeholder="Search service requests..." />
             </div>
-            <select className="filter-select">
-              <option>All Services</option>
-              <option>Grooming</option>
-              <option>Veterinary</option>
-              <option>Pet Hostel</option>
-            </select>
           </div>
         </div>
 
