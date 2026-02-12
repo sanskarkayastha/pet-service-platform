@@ -6,6 +6,7 @@ nav {
   z-index: 1000;
   background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
   backdrop-filter: blur(5px);
+  font-family: 'Poppins', sans-serif;
 }
 
 .nav-container {
@@ -98,14 +99,14 @@ nav {
 
 .nav-icons button {
   padding: 0.6rem 1.5rem;
-  border-radius: 25px;
+  border-radius: 10px;
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 1px;
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .nav-icons button:first-of-type {
