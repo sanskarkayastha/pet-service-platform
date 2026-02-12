@@ -1,24 +1,27 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosInstance } from "axios";
 import { authClient } from "./auth-client";
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
   withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 // Request interceptor to add JWT token
 apiClient.interceptors.request.use(async (config) => {
-  const {data,error} = await authClient.token();
+  const { data, error } = await authClient.token();
 
   if (data) {
     config.headers.Authorization = `Bearer ${data.token}`;
   }
-  if(error){
+  if (error) {
     console.error("Failed to get auth token:", error);
+  }
+
+  // Let Axios set multipart boundary automatically for FormData.
+  // Only force JSON for plain object payloads.
+  if (!(config.data instanceof FormData) && !config.headers["Content-Type"]) {
+    config.headers["Content-Type"] = "application/json";
   }
 
   return config;

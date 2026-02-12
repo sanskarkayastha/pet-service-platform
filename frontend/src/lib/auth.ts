@@ -4,6 +4,28 @@ import { jwt } from "better-auth/plugins";
 import { Pool } from "pg";
 import { sendTemplatedEmail } from "./mailer";
 
+function requireEnv(name: string): string {
+  const value = process.env[name]?.trim();
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return value;
+}
+
+const googleClientId = requireEnv("GOOGLE_CLIENT_ID");
+const googleClientSecret = requireEnv("GOOGLE_CLIENT_SECRET");
+const authBaseUrl =
+  process.env.BETTER_AUTH_URL ||
+  process.env.NEXT_PUBLIC_BETTER_AUTH_URL ||
+  "http://localhost:3000";
+
+if (process.env.NODE_ENV !== "production") {
+  const suffix = googleClientId.slice(-8);
+  console.info(
+    `[auth] Google OAuth config loaded. baseURL=${authBaseUrl} clientIdSuffix=${suffix}`,
+  );
+}
+
 export const auth = betterAuth({
   database: new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -63,8 +85,8 @@ export const auth = betterAuth({
   socialProviders: {
     google: {
       prompt: "select_account",
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
     },
   },
   session: {
@@ -72,7 +94,7 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24,
   },
   secret: process.env.BETTER_AUTH_SECRET || process.env.AUTH_SECRET || "change-this-secret-in-production",
-  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: authBaseUrl,
   autoMigrate: true,
   plugins: [
     nextCookies(),

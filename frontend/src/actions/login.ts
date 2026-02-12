@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { APIError } from "better-auth";
+import { headers } from "next/headers";
 
 
 export type LoginError = {
@@ -92,11 +93,13 @@ export async function logUserInWithGoogle(){
   let hasError = false
   let gUrl = '';
   try{
+    const requestHeaders = await headers();
     const {url} = await auth.api.signInSocial({
       body: {
         provider: "google",
         callbackURL: "/",
-      }
+      },
+      headers: requestHeaders,
     })
     if(!url){
       hasError = true
@@ -110,6 +113,7 @@ export async function logUserInWithGoogle(){
   }
 
   if(!hasError){
+    console.log(gUrl)
     redirect(gUrl)
   }
 }

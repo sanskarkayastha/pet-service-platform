@@ -59,7 +59,8 @@ export async function resendVerificationEmail(
 
 export type VerifyEmailResult =
   | { status: "success"; message: string }
-  | { status: "error"; message: string };
+  | { status: "error"; message: string }
+  | { status: "pending"; message: string };
 
 export async function verifyEmailToken(
   token?: string,

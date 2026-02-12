@@ -27,7 +27,7 @@ export default function VerifyEmailContent({
     initialState,
   );
 
-  const showResendForm = result.status === "error";
+  const showResendForm = result.status === "error" || result.status === "pending";
 
   return (
     <div className="login-page">
@@ -39,7 +39,9 @@ export default function VerifyEmailContent({
             className={
               result.status === "success"
                 ? "success-message"
-                : "error-message"
+                : result.status === "pending"
+                  ? "helper-text"
+                  : "error-message"
             }
           >
             {result.message}
@@ -48,7 +50,9 @@ export default function VerifyEmailContent({
           {showResendForm ? (
             <form action={resendAction}>
               <p className="helper-text">
-                Enter your email to receive a new verification link.
+                {result.status === "pending"
+                  ? "Didn't receive the email? Request a new link below."
+                  : "Enter your email to receive a new verification link."}
               </p>
               <div className="input-group">
                 <div className="input-wrapper">
@@ -92,7 +96,7 @@ export default function VerifyEmailContent({
               </button>
             </form>
           ) : (
-            <Link href="/users/login" className="login-submit">
+            <Link href="/users/login" className="login-submit" style={{ display: "block", textAlign: "center", textDecoration: "none" }}>
               Go to login
             </Link>
           )}

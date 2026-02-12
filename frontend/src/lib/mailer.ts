@@ -78,10 +78,15 @@ export async function sendTemplatedEmail(payload: MailPayload) {
     });
 
     if (mock) {
-      console.info(
-        "[mailer] Development mock email:\n",
-        JSON.stringify(info?.message ?? info, null, 2),
-      );
+      const msg = typeof info?.message === "string" ? info.message : JSON.stringify(info ?? {}, null, 2);
+      const urlMatch = msg.match(/https?:\/\/[^\s"<>]+verify-email[^\s"<>]*/i)
+        || msg.match(/https?:\/\/[^\s"<>]*\?[^\s"<>]*token=[^\s"<>]+/);
+      console.info("\n---------- [mailer] Development mock email ----------");
+      if (urlMatch) {
+        console.info("VERIFICATION LINK (copy and open in browser):\n", urlMatch[0]);
+      }
+      console.info("Full payload:", msg);
+      console.info("------------------------------------------------------\n");
     }
   } catch (error) {
     if (process.env.NODE_ENV !== "production") {
