@@ -128,12 +128,20 @@ const StepFour = ({ formData, setFormData, onBack, onSubmit }: any) => {
       setTimeout(() => {}, 2000);
     } catch (err: any) {
       console.error(err);
+      const backendMessage =
+        typeof err?.response?.data === "string"
+          ? err.response.data
+          : err?.response?.data?.message || "";
+      const message =
+        backendMessage || (typeof err?.message === "string" ? err.message : "");
+
       // Show a friendly message if the user already has a business
-      const message = typeof err?.message === "string" ? err.message : "";
       if (message.includes("Business already exists")) {
         setErrorMessage("You already have a business registered.");
       } else {
-        setErrorMessage("Something went wrong while submitting. Please try again.");
+        setErrorMessage(
+          message || "Something went wrong while submitting. Please try again.",
+        );
       }
     }
   };

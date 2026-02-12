@@ -23,6 +23,10 @@ export default function SignupForm() {
       <div className="modal-overlay">
         <div className="login-modal">
           <h2>Sign Up</h2>
+          <p className="helper-text">
+            Create your Furrever account. We&apos;ll email you a verification link
+            before you can sign in.
+          </p>
 
           {state.errors.general && (
             <p className="error-message">{state.errors.general}</p>
@@ -112,7 +116,7 @@ export default function SignupForm() {
               </button>
 
             <div className="register-link">
-              Already have an account? <Link href="/login">Login</Link>
+              Already have an account? <Link href="/users/login">Login</Link>
             </div>
           </form>
         </div>

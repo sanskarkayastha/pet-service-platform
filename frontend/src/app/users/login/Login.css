@@ -203,3 +203,48 @@ input::placeholder {
   font-size: 14px;
   margin-bottom: 10px;
 }
+
+.success-message {
+  color: #16a34a;
+  font-size: 14px;
+  background: rgba(22, 163, 74, 0.08);
+  border: 1px solid rgba(22, 163, 74, 0.2);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.helper-text {
+  color: #5a6670;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.resend-wrapper {
+  margin-top: 16px;
+  padding: 18px 20px;
+  background: rgba(231, 111, 81, 0.08);
+  border: 1px solid rgba(231, 111, 81, 0.2);
+  border-radius: 10px;
+}
+
+.resend-form {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 12px;
+}
+
+.resend-button {
+  background: transparent;
+  color: #e76f51;
+  border: 2px solid #e76f51;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.resend-button:hover {
+  background: #fbe7e3;
+}

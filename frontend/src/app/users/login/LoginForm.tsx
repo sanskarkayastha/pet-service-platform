@@ -1,9 +1,14 @@
 "use client";
 
-import React, { FormEvent, useActionState, useState } from "react";
+import React, { FormEvent, useActionState } from "react";
 import "./Login.css";
 import {FormState, logUserIn, logUserInWithGoogle } from "@/actions/login";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+  resendVerificationEmail,
+  VerificationFormState,
+} from "@/actions/emailVerification";
 
 export default function LoginForm() {
 
@@ -24,6 +29,12 @@ export default function LoginForm() {
   }
 
  const [state, formAction, isPending] =  useActionState(logUserIn, initialState)
+ const [resendState, resendAction, resendPending] = useActionState(
+  resendVerificationEmail,
+  {
+    status: "idle",
+  } as VerificationFormState,
+);
 
   return (
     <div className="login-page">
@@ -68,9 +79,9 @@ export default function LoginForm() {
                   <label className="remember">
                   <input type="checkbox" /> Remember me
                   </label>
-                  <a href="#" className="forgot">
+                  <Link href="/users/forgot-password" className="forgot">
                   Forgot Password?
-                  </a>
+                  </Link>
               </div>
 
               <button type="submit" className="login-submit" disabled={isPending}>
@@ -81,7 +92,7 @@ export default function LoginForm() {
                     <span>Or continue with</span>
               </div>
 
-              <button  className="google-btn" onClick={googleLogin}>
+              <button type="button" className="google-btn" onClick={googleLogin}>
                   <svg width="20" height="20" viewBox="0 0 20 20">
                         <path d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z" fill="#4285F4"/>
                         <path d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z" fill="#34A853"/>
@@ -92,9 +103,36 @@ export default function LoginForm() {
               </button>
 
               <div className="register-link">
-                  Don’t have an account? <a href="#">Register</a>
+                  Don’t have an account? <Link href="/users/register">Register</Link>
               </div>
               </form>
+
+              {state.error.verification && (
+                <div className="resend-wrapper">
+                  <p className="error-message">{state.error.verification}</p>
+                  <form action={resendAction} className="resend-form">
+                    <input type="hidden" name="email" value={state.prevData.email} />
+                    <button
+                      type="submit"
+                      className="resend-button"
+                      disabled={resendPending}
+                    >
+                      {resendPending ? "Resending..." : "Resend verification email"}
+                    </button>
+                  </form>
+                  {resendState.message && (
+                    <p
+                      className={
+                        resendState.status === "success"
+                          ? "success-message"
+                          : "error-message"
+                      }
+                    >
+                      {resendState.message}
+                    </p>
+                  )}
+                </div>
+              )}
           </div>
       </div>
       

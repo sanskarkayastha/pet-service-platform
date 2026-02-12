@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,11 +29,14 @@ import com.example.demo.model.BusinessStatus;
 import com.example.demo.security.CurrentUser;
 import com.example.demo.model.User;
 import com.example.demo.services.BusinessServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/business")
 public class BusinessController {
+    private static final Logger logger = LoggerFactory.getLogger(BusinessController.class);
 
     @Autowired
     private BusinessServices businessServices;
@@ -49,7 +53,9 @@ public class BusinessController {
             @RequestPart("businessInfo") BusinessDTO businessDTO,
             @RequestPart("logo-upload") MultipartFile logo,
             @RequestPart("license-upload") MultipartFile license,
-            @RequestPart("verification-upload") MultipartFile verificationDoc) {
+            @RequestPart("verification-upload") MultipartFile verificationDoc,
+            Authentication authenticaiton
+        ) {
         try {
             Business business = businessServices.addBusiness(businessDTO, logo, license, verificationDoc);
             if (business != null) {
@@ -63,9 +69,26 @@ public class BusinessController {
             }
 
         } catch (IOException e) {
+            logger.error("File upload failed while adding business for user {}", businessDTO.userId(), e);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to upload business documents");
+                    .body(Map.of(
+                            "message", "Failed to upload business documents: " + e.getMessage(),
+                            "status", "failed"));
+        } catch (IllegalArgumentException e) {
+            logger.warn("Invalid category received while adding business: {}", businessDTO.category(), e);
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of(
+                            "message", "Invalid business category: " + businessDTO.category(),
+                            "status", "failed"));
+        } catch (Exception e) {
+            logger.error("Unexpected error while adding business for user {}", businessDTO.userId(), e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of(
+                            "message", e.getMessage() == null ? "Unexpected error while adding business" : e.getMessage(),
+                            "status", "failed"));
         }
 
     }

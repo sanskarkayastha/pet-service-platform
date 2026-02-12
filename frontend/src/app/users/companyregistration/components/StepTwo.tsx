@@ -44,6 +44,14 @@ const StepTwo: React.FC<StepTwoProps> = ({
   /* -------------------- FILE UPLOAD -------------------- */
   const handleFileUpload = (type: string, file: File | null) => {
     if (!file) return;
+    if (type === "verificationDoc" && !file.type.startsWith("image/")) {
+      setErrors((prev) => ({
+        ...prev,
+        verificationDoc:
+          "Verification document must be an image (JPG, PNG, or WebP).",
+      }));
+      return;
+    }
 
     setFormData({
       ...formData,
@@ -239,7 +247,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
         {formData.verificationDoc ? (
           <div className={styles.filePreview}>
             <div className={styles.fileIcon}>
-              <FileText size={16} color="#FF6B35" />
+              <Image size={16} color="#FF6B35" />
             </div>
             <div className={styles.fileInfo}>
               <div className={styles.fileName}>
@@ -268,13 +276,13 @@ const StepTwo: React.FC<StepTwoProps> = ({
               or drag and drop
             </div>
             <div className={styles.uploadSubtext}>
-              PDF format only (max 10MB)
+              JPG, PNG, WebP (max 10MB)
             </div>
             <input
               id="verification-upload"
               type="file"
               hidden
-              accept=".pdf"
+              accept=".jpg,.jpeg,.png,.webp"
               onChange={(e) =>
                 handleFileUpload("verificationDoc", e.target.files?.[0] || null)
               }

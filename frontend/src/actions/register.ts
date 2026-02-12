@@ -35,8 +35,8 @@ export async function registerUser(prevState:FormState, formData: FormData){
         errors.email = "Email is required";
     }
 
-    if(password === "" && password.length < 8){
-        errors.password = "Password is required";
+    if(password === "" || password.length < 8){
+        errors.password = "Password must be at least 8 characters";
     }
 
     if(Object.keys(errors).length > 0){
@@ -67,14 +67,15 @@ export async function registerUser(prevState:FormState, formData: FormData){
         // }catch(err){
         //     errors.general = "Registration failed. Please try again.";
         // }
-        console.log("db url:", process.env.DATABASE_URL);
         const response = await auth.api.signUpEmail(
             {
                 body:{
                     name: name,
                     email: email,
                     password: password,
-                    callbackURL: "/users/login"
+                    callbackURL:
+                        process.env.NEXT_PUBLIC_APP_URL?.concat("/users/login") ??
+                        "/users/login",
                 },
                 asResponse: true
             }
@@ -88,7 +89,7 @@ export async function registerUser(prevState:FormState, formData: FormData){
     }
 
     if(!hasError){
-        redirect("/users/login");
+        redirect(`/users/verify-email?email=${encodeURIComponent(email)}`);
     }else{
         return {
             errors: errors,
