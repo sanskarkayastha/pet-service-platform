@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import "@/styles/Grooming.css";
-import apiClient from "@/lib/api-client";
 
 interface Business {
   id: number;
@@ -31,9 +30,14 @@ export default function VetPage() {
   useEffect(() => {
     const getBusinessData = async () => {
       try {
-        const json = await apiClient.get<Business[]>("/api/business/allBusinesses");
+        const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+        const response = await fetch(`${apiBase}/api/business/allBusinesses`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch veterinary businesses: ${response.status}`);
+        }
+        const json: Business[] = await response.json();
         setBusinesses(
-          json.data.filter((b) => (b.category || []).includes("VETERINARY")),
+          json.filter((b) => (b.category || []).includes("VETERINARY")),
         );
       } catch (err) {
         console.error("Failed to fetch veterinary businesses", err);
