@@ -38,7 +38,9 @@ export default function GroomingPage() {
       try {
         // Use authenticated API utility - automatically adds JWT token if available
         const json = await apiClient.get<Business[]>("/api/business/allBusinesses");
-        setBusinesses(json.data);
+        setBusinesses(
+          json.data.filter((b) => (b.category || []).includes("GROOMING")),
+        );
       } catch (err) {
         console.error("Failed to fetch businesses", err);
       } finally {
