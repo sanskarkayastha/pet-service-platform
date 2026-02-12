@@ -3,16 +3,17 @@
 import React from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { logOut } from "@/actions/logout";
+import { Briefcase, Wrench, LogOut } from "lucide-react";
 
 const SuperAdminSidebar: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  async function logUserOut(){
-    let result = await logOut()
-    if(result){
-      router.refresh()
-      router.replace("/")
+  async function logUserOut() {
+    let result = await logOut();
+    if (result) {
+      router.refresh();
+      router.replace("/");
     }
   }
 
@@ -21,24 +22,14 @@ const SuperAdminSidebar: React.FC = () => {
       name: "Business Requests",
       badge: 12,
       path: "/superAdmin/businessRequest",
+      icon: <Briefcase size={18} />,
     },
-    {
-      name: "Service Requests",
-      badge: 7,
-      path: "/superAdmin/serviceRequest",
-    },
-    {
-      name: "All Businesses",
-      path: "/superAdmin/businesses",
-    },
-    {
-      name: "Analytics",
-      path: "/superAdmin/analytics",
-    },
-    {
-      name: "Settings",
-      path: "/superAdmin/settings",
-    },
+    // {
+    //   name: "Service Requests",
+    //   badge: 7,
+    //   path: "/superAdmin/serviceRequest",
+    //   icon: <Wrench size={18} />,
+    // },
   ];
 
   return (
@@ -58,21 +49,7 @@ const SuperAdminSidebar: React.FC = () => {
               className={`menu-item ${isActive ? "active" : ""}`}
               onClick={() => router.push(item.path)}
             >
-              <div className="menu-icon">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <rect x="3" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="14" width="7" height="7"></rect>
-                  <rect x="3" y="14" width="7" height="7"></rect>
-                </svg>
-              </div>
+              <div className="menu-icon">{item.icon}</div>
 
               <span>{item.name}</span>
 
@@ -80,9 +57,12 @@ const SuperAdminSidebar: React.FC = () => {
             </div>
           );
         })}
-        <button onClick={logUserOut}>Log Out</button>
-      </div>
 
+        <button className="logout-btn" onClick={logUserOut}>
+          <LogOut size={18} />
+          Log Out
+        </button>
+      </div>
     </div>
   );
 };

@@ -36,7 +36,7 @@ const BusinessRequestsPage: React.FC = () => {
 
         // axios automatically gives data
         const data = res.data;
-        console.log(data)
+        console.log(data);
         // safety check in case backend wraps response
         if (Array.isArray(data)) {
           setRequests(data);
@@ -74,13 +74,6 @@ const BusinessRequestsPage: React.FC = () => {
             <div className="search-box">
               <input type="text" placeholder="Search businesses..." />
             </div>
-
-            <select className="filter-select">
-              <option>All Services</option>
-              <option>Grooming</option>
-              <option>Veterinary</option>
-              <option>Pet Hostel</option>
-            </select>
           </div>
         </div>
 
@@ -105,12 +98,15 @@ const BusinessRequestsPage: React.FC = () => {
                 owner: req.ownerName,
                 email: req.email,
                 contact: req.contactNumber,
-                location: `${req.city ?? ""} ${req.businessAddress ?? ""}`.trim(),
+                location:
+                  `${req.city ?? ""} ${req.businessAddress ?? ""}`.trim(),
                 serviceType: req.category?.join(", ") ?? "",
                 pan: req.panNumber ?? "",
                 submitted: "",
                 description: req.description ?? "",
-                documents: req.imageUrl ? [{ name: "Business Documents", icon: "📄" }] : [],
+                documents: req.imageUrl
+                  ? [{ name: "Business Documents", icon: "📄" }]
+                  : [],
               }}
               onView={setSelectedRequest}
             />
