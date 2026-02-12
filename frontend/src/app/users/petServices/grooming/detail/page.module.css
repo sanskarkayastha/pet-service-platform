@@ -59,13 +59,16 @@
   border: 1px solid #e5e7eb;
   background: #ffffff;
   cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease,
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease,
     transform 0.1s ease;
 }
 
 .serviceOptionSelected {
-  border-color: #9c27b0;
-  background: #faf5ff;
+  border-color: #f28b2e;
+  background: #ffffff;
   box-shadow: 0 10px 30px rgba(147, 51, 234, 0.18);
   transform: translateY(-1px);
 }
@@ -76,15 +79,21 @@
   align-items: flex-start;
   gap: 16px;
 }
+.serviceMeta {
+  margin-left: 0;
+  text-align: left;
+}
 
 .serviceTitle {
   font-size: 1rem;
   font-weight: 600;
+  color: #f28b2e;
+  margin-left: -46px;
 }
 
 .serviceDescription {
   margin-top: 4px;
-  color: #6b7280;
+  color: #000000;
   font-size: 0.9rem;
 }
 
@@ -97,7 +106,7 @@
 .servicePrice {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #9c27b0;
+  color: #f28b2e;
 }
 
 .addonList {
@@ -139,6 +148,8 @@
   border-radius: 8px;
   border: 1px solid #e5e7eb;
   font-size: 0.9rem;
+  background-color: white;
+  color: black;
 }
 
 .textArea {
@@ -147,9 +158,13 @@
   border: 1px solid #e5e7eb;
   font-size: 0.9rem;
   resize: vertical;
+  background-color: white;
+  color: black;
 }
 
 .dateInput {
+  background-color: white;
+  color: black;
   width: 100%;
   padding: 10px 12px;
   border-radius: 8px;
@@ -167,16 +182,19 @@
   padding: 8px 10px;
   border-radius: 999px;
   border: 1px solid #e5e7eb;
-  background: #ffffff;
+  background: #000000;
   font-size: 0.85rem;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .timeButtonSelected {
-  border-color: #9c27b0;
+  border-color: #f28b2e;
   background: #f3e5f5;
-  color: #4a148c;
+  color: #f28b2e;
 }
 
 .summaryCard {
@@ -220,12 +238,15 @@
   padding: 12px;
   border-radius: 999px;
   border: none;
-  background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+  background: linear-gradient(135deg, #f28b2e, #f28b2e);
   color: #ffffff;
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
 }
 
 .primaryButton:disabled {
@@ -284,7 +305,7 @@
 
 .divider {
   border: none;
-  border-top: 0.5px solid #92AFBF; /* grey line */
+  border-top: 0.5px solid #92afbf; /* grey line */
   margin: 40px 0; /* space above and below */
   opacity: 50%;
 }
@@ -294,7 +315,7 @@
 }
 
 .reviews h2 {
-    color: black;
+  color: black;
 }
 
 .reviewGrid {
@@ -318,7 +339,7 @@
 .avatar {
   width: 35px;
   height: 35px;
-   min-width: 35px;
+  min-width: 35px;
   min-height: 35px;
   background: #00bcd4;
   color: white;
@@ -327,7 +348,7 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
-   flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .time {

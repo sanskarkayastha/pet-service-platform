@@ -54,7 +54,7 @@ export default function BookingPage() {
   useEffect(() => {
     if (businessId) {
       loadBusinessData();
-    } 
+    }
   }, [businessId]);
 
   useEffect(() => {
@@ -87,7 +87,9 @@ export default function BookingPage() {
 
   const loadBusinessData = async () => {
     try {
-      const servicesRes = await apiClient.get<Service[]>(`/api/services/business/${businessId}`);
+      const servicesRes = await apiClient.get<Service[]>(
+        `/api/services/business/${businessId}`,
+      );
 
       setServices(servicesRes.data);
 
@@ -161,7 +163,8 @@ export default function BookingPage() {
       );
     } catch (error: any) {
       const backendMessage: string | undefined = error?.response?.data;
-      const genericMessage = "We couldn't complete this booking. Please try another time or slot.";
+      const genericMessage =
+        "We couldn't complete this booking. Please try another time or slot.";
 
       if (
         error?.response?.status === 400 &&
@@ -169,13 +172,13 @@ export default function BookingPage() {
         backendMessage.toLowerCase().includes("slot is full")
       ) {
         setErrorToast(
-          "That time slot has just been fully booked. Please pick a different time."
+          "That time slot has just been fully booked. Please pick a different time.",
         );
       } else {
         setErrorToast(
           typeof backendMessage === "string" && backendMessage.length < 160
             ? backendMessage
-            : genericMessage
+            : genericMessage,
         );
       }
     } finally {
@@ -213,7 +216,9 @@ export default function BookingPage() {
           }}
           onClick={() => setErrorToast(null)}
         >
-          <strong style={{ display: "block", marginBottom: 4 }}>Booking not completed</strong>
+          <strong style={{ display: "block", marginBottom: 4 }}>
+            Booking not completed
+          </strong>
           <span>{errorToast}</span>
           <div style={{ marginTop: 6, fontSize: "0.8rem", opacity: 0.8 }}>
             Tap to dismiss.
@@ -224,7 +229,8 @@ export default function BookingPage() {
         <header className={styles.bookingHeader}>
           <h1 className={styles.bookingTitle}>Book a service</h1>
           <p className={styles.bookingSubtitle}>
-            Choose a service, pick a time and share your pet&apos;s details in a few simple steps.
+            Choose a service, pick a time and share your pet&apos;s details in a
+            few simple steps.
           </p>
         </header>
 
@@ -247,13 +253,19 @@ export default function BookingPage() {
                     >
                       <div className={styles.serviceHeader}>
                         <div>
-                          <h3 className={styles.serviceTitle}>{service.title}</h3>
-                          <p className={styles.serviceDescription}>{service.description}</p>
+                          <h3 className={styles.serviceTitle}>
+                            {service.title}
+                          </h3>
+                          <p className={styles.serviceDescription}>
+                            {service.description}
+                          </p>
                           <p className={styles.serviceMeta}>
                             Duration: {service.durationMinutes} minutes
                           </p>
                         </div>
-                        <div className={styles.servicePrice}>Rs {service.price}</div>
+                        <div className={styles.servicePrice}>
+                          Rs {service.price}
+                        </div>
                       </div>
                     </button>
                   );
@@ -261,43 +273,58 @@ export default function BookingPage() {
               </div>
             </section>
 
-            {selectedService && selectedService.addons && selectedService.addons.length > 0 && (
-              <section style={{ marginTop: "28px" }}>
-                <h3 className={styles.bookingSectionTitle}>Add-ons (optional)</h3>
-                <div className={styles.addonList}>
-                  {selectedService.addons.map((addon) => (
-                    <label key={addon.id} className={styles.addonItem}>
-                      <input
-                        type="checkbox"
-                        checked={selectedAddons.includes(addon.id)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedAddons([...selectedAddons, addon.id]);
-                          } else {
-                            setSelectedAddons(
-                              selectedAddons.filter((id) => id !== addon.id)
-                            );
-                          }
-                        }}
-                      />
-                      <div style={{ flex: 1 }}>
-                        <div className={styles.addonContentTitle}>{addon.name}</div>
-                        {addon.description && (
-                          <p className={styles.addonContentDescription}>
-                            {addon.description}
-                          </p>
-                        )}
-                      </div>
-                      <div className={styles.addonPrice}>+Rs {addon.price}</div>
-                    </label>
-                  ))}
-                </div>
-              </section>
-            )}
+            {selectedService &&
+              selectedService.addons &&
+              selectedService.addons.length > 0 && (
+                <section style={{ marginTop: "28px" }}>
+                  <h3 className={styles.bookingSectionTitle}>
+                    Add-ons (optional)
+                  </h3>
+                  <div className={styles.addonList}>
+                    {selectedService.addons.map((addon) => (
+                      <label key={addon.id} className={styles.addonItem}>
+                        <input
+                          type="checkbox"
+                          checked={selectedAddons.includes(addon.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedAddons([...selectedAddons, addon.id]);
+                            } else {
+                              setSelectedAddons(
+                                selectedAddons.filter((id) => id !== addon.id),
+                              );
+                            }
+                          }}
+                        />
+                        <div style={{ flex: 1 }}>
+                          <div className={styles.addonContentTitle}>
+                            {addon.name}
+                          </div>
+                          {addon.description && (
+                            <p className={styles.addonContentDescription}>
+                              {addon.description}
+                            </p>
+                          )}
+                        </div>
+                        <div className={styles.addonPrice}>
+                          +Rs {addon.price}
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </section>
+              )}
 
             {selectedService && (
               <>
-                <section style={{ marginTop: "28px" }}>
+                <section
+                  style={{
+                    marginTop: "28px",
+                    backgroundColor: "white",
+                    color: "black",
+                    padding: "16px",
+                  }}
+                >
                   <h3 className={styles.bookingSectionTitle}>Choose date</h3>
                   <input
                     type="date"
@@ -317,7 +344,9 @@ export default function BookingPage() {
                   ) : (
                     <div className={styles.timeGrid}>
                       {availableSlots.map((slot, index) => {
-                        const startLabel = new Date(slot.start).toLocaleTimeString([], {
+                        const startLabel = new Date(
+                          slot.start,
+                        ).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
                         });
@@ -342,7 +371,9 @@ export default function BookingPage() {
             )}
 
             <section style={{ marginTop: "28px" }}>
-              <h3 className={styles.bookingSectionTitle}>Customer & pet details</h3>
+              <h3 className={styles.bookingSectionTitle}>
+                Customer & pet details
+              </h3>
               <div className={styles.fieldGrid}>
                 <input
                   type="text"
@@ -402,7 +433,9 @@ export default function BookingPage() {
                     <span>Rs {selectedService.price}</span>
                   </div>
                   {selectedAddons.map((addonId) => {
-                    const addon = selectedService.addons.find((a) => a.id === addonId);
+                    const addon = selectedService.addons.find(
+                      (a) => a.id === addonId,
+                    );
                     if (!addon) return null;
                     return (
                       <div
