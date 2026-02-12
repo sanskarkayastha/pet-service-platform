@@ -71,7 +71,7 @@
     color: white;
     border: none;
     padding: 12px 24px;
-    border-radius: 999px;
+    border-radius: 10px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -83,7 +83,7 @@
     background: transparent;
     color: #f4a261;
     padding: 12px 24px;
-    border-radius: 999px;
+    border-radius: 10px;
     cursor: pointer;
   }
   
