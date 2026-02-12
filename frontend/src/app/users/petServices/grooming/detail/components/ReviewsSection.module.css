@@ -1,0 +1,239 @@
+.section {
+  margin-top: 3rem;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0 0 1.5rem 0;
+}
+
+.loading,
+.empty {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.95rem;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px dashed #e5e7eb;
+}
+
+.reviewGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.reviewCard {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.reviewCard:hover {
+  border-color: #fcd34d;
+  box-shadow: 0 4px 20px rgba(251, 191, 36, 0.12);
+}
+
+.cardBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardHeader {
+  margin-bottom: 0.5rem;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.userInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.userName {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #111827;
+  margin: 0 0 0.15rem 0;
+}
+
+.date {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: 0.5rem 0 0.5rem 0;
+}
+
+.starFilled {
+  color: #fbbf24;
+}
+
+.starEmpty {
+  color: #e5e7eb;
+}
+
+.comment {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #4b5563;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Leave a review form */
+.formWrap {
+  margin-top: 2.5rem;
+  padding: 1.75rem;
+  background: linear-gradient(180deg, #fffbeb 0%, #fff 100%);
+  border: 1px solid #fde68a;
+  border-radius: 16px;
+  max-width: 480px;
+}
+
+.formTitle {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.35rem 0;
+}
+
+.formHint {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0 0 1.25rem 0;
+  line-height: 1.45;
+}
+
+.alertError {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 0.875rem;
+  border: 1px solid #fecaca;
+}
+
+.alertSuccess {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: #ecfdf5;
+  color: #15803d;
+  font-size: 0.875rem;
+  border: 1px solid #a7f3d0;
+}
+
+.ratingRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.ratingRow label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.ratingSelect {
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+  background: #fff;
+  color: #111827;
+  cursor: pointer;
+  min-width: 100px;
+}
+
+.ratingSelect:focus {
+  outline: none;
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+  font-family: inherit;
+  margin-bottom: 1rem;
+  resize: vertical;
+  min-height: 88px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+
+.textarea::placeholder {
+  color: #9ca3af;
+}
+
+.submitBtn {
+  padding: 0.65rem 1.5rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.4);
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
