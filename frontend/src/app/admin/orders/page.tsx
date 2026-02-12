@@ -182,7 +182,7 @@ export default function OrdersPage() {
               padding: "8px 16px",
               border: "1px solid #e0e0e0",
               borderRadius: "8px",
-              background: filter === status ? "#9c27b0" : "white",
+              background: filter === status ? "#f28b2e" : "white",
               color: filter === status ? "white" : "#666",
               cursor: "pointer",
               fontSize: "14px",

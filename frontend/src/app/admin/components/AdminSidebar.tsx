@@ -41,9 +41,8 @@ export default function AdminSidebar() {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.logo}>
-        <div className={styles.logoIcon}>🐾</div>
         <div>
-          <h2>FurrEver</h2>
+          <h2>FURREVER</h2>
           <p>Business Dashboard</p>
         </div>
       </div>
