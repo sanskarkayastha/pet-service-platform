@@ -8,6 +8,7 @@
   height: 100vh;
   position: fixed;
   top: 0;
+  font-family: 'Poppins', sans-serif;
 }
 
 .logo {
@@ -20,7 +21,7 @@
 .logoIcon {
   width: 48px;
   height: 48px;
-  background: #ff9800;
+  background: #f28b2e;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -29,14 +30,20 @@
 }
 
 .logo h2 {
-  font-size: 18px;
-  margin: 0;
-  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  z-index: 1001;
+  color: #f28b2e;
 }
 
 .logo p {
   font-size: 12px;
-  color: #777;
+  color: #f28b2e;
   margin: 2px 0 0;
 }
 
@@ -64,7 +71,7 @@
 }
 
 .active {
-  background: #ff9800;
+  background: #f28b2e;
   color: #fff;
 }
 

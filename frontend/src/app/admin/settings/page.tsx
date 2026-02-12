@@ -137,6 +137,8 @@ export default function BusinessSettingsPage() {
                 border: "1px solid #e0e0e0",
                 borderRadius: "8px",
                 fontSize: "14px",
+                backgroundColor:"white",
+                color: "grey",
               }}
             />
           </div>
@@ -162,6 +164,8 @@ export default function BusinessSettingsPage() {
                 border: "1px solid #e0e0e0",
                 borderRadius: "8px",
                 fontSize: "14px",
+                backgroundColor:"white",
+                color: "grey",
               }}
             />
           </div>
@@ -188,6 +192,8 @@ export default function BusinessSettingsPage() {
                   border: "1px solid #e0e0e0",
                   borderRadius: "8px",
                   fontSize: "14px",
+                  backgroundColor:"white",
+                  color: "grey",
                 }}
               />
             </div>
@@ -213,6 +219,8 @@ export default function BusinessSettingsPage() {
                   border: "1px solid #e0e0e0",
                   borderRadius: "8px",
                   fontSize: "14px",
+                  backgroundColor:"white",
+                  color: "grey",
                 }}
               />
             </div>
@@ -239,6 +247,8 @@ export default function BusinessSettingsPage() {
                 border: "1px solid #e0e0e0",
                 borderRadius: "8px",
                 fontSize: "14px",
+                backgroundColor:"white",
+                color: "grey",
               }}
             />
           </div>
@@ -265,6 +275,8 @@ export default function BusinessSettingsPage() {
                   border: "1px solid #e0e0e0",
                   borderRadius: "8px",
                   fontSize: "14px",
+                  backgroundColor:"white",
+                  color: "grey",
                 }}
               />
             </div>
@@ -290,6 +302,8 @@ export default function BusinessSettingsPage() {
                   border: "1px solid #e0e0e0",
                   borderRadius: "8px",
                   fontSize: "14px",
+                  backgroundColor:"white",
+                  color: "grey",
                 }}
               />
             </div>
@@ -317,6 +331,8 @@ export default function BusinessSettingsPage() {
                 borderRadius: "8px",
                 fontSize: "14px",
                 resize: "vertical",
+                backgroundColor:"white",
+                color: "grey",
               }}
             />
           </div>

@@ -57,7 +57,7 @@
 .btnPrimary {
   padding: 10px 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 14px;
   transition: all 0.3s;
@@ -68,16 +68,17 @@
 
 .btnOutline {
   background: white;
-  color: #b39ddb;
-  border: 1px solid #b39ddb;
+  color: #f28b2e;
+  border: 1px solid #f28b2e;
 }
 
 .btnOutline:hover {
-  background-color: #f3e5f5;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px #f28b2e;
 }
 
 .btnPrimary {
-  background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+  background: #f28b2e;
   color: white;
 }
 
@@ -237,8 +238,8 @@
 }
 
 .btnApprove {
-  border-color: #ff9800;
-  color: #ff9800;
+  border-color: #f28b2e;
+  color: #f28b2e;
 }
 
 .btnApprove:hover {

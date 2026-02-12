@@ -160,6 +160,7 @@ export default function WorkingHoursPage() {
                 border: "1px solid #e0e0e0",
                 borderRadius: "8px",
                 backgroundColor: day.isAvailable ? "white" : "#f5f5f5",
+                color:"grey",
               }}
             >
               <div>
@@ -182,8 +183,9 @@ export default function WorkingHoursPage() {
                   style={{
                     display: "block",
                     fontSize: "12px",
-                    color: "#999",
+                    color: "grey",
                     marginBottom: "5px",
+                    backgroundColor:"white"
                   }}
                 >
                   Start Time
@@ -199,6 +201,8 @@ export default function WorkingHoursPage() {
                     border: "1px solid #e0e0e0",
                     borderRadius: "6px",
                     fontSize: "14px",
+                    backgroundColor:"white",
+                    color: "grey",
                   }}
                 />
               </div>
@@ -225,6 +229,8 @@ export default function WorkingHoursPage() {
                     border: "1px solid #e0e0e0",
                     borderRadius: "6px",
                     fontSize: "14px",
+                    backgroundColor:"white",
+                    color: "grey",
                   }}
                 />
               </div>
@@ -253,6 +259,8 @@ export default function WorkingHoursPage() {
                     border: "1px solid #e0e0e0",
                     borderRadius: "6px",
                     fontSize: "14px",
+                    backgroundColor:"white",
+                    color: "grey",
                   }}
                 />
               </div>
@@ -281,6 +289,8 @@ export default function WorkingHoursPage() {
                     border: "1px solid #e0e0e0",
                     borderRadius: "6px",
                     fontSize: "14px",
+                    backgroundColor:"white",
+                    color: "grey",
                   }}
                 />
               </div>

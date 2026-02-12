@@ -1,240 +1,224 @@
+/* ================= LAYOUT ================= */
 .layout {
-  min-height: 100%;
-  background: #f7f7f7;
+  min-height: 100vh;
+  background: #f9fafb;
+  padding: 30px;
 }
 
 .main {
-  padding: 8px 0;
-  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  color: #000;
 }
 
-/* TOP BAR */
-.topBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* ================= HEADER ================= */
+.topBar h1 {
+  font-size: 28px;
+  margin-bottom: 6px;
+  color: #000;
+}
+
+.topBar p {
+  color: #000;
+  font-size: 14px;
+}
+
+/* ================= CARD ================= */
+.card {
+  margin-top: 25px;
+  background: white;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* ================= TITLES ================= */
+.title {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #777;
   margin-bottom: 20px;
 }
 
-.actions {
-  display: flex;
-  gap: 12px;
+/* ================= ALERT BANNERS ================= */
+.errorBanner {
+  background: #ffebee;
+  color: #c62828;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 13px;
 }
 
-/* BUTTONS */
-.primaryBtn {
-  background: #ff7a18;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
+.successBanner {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 13px;
 }
 
-.secondaryBtn {
-  background: white;
-  border: 1px solid #ddd;
-  padding: 10px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-/* STATS GRID */
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-bottom: 24px;
-}
-
-/* CARD BASE */
-.statCard {
-  padding: 18px 20px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #ffffff, #fafafa);
-  border: 1px solid transparent;
-}
-
-/* NUMBER */
-.statCard h2 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-}
-
-/* LABEL */
-.statCard p {
-  margin-top: 6px;
-  font-size: 14px;
-  color: #6b7280;
-}
-
-/* ORANGE */
-.orange {
-  background: linear-gradient(135deg, #fff7ed, #ffedd5);
-  border-color: #fed7aa;
-}
-.orange h2 {
-  color: #f97316;
-}
-
-/* YELLOW */
-.yellow {
-  background: linear-gradient(135deg, #fffbea, #fef3c7);
-  border-color: #fde68a;
-}
-.yellow h2 {
-  color: #f59e0b;
-}
-
-/* RED */
-.red {
-  background: linear-gradient(135deg, #fff1f2, #ffe4e6);
-  border-color: #fecdd3;
-}
-.red h2 {
-  color: #ef4444;
-}
-
-/* PURPLE */
-.purple {
-  background: linear-gradient(135deg, #f5f3ff, #ede9fe);
-  border-color: #ddd6fe;
-}
-.purple h2 {
-  color: #8b5cf6;
-}
-
-/* MAIN GRID */
-.dashboardGrid {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 24px;
-}
-
-.rightColumn {
+/* ================= DATE PICKER ================= */
+.dateRow {
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-}
-
-/* CARD */
-.card {
-  background: white;
-  padding: 16px;
-  border-radius: 12px;
-  color: black;
-}
-
-/* CALENDAR GRID */
-.calendarGrid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
   gap: 6px;
 }
 
-/* Keep empty cells aligned */
-.calendarGrid > div {
-  min-height: 32px;
-}
-
-/* DAY CELL */
-.day {
-  padding: 8px 0;
-  text-align: center;
-  border-radius: 8px;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-/* Hover effect */
-.day:hover {
-  background: #f3f4f6;
-}
-
-/* ACTIVE DAY (matches design) */
-.activeDay {
-  background: #ffedd5;
-  color: #f97316;
-  font-weight: 600;
-}
-
-/* BADGES */
-.openBadge {
-  background: #e6f9ee;
-  color: #16a34a;
-  padding: 2px 8px;
-  border-radius: 12px;
-}
-
-/* APPOINTMENTS */
-.appointment {
-  display: grid;
-  grid-template-columns: 80px 1fr auto auto;
-  gap: 8px;
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.time {
-  color: #ff7a18;
-}
-
-.status {
-  padding: 2px 8px;
-  border-radius: 10px;
+.dateRow label {
   font-size: 12px;
+  color: #000;
 }
 
-.confirmed {
-  background: #dcfce7;
-  color: #16a34a;
-}
-
-.pending {
-  background: #fef3c7;
-  color: #ca8a04;
-}
-
-.viewBtn {
-  background: white;
-  border: 1px solid #ddd;
+.dateRow input {
+  padding: 10px 12px;
   border-radius: 8px;
-  padding: 4px 10px;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
+  background-color: white;
+  color: #000;
 }
 
-/* MODAL */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+/* ================= SLOT FORM ================= */
+.slotForm {
+  margin-top: 10px;
+  padding: 18px;
+  border-radius: 12px;
+  background: #fafafa;
+  border: 1px solid #eee;
 }
 
-.modal {
-  background: white;
-  width: 420px;
-  border-radius: 14px;
-  overflow: hidden;
+.slotForm h4 {
+  margin-bottom: 12px;
 }
 
-.modalHeader {
-  padding: 16px;
-  background: #8b5cf6;
+.timeInputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 15px;
+  background-color: white;
+  color: #000;
+}
+
+.timeInputs label {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.timeInputs input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background-color: white;
+  color: #000;
+}
+
+/* ================= BUTTON ================= */
+.primaryBtn {
+  background: #f28b2e;
   color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.primaryBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(242, 139, 46, 0.35);
+}
+
+.primaryBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ================= SLOT LIST ================= */
+.slotList {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 30px;
+  color: #888;
+  font-size: 14px;
+}
+
+/* ================= SLOT ROW ================= */
+.slotRow {
+  margin-top: 25px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  margin-bottom: 12px;
+  background: white;
+  transition: 0.2s ease;
 }
 
-.modalBody {
-  padding: 16px;
+.slotRow:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.modalFooter {
-  padding: 16px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+.slotTime {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.slotMeta {
+  font-size: 12px;
+  color: #777;
+  margin-top: 3px;
+}
+
+/* ================= DELETE BUTTON ================= */
+.deleteBtn {
+  background: none;
+  border: none;
+  color: #f44336;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: 0.2s ease;
+}
+
+.deleteBtn:hover {
+  background: #ffebee;
+}
+
+/* ================= HELPER TEXT ================= */
+.helperText {
+  margin-top: 25px;
+  font-size: 13px;
+  color: #777;
+  text-align: center;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .layout {
+    padding: 20px;
+  }
+
+  .card {
+    padding: 20px;
+  }
 }
