@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { authClient } from "./auth-client";
+import { redirect } from "next/navigation";
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
@@ -32,8 +33,7 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid - could redirect to login
-      console.error("Unauthorized - token may be expired");
+      redirect("http://localhost:3000/users/login");
     }
     return Promise.reject(error);
   }
